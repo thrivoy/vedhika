@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class VII Biology – CBSE Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1e0f0a;--paper:#fdf7f4;--cream:#f0ddd4;--rule:#c47a5a;
+    --accent:#7b2c14;--accent2:#9c3a1c;--gold:#a05830;
+    --muted:#7a5848;--border:#dbb8a4;--card:#fffaf8;
+    --correct:#1a5c38;--wrong:#8b2635;--pending:#7a5c10;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);font-family:'Crimson Pro',Georgia,serif;color:var(--ink);min-height:100vh;font-size:1.04rem;}
+  #setup-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 60% 40%,#f0ddd4 0%,var(--paper) 70%);padding:2rem;}
+  .setup-card{background:var(--card);border:2px solid var(--border);max-width:560px;width:100%;padding:3rem 3.5rem;box-shadow:9px 9px 0 var(--cream),9px 9px 0 2px var(--rule);}
+  .school-name{font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);text-align:center;margin-bottom:0.4rem;}
+  .setup-card h1{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--ink);text-align:center;margin-bottom:0.25rem;font-weight:700;}
+  .setup-card .subtitle{font-size:0.88rem;color:var(--muted);text-align:center;margin-bottom:2.5rem;font-style:italic;}
+  .form-group{margin-bottom:1.4rem;}
+  .form-group label{display:block;font-size:0.78rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;font-family:'JetBrains Mono',monospace;}
+  .form-group input{width:100%;padding:0.7rem 1rem;border:1.5px solid var(--border);background:var(--paper);font-family:'Crimson Pro',serif;font-size:1rem;color:var(--ink);outline:none;transition:border-color 0.2s;}
+  .form-group input:focus{border-color:var(--accent);}
+  .api-note{font-size:0.78rem;color:var(--muted);margin-top:0.3rem;font-style:italic;}
+  .meta-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .btn-primary{width:100%;padding:0.9rem;background:var(--accent);color:#fff;border:none;font-family:'Cormorant Garamond',serif;font-size:1.2rem;cursor:pointer;transition:background 0.2s,transform 0.1s;}
+  .btn-primary:hover{background:var(--accent2);transform:translateY(-1px);}
+  .divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0;}
+  .marks-badge{display:inline-block;background:var(--cream);border:1px solid var(--rule);padding:0.22rem 0.75rem;font-family:'JetBrains Mono',monospace;font-size:0.76rem;color:var(--gold);margin:0 0.2rem;}
+  .ai-badge{display:inline-block;background:#f0ddd4;border:1px solid var(--accent);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:0.66rem;padding:0.1rem 0.4rem;margin-left:0.4rem;vertical-align:middle;}
+  #exam-screen{display:none;}
+  .exam-header{background:var(--ink);color:var(--paper);padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 3px 14px rgba(0,0,0,0.2);}
+  .hd-school{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--rule);letter-spacing:0.07em;}
+  .hd-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;text-align:center;}
+  .hd-timer{font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:#f6d365;min-width:80px;text-align:right;}
+  .hd-timer.warn{color:#e74c3c;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.45}}
+  .exam-body{max-width:840px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+  .candidate-strip{border:1.5px solid var(--border);padding:0.75rem 1.4rem;display:flex;gap:2rem;margin-bottom:2rem;background:var(--card);font-size:0.9rem;flex-wrap:wrap;}
+  .candidate-strip span{color:var(--muted);font-style:italic;}
+  .paper-title{text-align:center;margin-bottom:2rem;padding-bottom:1.2rem;border-bottom:2px solid var(--border);}
+  .paper-title .school{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+  .paper-title .exam-name{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-top:0.2rem;}
+  .paper-meta{display:flex;justify-content:space-between;margin-top:0.8rem;font-size:0.83rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .section-title{text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border-top:1.5px solid var(--border);border-bottom:1.5px solid var(--border);padding:0.5rem;margin:2rem 0 1.5rem;}
+  .question-block{margin-bottom:2rem;}
+  .question-label{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;margin-bottom:0.8rem;color:var(--accent);}
+  .question-label .marks{font-family:'JetBrains Mono',monospace;font-size:0.76rem;color:var(--gold);font-weight:400;margin-left:0.5rem;}
+  .sub-instruction{font-size:0.92rem;font-weight:600;margin-bottom:1rem;color:var(--ink);}
+  .mcq-item{margin-bottom:1.1rem;padding:0.9rem 1rem;background:var(--card);border:1px solid var(--border);}
+  .mcq-item .q-text{font-size:0.95rem;margin-bottom:0.7rem;line-height:1.55;}
+  .q-num{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:0.78rem;margin-right:0.4rem;}
+  .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 1rem;}
+  .opt-label{display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.9rem;padding:0.3rem 0.4rem;transition:background 0.15s;}
+  .opt-label:hover{background:var(--cream);}
+  .opt-label input[type=radio]{accent-color:var(--accent);}
+  .tf-item{display:flex;align-items:flex-start;gap:1rem;padding:0.7rem 0;border-bottom:1px dashed var(--border);font-size:0.92rem;}
+  .tf-item:last-child{border-bottom:none;}
+  .tf-controls{display:flex;gap:0.5rem;}
+  .tf-btn{padding:0.22rem 0.65rem;border:1.5px solid var(--border);background:transparent;font-family:'JetBrains Mono',monospace;font-size:0.76rem;cursor:pointer;transition:all 0.15s;color:var(--muted);}
+  .tf-btn.selected-t{background:var(--correct);color:#fff;border-color:var(--correct);}
+  .tf-btn.selected-f{background:var(--wrong);color:#fff;border-color:var(--wrong);}
+  .name-item{display:grid;grid-template-columns:1.8rem 1fr;gap:0.5rem;align-items:start;margin-bottom:0.75rem;}
+  .text-input{padding:0.5rem 0.8rem;border:1.5px solid var(--border);background:var(--paper);font-family:'Crimson Pro',serif;font-size:0.95rem;color:var(--ink);width:100%;outline:none;transition:border-color 0.2s;}
+  .text-input:focus{border-color:var(--accent);}
+  .textarea-input{padding:0.7rem 0.9rem;border:1.5px solid var(--border);background:var(--paper);font-family:'Crimson Pro',serif;font-size:0.95rem;color:var(--ink);width:100%;min-height:88px;outline:none;resize:vertical;transition:border-color 0.2s;line-height:1.65;}
+  .textarea-input:focus{border-color:var(--accent);}
+  .long-q-item{margin-bottom:1.3rem;padding:1rem 1.1rem;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);}
+  .long-q-item .q-prompt{font-size:0.94rem;margin-bottom:0.6rem;line-height:1.6;white-space:pre-line;}
+  .long-q-item .q-sub{font-family:'JetBrains Mono',monospace;font-size:0.73rem;color:var(--muted);margin-bottom:0.5rem;}
+  .examples-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+  .example-cell{padding:0.7rem 0.9rem;background:var(--card);border:1px solid var(--border);}
+  .example-cell .cell-label{font-size:0.76rem;font-weight:600;color:var(--gold);font-family:'JetBrains Mono',monospace;margin-bottom:0.4rem;}
+  .submit-bar{position:fixed;bottom:0;left:0;right:0;background:var(--ink);padding:0.85rem 2rem;display:flex;align-items:center;justify-content:space-between;}
+  .progress-text{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--rule);}
+  .btn-submit{padding:0.7rem 2.5rem;background:#f6d365;color:var(--ink);border:none;font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity 0.2s,transform 0.1s;}
+  .btn-submit:hover{opacity:0.88;transform:translateY(-1px);}
+  .diff-table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+  .diff-table th{background:var(--cream);padding:0.5rem 0.8rem;text-align:left;font-family:'JetBrains Mono',monospace;font-size:0.73rem;color:var(--gold);text-transform:uppercase;border:1px solid var(--border);}
+  .diff-table td{padding:0.5rem 0.8rem;border:1px solid var(--border);vertical-align:top;}
+  #grading-screen{display:none;min-height:100vh;background:var(--paper);}
+  .grading-body{max-width:660px;margin:0 auto;padding:5rem 2rem;text-align:center;}
+  .grading-body h2{font-family:'Cormorant Garamond',serif;font-size:2.1rem;margin-bottom:0.5rem;}
+  .grading-body p{color:var(--muted);font-size:0.95rem;margin-bottom:2rem;}
+  .progress-bar-outer{height:7px;background:var(--cream);overflow:hidden;margin-bottom:1rem;}
+  .progress-bar-inner{height:100%;background:var(--accent);width:0%;transition:width 0.4s;}
+  .grading-log{text-align:left;background:var(--card);border:1px solid var(--border);padding:1rem 1.2rem;max-height:260px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:0.76rem;color:var(--muted);line-height:1.9;}
+  #results-screen{display:none;min-height:100vh;background:radial-gradient(ellipse at 70% 30%,#f0ddd4 0%,var(--paper) 65%);padding:3rem 1.5rem 5rem;}
+  .results-body{max-width:840px;margin:0 auto;}
+  .results-header{text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:2px solid var(--border);}
+  .results-header h1{font-family:'Cormorant Garamond',serif;font-size:2.3rem;margin-bottom:0.3rem;}
+  .score-big{font-family:'JetBrains Mono',monospace;font-size:3.6rem;font-weight:500;color:var(--accent);line-height:1;margin:0.8rem 0;}
+  .score-label{font-size:0.85rem;color:var(--muted);font-style:italic;}
+  .grade-badge{display:inline-block;padding:0.4rem 1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.4rem;border:2px solid;margin-top:0.5rem;}
+  .grade-A{color:#1a5c38;border-color:#1a5c38;background:#e6f4ec;}.grade-B{color:#1e4d8c;border-color:#1e4d8c;background:#e3edf7;}.grade-C{color:#a07828;border-color:#a07828;background:#fdf3df;}.grade-D{color:#8b2635;border-color:#8b2635;background:#fceaea;}
+  .score-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1rem;margin-bottom:2.5rem;}
+  .score-card{background:var(--card);border:1px solid var(--border);padding:1rem 1.2rem;text-align:center;}
+  .sc-label{font-size:0.73rem;font-family:'JetBrains Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.3rem;}
+  .sc-val{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--ink);}
+  .sc-max{font-size:0.85rem;color:var(--muted);}
+  .review-section{margin-bottom:2.5rem;}
+  .review-section h2{font-family:'Cormorant Garamond',serif;font-size:1.25rem;margin-bottom:1rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border);}
+  .review-item{padding:1rem 1.1rem;margin-bottom:0.8rem;border:1px solid var(--border);background:var(--card);font-size:0.9rem;}
+  .ri-q{font-weight:600;margin-bottom:0.4rem;line-height:1.5;}.ri-given{color:var(--muted);margin-bottom:0.3rem;}.ri-answer{color:var(--correct);font-style:italic;}
+  .ri-feedback{background:#fdf5f0;border-left:3px solid var(--accent);padding:0.5rem 0.8rem;margin-top:0.5rem;font-style:italic;color:var(--ink);font-size:0.87rem;line-height:1.6;}
+  .status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:0.4rem;vertical-align:middle;}
+  .dot-correct{background:var(--correct);}.dot-wrong{background:var(--wrong);}.dot-partial{background:var(--pending);}
+  .score-pill{float:right;font-family:'JetBrains Mono',monospace;font-size:0.76rem;padding:0.15rem 0.5rem;}
+  .pill-correct{background:#d4edda;color:var(--correct);}.pill-wrong{background:#f8d7da;color:var(--wrong);}.pill-partial{background:#fff3cd;color:var(--pending);}
+  .btn-retry{display:block;width:fit-content;margin:2rem auto 0;padding:0.9rem 3rem;background:var(--accent);color:#fff;border:none;font-family:'Cormorant Garamond',serif;font-size:1.15rem;cursor:pointer;transition:background 0.2s;}
+  .btn-retry:hover{background:var(--accent2);}
+  .btn-home{display:inline-block;width:fit-content;margin:1rem auto 0;padding:0.6rem 2rem;background:transparent;color:var(--accent);border:1.5px solid var(--accent);font-family:'Cormorant Garamond',serif;font-size:1rem;cursor:pointer;text-decoration:none;transition:all 0.2s;}
+  .btn-home:hover{background:var(--accent);color:#fff;}
+  @media(max-width:600px){.options-grid{grid-template-columns:1fr;}.examples-grid{grid-template-columns:1fr;}.exam-header{flex-direction:column;gap:0.4rem;text-align:center;}.meta-row{grid-template-columns:1fr;}.paper-meta{flex-direction:column;gap:0.3rem;text-align:center;}}
+</style>
+</head>
+<body>
+
+<div id="setup-screen">
+  <div class="setup-card">
+    <div class="school-name">Trinity Central School</div>
+    <h1>Biology — Class VII</h1>
+    <p class="subtitle">CBSE &nbsp;·&nbsp; Annual Examination 2025–26 &nbsp;·&nbsp; Marks: 80</p>
+    <hr class="divider">
+    <div class="form-group"><label>Candidate Name</label><input type="text" id="cand-name" placeholder="Enter your full name"></div>
+    <div class="meta-row">
+      <div class="form-group"><label>Roll Number</label><input type="text" id="cand-roll" placeholder="e.g. 12"></div>
+      <div class="form-group"><label>Section</label><input type="text" id="cand-section" placeholder="e.g. B"></div>
+    </div>
+    <hr class="divider">
+    <div class="form-group">
+      <label>API Key <span class="ai-badge">AI Grading</span></label>
+      <input type="password" id="api-key" placeholder="AIza... (Gemini)  or  sk-or-... (OpenRouter)">
+      <div class="api-note">Used only in-browser, never stored.</div>
+    </div>
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.65;">
+      <strong>Chapters:</strong> Nutrition in Animals · Respiration in Organisms · Transportation in Animals &amp; Plants · Reproduction in Plants · Weather, Climate &amp; Adaptations<br>
+      <strong>Total Marks:</strong> <span class="marks-badge">80</span> &nbsp; <strong>Time:</strong> <span class="marks-badge">2 Hours</span>
+    </div>
+    <button class="btn-primary" onclick="startExam()">Begin Examination →</button>
+    <div style="text-align:center;margin-top:1rem;"><a href="index.html" style="color:var(--muted);font-size:0.85rem;">← Back to Portal</a></div>
+  </div>
+</div>
+
+<div id="exam-screen">
+  <div class="exam-header">
+    <div class="hd-school">Trinity Central School</div>
+    <div class="hd-title">Class VII – Biology (CBSE)</div>
+    <div class="hd-timer" id="timer-display">2:00:00</div>
+  </div>
+  <div class="exam-body">
+    <div class="candidate-strip">
+      <div><span>Name: </span><strong id="disp-name">—</strong></div>
+      <div><span>Roll: </span><strong id="disp-roll">—</strong></div>
+      <div><span>Section: </span><strong id="disp-sec">—</strong></div>
+      <div><span>Subject: </span><strong>Biology</strong></div>
+    </div>
+    <div class="paper-title">
+      <div class="school">Trinity Central School</div>
+      <div class="exam-name">CBSE Annual Examination 2025–26</div>
+      <div class="paper-meta"><span>Class: VII &nbsp;|&nbsp; Subject: Biology</span><span>Time: 2 Hours &nbsp;|&nbsp; Marks: 80</span></div>
+    </div>
+    <div class="section-title">Section A (40 Marks)</div>
+    <div class="question-block">
+      <div class="question-label">Question 1 <span class="marks">[40 marks]</span></div>
+      <div class="sub-instruction">a) Choose the correct option: <span class="marks">[10]</span></div>
+      <div id="mcq-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">b) Write True or False. Correct the false statements: <span class="marks">[5]</span></div>
+      <div id="tf-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">c) Name the following: <span class="marks">[5]</span></div>
+      <div id="name-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">d) Give two examples of each: <span class="marks">[5]</span></div>
+      <div id="examples-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">e) Fill in the blanks: <span class="marks">[5]</span></div>
+      <div id="fill-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">f) Answer in one sentence: <span class="marks">[5]</span></div>
+      <div id="short-f-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">g) Answer briefly: <span class="marks">[5]</span></div>
+      <div id="short-g-container"></div>
+    </div>
+    <div class="section-title">Section B (40 Marks)</div>
+    <div class="question-block">
+      <div class="question-label">Question 2 <span class="marks">[10 marks]</span></div>
+      <div class="sub-instruction">Differentiate between the following (2 marks each):</div>
+      <div id="diff-container"></div>
+    </div>
+    <div class="question-block"><div class="question-label">Question 3</div><div id="q3-container"></div></div>
+    <div class="question-block"><div class="question-label">Question 4 <span class="marks">[8 marks]</span></div><div id="q4-container"></div></div>
+    <div class="question-block"><div class="question-label">Question 5</div><div id="q5-container"></div></div>
+  </div>
+  <div class="submit-bar">
+    <div class="progress-text" id="progress-text">Answered: 0 / 0</div>
+    <button class="btn-submit" onclick="submitExam()">Submit Paper →</button>
+  </div>
+</div>
+
+<div id="grading-screen">
+  <div class="grading-body">
+    <h2>Evaluating Your Paper…</h2>
+    <p>AI is grading your subjective answers. Please wait.</p>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="grade-progress"></div></div>
+    <div class="grading-log" id="grading-log"></div>
+  </div>
+</div>
+
+<div id="results-screen">
+  <div class="results-body">
+    <div class="results-header">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">Trinity Central School</div>
+      <h1>Your Results — Biology</h1>
+      <div class="score-big" id="res-total">—</div>
+      <div class="score-label">out of 80 marks</div>
+      <div id="res-grade-badge"></div>
+    </div>
+    <div class="score-breakdown" id="score-breakdown"></div>
+    <div class="review-section"><h2>Section A — Objective Review</h2><div id="obj-review"></div></div>
+    <div class="review-section"><h2>Section B — Subjective Review <span class="ai-badge">AI Graded</span></h2><div id="subj-review"></div></div>
+    <div style="text-align:center">
+      <button class="btn-retry" onclick="location.reload()">← New Attempt</button><br>
+      <a class="btn-home" href="index.html">↩ Back to Portal</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// QUESTION BANK — CBSE CLASS 7 BIOLOGY
+// Chapters: Nutrition in Animals | Respiration | Transportation | Reproduction in Plants | Weather & Adaptations
+// ══════════════════════════════════════════
+
+const MCQ = [
+  { id:'m1', text:'Digestion of proteins begins in the:', opts:['Mouth','Stomach','Small intestine','Large intestine'], ans:'b' },
+  { id:'m2', text:'The respiratory organ of fish is:', opts:['Lungs','Skin','Gills','Trachea'], ans:'c' },
+  { id:'m3', text:'Blood is carried away from the heart through:', opts:['Veins','Capillaries','Arteries','Lymph vessels'], ans:'c' },
+  { id:'m4', text:'The transfer of pollen grains from the anther to the stigma of a flower is called:', opts:['Germination','Fertilisation','Pollination','Dispersal'], ans:'c' },
+  { id:'m5', text:'Which of the following is an adaptation of animals living in cold polar climates?', opts:['Thin skin','Large surface area to lose heat','Thick layer of fat (blubber) under skin','Absence of fur'], ans:'c' },
+  { id:'m6', text:'The breakdown of glucose to release energy inside cells is called:', opts:['Photosynthesis','Digestion','Cellular respiration','Transpiration'], ans:'c' },
+  { id:'m7', text:'The largest gland in the human body is the:', opts:['Pancreas','Kidney','Liver','Stomach'], ans:'c' },
+  { id:'m8', text:'In Amoeba, food is engulfed and digested inside a:', opts:['Stomach','Food vacuole','Cell membrane','Nucleus'], ans:'b' },
+  { id:'m9', text:'Camels store fat in their humps. This fat can be used to produce:', opts:['Energy and water','Only energy','Only water','Neither energy nor water'], ans:'a' },
+  { id:'m10', text:'Which tissue transports food (prepared by leaves) to all parts of a plant?', opts:['Xylem','Phloem','Epidermis','Cortex'], ans:'b' }
+];
+
+const TF = [
+  { id:'t1', text:'Arteries always carry oxygenated blood.', ans:false, correction:'NOT always — the PULMONARY ARTERY carries deoxygenated blood from the heart to the lungs.' },
+  { id:'t2', text:'Anaerobic respiration produces lactic acid in human muscle cells during intense exercise.', ans:true, correction:null },
+  { id:'t3', text:'Pollination and fertilisation in plants are the same process.', ans:false, correction:'They are DIFFERENT processes. Pollination is the transfer of pollen to the stigma; fertilisation is the fusion of male and female gametes.' },
+  { id:'t4', text:'Xylem transports water and minerals from the roots to the leaves of a plant.', ans:true, correction:null },
+  { id:'t5', text:'Polar bears have white fur because they produce white pigment.', ans:false, correction:'Polar bear fur is actually TRANSPARENT/HOLLOW — it appears white because of light scattering. The purpose is camouflage in snow.' }
+];
+
+const NAME_Q = [
+  { id:'n1', text:'The muscular tube that pushes food from the mouth to the stomach.' },
+  { id:'n2', text:'The finger-like projections lining the small intestine that increase the surface area for absorption.' },
+  { id:'n3', text:'The male reproductive organ of a flower that produces pollen.' },
+  { id:'n4', text:'The process by which water vapour is released from leaves through stomata.' },
+  { id:'n5', text:'The seasonal movement of birds or animals from one region to another in search of food or better climate.' }
+];
+const NAME_ANS = ['Oesophagus / Food pipe','Villi','Stamen / Anther','Transpiration','Migration'];
+
+const EXAMPLES_Q = [
+  { id:'ex1', label:'Animals that breathe through gills' },
+  { id:'ex2', label:'Animals that show hibernation' },
+  { id:'ex3', label:'Methods of vegetative propagation' },
+  { id:'ex4', label:'Organs of the human digestive system' },
+  { id:'ex5', label:'Animals adapted to desert conditions' }
+];
+const EXAMPLES_ANS = [
+  ['Fish','Prawn / Tadpole'],
+  ['Bear','Frog / Snail'],
+  ['Stem cutting (rose)','Budding (potato)'],
+  ['Stomach','Small intestine / Liver'],
+  ['Camel','Sand lizard / Desert rat']
+];
+
+const FILL_Q = [
+  { id:'f1', text:'The enzyme present in saliva that begins the digestion of starch is called _______.' },
+  { id:'f2', text:'Reproduction without the fusion of gametes is called _______ reproduction.' },
+  { id:'f3', text:'The process by which water moves up the stem of a plant from roots to leaves is called _______ of sap.' },
+  { id:'f4', text:'The blood component responsible for clotting of blood is called _______.' },
+  { id:'f5', text:'Animals that lay eggs are called _______ animals.' }
+];
+const FILL_ANS = ['Salivary amylase / Ptyalin','Asexual','Ascent','Platelets','Oviparous'];
+
+const SHORT_F = [
+  { id:'sf1', text:'What is the role of the liver in digestion? Name one digestive juice it produces.' },
+  { id:'sf2', text:'Distinguish between aerobic and anaerobic respiration in one sentence each.' },
+  { id:'sf3', text:'What is cross-pollination? How does it differ from self-pollination?' },
+  { id:'sf4', text:'Why do plants need to transport water to their leaves? Give two reasons.' },
+  { id:'sf5', text:'Name two structural adaptations of a fish that help it survive underwater.' }
+];
+
+const SHORT_G = [
+  { id:'sg1', text:'Explain the process of digestion in the human stomach. What acid is present and which enzyme does it activate?' },
+  { id:'sg2', text:'Describe how oxygen reaches the cells in the human body from the lungs. Name the blood component that carries oxygen.' },
+  { id:'sg3', text:'What is seed dispersal? Name three agents of seed dispersal and give one example of a seed dispersed by each.' },
+  { id:'sg4', text:'What is hibernation? Why do some animals hibernate in winter? Give two examples of hibernating animals.' },
+  { id:'sg5', text:'Explain the difference between a food chain and a food web. Write a food chain with four organisms including a producer.' }
+];
+
+const DIFF_Q = [
+  { id:'d1', text:'Aerobic respiration vs Anaerobic respiration' },
+  { id:'d2', text:'Arteries vs Veins' },
+  { id:'d3', text:'Self-pollination vs Cross-pollination' },
+  { id:'d4', text:'Xylem vs Phloem' },
+  { id:'d5', text:'Weather vs Climate' }
+];
+
+const Q3 = [
+  { id:'q3a', marks:3, text:'Explain the following terms with one example each:\n(i) Hibernation  (ii) Aestivation  (iii) Migration' },
+  { id:'q3b', marks:3, text:'Describe the process of digestion in the human body from mouth to small intestine. Name the enzymes and their functions at each stage.' },
+  { id:'q3c', marks:2, text:'Why is transpiration important for plants? Give two reasons. Name the structure through which transpiration mainly occurs.' },
+  { id:'q3d1', marks:1, text:'(d) i. What is double fertilisation in flowering plants? Why is it called "double"?' },
+  { id:'q3d2', marks:1, text:'(d) ii. Name two animals that can breathe through their skin (cutaneous respiration).' }
+];
+
+const Q4 = [
+  { id:'q4a', marks:4, text:'Describe the structure and working of the human heart. How many chambers does it have? Explain how blood flows through it in one complete circulation.' },
+  { id:'q4b', marks:2, text:'What is vegetative propagation? Describe any two natural methods with examples of plants that use each method.' },
+  { id:'q4c', marks:2, text:'How are desert animals adapted to survive with very little water? Describe any three specific structural or behavioural adaptations.' },
+  { id:'q4d', marks:2, text:'What is fermentation? Write the word equation for fermentation by yeast. State two useful applications of fermentation in daily life.' }
+];
+
+const Q5 = [
+  { id:'q5a', marks:3, text:'Explain the human digestive system from mouth to small intestine. For each organ, name the digestive juice produced and its function. What is the role of the large intestine?' },
+  { id:'q5b', marks:2, text:'Describe the process of pollination in flowering plants. Distinguish between wind-pollinated and insect-pollinated flowers — give two differences and one example of each.' },
+  { id:'q5c', marks:2, text:'What adaptations do aquatic animals have for living in water? Describe at least three structural adaptations and explain how each helps the animal survive.' },
+  { id:'q5d', marks:3, text:'Explain the following terms and give one biological example for each:\n(i) Excretion in animals\n(ii) Transpiration pull in plants\n(iii) Symbiosis — with one example of mutualism and one of parasitism' }
+];
+
+// ══════════════════════════════════════════
+let timerInterval=null,secondsLeft=7200,apiKey='';
+let results={mcq:[],tf:[],name:[],examples:[],fill:[],shortF:[],shortG:[],diff:[],q3:[],q4:[],q5:[]};
+let totalMarks=0;
+
+function startExam(){
+  const name=document.getElementById('cand-name').value.trim();
+  if(!name){alert('Please enter your name.');return;}
+  apiKey=document.getElementById('api-key').value.trim();
+  document.getElementById('disp-name').textContent=name;
+  document.getElementById('disp-roll').textContent=document.getElementById('cand-roll').value.trim()||'—';
+  document.getElementById('disp-sec').textContent=document.getElementById('cand-section').value.trim()||'—';
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('exam-screen').style.display='block';
+  buildExam();startTimer();
+}
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const h=Math.floor(secondsLeft/3600),m=Math.floor((secondsLeft%3600)/60),s=secondsLeft%60;
+    const el=document.getElementById('timer-display');
+    el.textContent=`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(secondsLeft<=300)el.classList.add('warn');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitExam();}
+    updateProgress();
+  },1000);
+}
+function buildExam(){
+  const L=['i','ii','iii','iv','v'];
+  const mc=document.getElementById('mcq-container');
+  MCQ.forEach((q,i)=>{const d=document.createElement('div');d.className='mcq-item';d.innerHTML=`<div class="q-text"><span class="q-num">${i+1}.</span>${q.text}</div><div class="options-grid">${['a','b','c','d'].map((l,j)=>`<label class="opt-label"><input type="radio" name="${q.id}" value="${l}"> ${l}) ${q.opts[j]}</label>`).join('')}</div>`;mc.appendChild(d);});
+  const tf=document.getElementById('tf-container');
+  TF.forEach((q,i)=>{const d=document.createElement('div');d.className='tf-item';d.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);min-width:1.6rem">${L[i]}.</span><span style="flex:1;line-height:1.55">${q.text}</span><div class="tf-controls"><button class="tf-btn" onclick="selectTF('${q.id}','T',this)">TRUE</button><button class="tf-btn" onclick="selectTF('${q.id}','F',this)">FALSE</button></div>`;tf.appendChild(d);});
+  const nq=document.getElementById('name-container');
+  NAME_Q.forEach((q,i)=>{const d=document.createElement('div');d.className='name-item';d.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:0.8rem">${L[i]}.</span><div><div style="font-size:0.92rem;margin-bottom:0.3rem">${q.text}</div><input type="text" class="text-input" id="${q.id}" placeholder="Your answer…"></div>`;nq.appendChild(d);});
+  const ex=document.getElementById('examples-container');const eg=document.createElement('div');eg.className='examples-grid';
+  EXAMPLES_Q.forEach((q,i)=>{const c=document.createElement('div');c.className='example-cell';c.innerHTML=`<div class="cell-label">${L[i]}. ${q.label}</div><input type="text" class="text-input" id="${q.id}_1" placeholder="Example 1"><input type="text" class="text-input" id="${q.id}_2" placeholder="Example 2" style="margin-top:0.3rem">`;eg.appendChild(c);});ex.appendChild(eg);
+  const fi=document.getElementById('fill-container');
+  FILL_Q.forEach((q,i)=>{const d=document.createElement('div');d.className='name-item';d.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:0.8rem">${L[i]}.</span><div><div style="font-size:0.92rem;margin-bottom:0.3rem">${q.text}</div><input type="text" class="text-input" id="${q.id}" placeholder="Fill in the blank…"></div>`;fi.appendChild(d);});
+  const sf=document.getElementById('short-f-container');
+  SHORT_F.forEach((q,i)=>{const d=document.createElement('div');d.className='long-q-item';d.innerHTML=`<div class="q-sub">${L[i]}.</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="2" placeholder="Your answer…"></textarea>`;sf.appendChild(d);});
+  const sg=document.getElementById('short-g-container');
+  SHORT_G.forEach((q,i)=>{const d=document.createElement('div');d.className='long-q-item';d.innerHTML=`<div class="q-sub">${L[i]}.</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="3" placeholder="Your answer…"></textarea>`;sg.appendChild(d);});
+  const dq=document.getElementById('diff-container');
+  DIFF_Q.forEach((q,i)=>{const[tA,tB]=q.text.split(' vs ');const d=document.createElement('div');d.className='long-q-item';d.innerHTML=`<div class="q-prompt" style="font-weight:600">${L[i]}. ${q.text}</div><table class="diff-table" style="margin-top:0.5rem"><tr><th>Basis</th><th>${tA}</th><th>${tB||'—'}</th></tr><tr><td><input class="text-input" placeholder="Point 1…"></td><td><input class="text-input" id="${q.id}_a" placeholder="…"></td><td><input class="text-input" id="${q.id}_b" placeholder="…"></td></tr><tr><td><input class="text-input" placeholder="Point 2…"></td><td><input class="text-input" id="${q.id}_c" placeholder="…"></td><td><input class="text-input" id="${q.id}_d" placeholder="…"></td></tr></table>`;dq.appendChild(d);});
+  [['q3-container',Q3],['q4-container',Q4],['q5-container',Q5]].forEach(([cid,arr])=>{const c=document.getElementById(cid);arr.forEach(q=>{const d=document.createElement('div');d.className='long-q-item';d.innerHTML=`<div class="q-sub">Marks: [${q.marks}]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="5" placeholder="Write your answer here…"></textarea>`;c.appendChild(d);});});
+  updateProgress();
+}
+function selectTF(id,val,btn){btn.parentElement.querySelectorAll('.tf-btn').forEach(b=>b.className='tf-btn');btn.classList.add(val==='T'?'selected-t':'selected-f');let h=document.getElementById('tf_'+id);if(!h){h=document.createElement('input');h.type='hidden';h.id='tf_'+id;document.body.appendChild(h);}h.value=val;updateProgress();}
+function updateProgress(){let answered=0,total=0;MCQ.forEach(q=>{total++;if(document.querySelector(`input[name="${q.id}"]:checked`))answered++;});TF.forEach(q=>{total++;if(document.getElementById('tf_'+q.id))answered++;});document.getElementById('progress-text').textContent=`Answered: ${answered} / ${total}`;}
+function submitExam(){clearInterval(timerInterval);if(!confirm('Submit your paper?')){startTimer();return;}document.getElementById('exam-screen').style.display='none';const gs=document.getElementById('grading-screen');gs.style.display='flex';gs.style.flexDirection='column';gs.style.alignItems='center';gs.style.justifyContent='center';gradeAll();}
+
+async function gradeAll(){
+  const log=document.getElementById('grading-log'),bar=document.getElementById('grade-progress');
+  const subjQs=[...SHORT_F.map(q=>({id:q.id,text:q.text,maxMark:1,group:'shortF'})),...SHORT_G.map(q=>({id:q.id,text:q.text,maxMark:1,group:'shortG'})),...DIFF_Q.map(q=>({id:q.id,text:q.text,maxMark:2,group:'diff',answer:gatherDiff(q.id)})),...Q3.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'q3'})),...Q4.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'q4'})),...Q5.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'q5'}))];
+  const totalSteps=4+subjQs.length;let step=0;
+  const logMsg=m=>{log.innerHTML+=m+'<br>';log.scrollTop=log.scrollHeight;};
+  const adv=()=>{step++;bar.style.width=Math.round((step/totalSteps)*100)+'%';};
+  logMsg('↳ Grading MCQs…');let mcqScore=0;
+  MCQ.forEach(q=>{const sel=document.querySelector(`input[name="${q.id}"]:checked`);const given=sel?sel.value:null;const correct=given===q.ans;if(correct)mcqScore++;results.mcq.push({q:q.text,opts:q.opts,ans:q.ans,given,correct});});adv();logMsg(`  MCQ: ${mcqScore}/10`);
+  logMsg('↳ Grading TF…');let tfScore=0;
+  TF.forEach(q=>{const h=document.getElementById('tf_'+q.id);const given=h?h.value:null;const correct=(given==='T')===q.ans;if(correct)tfScore++;results.tf.push({q:q.text,ans:q.ans,given,correct,correction:q.correction});});adv();logMsg(`  TF: ${tfScore}/5`);
+  logMsg('↳ Grading Name & Fill…');let nameScore=0,fillScore=0;
+  NAME_Q.forEach((q,i)=>{const given=(document.getElementById(q.id)||{}).value||'';const correct=given.trim().toLowerCase().includes(NAME_ANS[i].toLowerCase().split('/')[0].trim().split(' ')[0].toLowerCase());if(correct)nameScore++;results.name.push({q:q.text,ans:NAME_ANS[i],given,correct});});
+  FILL_Q.forEach((q,i)=>{const given=(document.getElementById(q.id)||{}).value||'';const correct=given.trim().toLowerCase().includes(FILL_ANS[i].toLowerCase().split('/')[0].trim().split(' ')[0].toLowerCase());if(correct)fillScore++;results.fill.push({q:q.text,ans:FILL_ANS[i],given,correct});});
+  adv();logMsg(`  Name: ${nameScore}/5, Fill: ${fillScore}/5`);
+  logMsg('↳ Grading Examples…');let exScore=0;
+  EXAMPLES_Q.forEach((q,i)=>{const g1=(document.getElementById(q.id+'_1')||{}).value||'',g2=(document.getElementById(q.id+'_2')||{}).value||'';const ca=EXAMPLES_ANS[i].map(a=>a.toLowerCase());const s1=g1.trim()&&ca.some(a=>g1.toLowerCase().includes(a.split('/')[0].split(' ')[0].replace(/[()]/g,'')))?0.5:0;const s2=g2.trim()&&ca.some(a=>g2.toLowerCase().includes(a.split('/')[0].split(' ')[0].replace(/[()]/g,'')))?0.5:0;exScore+=s1+s2;results.examples.push({q:q.label,ans:EXAMPLES_ANS[i],given:[g1,g2],score:s1+s2});});
+  adv();logMsg(`  Examples: ${exScore}/5`);
+  let aiScore=0;
+  for(const sq of subjQs){const given=sq.answer||(document.getElementById(sq.id)||{}).value||'';logMsg(`↳ AI: ${sq.text.substring(0,55)}…`);const r=await aiGrade(sq.text,given,sq.maxMark);aiScore+=r.score;results[sq.group].push({q:sq.text,given,score:r.score,maxMark:sq.maxMark,feedback:r.feedback});adv();}
+  logMsg(`↳ AI total: ${aiScore.toFixed(1)}`);logMsg('✓ Done!');
+  const autoScore=mcqScore+tfScore+nameScore+fillScore+exScore;
+  totalMarks=Math.round((autoScore+aiScore)*10)/10;
+  setTimeout(()=>showResults(mcqScore,tfScore,nameScore,fillScore,exScore,aiScore),800);
+}
+function gatherDiff(id){return['a','b','c','d'].map(x=>(document.getElementById(id+'_'+x)||{}).value||'').join(' | ');}
+async function aiGrade(question,answer,maxMark){
+  if(!apiKey){if(!answer.trim())return{score:0,feedback:'No answer provided.'};const w=answer.trim().split(/\s+/).length;return{score:Math.min(maxMark,w>10?maxMark:w>4?maxMark*0.5:0),feedback:'(No API key – heuristic score.)'};}
+  if(!answer.trim())return{score:0,feedback:'No answer was provided for this question.'};
+  const prompt=`You are an experienced Class 7 CBSE Biology teacher evaluating a student's exam answer.\nQuestion: ${question}\nMaximum Marks: ${maxMark}\nStudent's Answer: "${answer}"\nAward marks 0 to ${maxMark} (decimals fine). Reward correct concepts even if phrasing differs. Be encouraging for a 12-year-old.\nRespond with ONLY raw JSON: {"score":<number>,"feedback":"<1-2 sentences>"}`;
+  try{
+    let responseText='';
+    if(apiKey.startsWith('AIza')){const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:300,responseMimeType:'application/json'}})});const d=await r.json();if(d.error)throw new Error(d.error.message);responseText=d.candidates?.[0]?.content?.parts?.[0]?.text||'';}
+    else{const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`,'HTTP-Referer':'https://trinitycentralschool.edu','X-Title':'Class VII Biology'},body:JSON.stringify({model:'google/gemini-2.0-flash-001',max_tokens:300,temperature:0.2,messages:[{role:'user',content:prompt}]})});const d=await r.json();if(d.error)throw new Error(JSON.stringify(d.error));responseText=d.choices?.[0]?.message?.content||'';}
+    responseText=responseText.trim().replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```$/i,'').trim();
+    const m=responseText.match(/\{[\s\S]*?\}/);if(!m)throw new Error('No JSON in: '+responseText.substring(0,100));
+    const p=JSON.parse(m[0]);return{score:Math.min(maxMark,Math.max(0,parseFloat(p.score)||0)),feedback:p.feedback||'Answer evaluated.'};
+  }catch(e){console.error('aiGrade error:',e);const w=answer.trim().split(/\s+/).length;const fb=Math.min(maxMark*0.4,w>15?maxMark*0.4:w>5?maxMark*0.2:0);return{score:Math.round(fb*2)/2,feedback:`Grading error (${e.message?.substring(0,60)}). Score estimated.`};}
+}
+function showResults(mcq,tf,name,fill,ex,ai){
+  document.getElementById('grading-screen').style.display='none';document.getElementById('results-screen').style.display='block';
+  document.getElementById('res-total').textContent=`${totalMarks} / 80`;
+  const pct=(totalMarks/80)*100;let grade,gc;
+  if(pct>=75){grade='A+';gc='A';}else if(pct>=60){grade='B';gc='B';}else if(pct>=40){grade='C';gc='C';}else{grade='D';gc='D';}
+  document.getElementById('res-grade-badge').innerHTML=`<span class="grade-badge grade-${gc}">Grade ${grade}</span>`;
+  const bd=document.getElementById('score-breakdown');
+  [['MCQ',mcq,10],['True/False',tf,5],['Name the Foll.',name,5],['Fill Blanks',fill,5],['Examples',ex,5],['Subjective (AI)',ai.toFixed(1),50]].forEach(([l,v,m])=>{bd.innerHTML+=`<div class="score-card"><div class="sc-label">${l}</div><div class="sc-val">${v} <span class="sc-max">/ ${m}</span></div></div>`;});
+  const ob=document.getElementById('obj-review');
+  results.mcq.forEach((r,i)=>{const dc=r.correct?'dot-correct':'dot-wrong',pc=r.correct?'pill-correct':'pill-wrong';const idx=['a','b','c','d'].indexOf(r.given),cidx=['a','b','c','d'].indexOf(r.ans);ob.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>MCQ ${i+1}: ${r.q}<span class="score-pill ${pc}">${r.correct?1:0}/1</span></div><div class="ri-given">Your answer: ${r.given?r.given.toUpperCase()+') '+(r.opts[idx]||''):'Not answered'}</div><div class="ri-answer">${r.correct?'✓ Correct':'✗ Correct: '+r.ans.toUpperCase()+') '+r.opts[cidx]}</div></div>`;});
+  results.tf.forEach((r,i)=>{const dc=r.correct?'dot-correct':'dot-wrong',pc=r.correct?'pill-correct':'pill-wrong';ob.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>T/F ${i+1}: ${r.q}<span class="score-pill ${pc}">${r.correct?1:0}/1</span></div><div class="ri-given">Your answer: ${r.given||'Not answered'}</div><div class="ri-answer">Correct: ${r.ans?'TRUE':'FALSE'}${r.correction?' — '+r.correction:''}</div></div>`;});
+  results.name.forEach((r,i)=>{const dc=r.correct?'dot-correct':'dot-wrong',pc=r.correct?'pill-correct':'pill-wrong';ob.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>Name ${i+1}: ${r.q}<span class="score-pill ${pc}">${r.correct?1:0}/1</span></div><div class="ri-given">Your answer: ${r.given||'—'}</div><div class="ri-answer">Answer: ${r.ans}</div></div>`;});
+  results.fill.forEach((r,i)=>{const dc=r.correct?'dot-correct':'dot-wrong',pc=r.correct?'pill-correct':'pill-wrong';ob.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>Fill ${i+1}: ${r.q}<span class="score-pill ${pc}">${r.correct?1:0}/1</span></div><div class="ri-given">Your answer: ${r.given||'—'}</div><div class="ri-answer">Answer: ${r.ans}</div></div>`;});
+  const sb=document.getElementById('subj-review');
+  [...results.shortF,...results.shortG,...results.diff,...results.q3,...results.q4,...results.q5].forEach(r=>{const p2=r.score/r.maxMark,dc=p2>=0.8?'dot-correct':p2>=0.4?'dot-partial':'dot-wrong',pc=p2>=0.8?'pill-correct':p2>=0.4?'pill-partial':'pill-wrong';sb.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>${r.q.substring(0,100)}${r.q.length>100?'…':''}<span class="score-pill ${pc}">${r.score}/${r.maxMark}</span></div><div class="ri-given">Your answer: ${(r.given||'—').substring(0,200)}</div>${r.feedback?`<div class="ri-feedback">💬 ${r.feedback}</div>`:''}</div>`;});
+}
+</script>
+</body>
+</html>

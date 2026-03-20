@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class VIII Biology – Second Term Exam</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #faf8f3;
+    --cream: #f2edd8;
+    --rule: #c8b98a;
+    --accent: #2d6a4f;
+    --accent2: #40916c;
+    --red: #c1440e;
+    --gold: #b5832a;
+    --muted: #6b6b7b;
+    --border: #d4c89a;
+    --correct: #1b6c3d;
+    --wrong: #c1440e;
+    --pending: #7b5e14;
+    --card: #fffdf5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── SETUP SCREEN ── */
+  #setup-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 60% 40%, #e8f5e9 0%, var(--paper) 70%);
+    padding: 2rem;
+  }
+  .setup-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 2px;
+    max-width: 560px;
+    width: 100%;
+    padding: 3rem 3.5rem;
+    box-shadow: 8px 8px 0 var(--cream), 8px 8px 0 2px var(--rule);
+  }
+  .setup-card .school-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 0.4rem;
+  }
+  .setup-card h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    color: var(--ink);
+    text-align: center;
+    margin-bottom: 0.3rem;
+  }
+  .setup-card .subtitle {
+    font-size: 0.88rem;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-style: italic;
+  }
+  .form-group { margin-bottom: 1.4rem; }
+  .form-group label {
+    display: block;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 1.5px solid var(--border);
+    background: var(--paper);
+    font-family: 'Source Serif 4', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus { border-color: var(--accent); }
+  .api-note {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+    font-style: italic;
+  }
+  .meta-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .btn-primary {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+  .marks-badge {
+    display: inline-block;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    padding: 0.25rem 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--gold);
+    border-radius: 2px;
+    margin: 0 0.2rem;
+  }
+
+  /* ── EXAM SCREEN ── */
+  #exam-screen { display: none; }
+
+  .exam-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1.2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .exam-header .hd-school {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--rule);
+    letter-spacing: 0.06em;
+  }
+  .exam-header .hd-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  .exam-header .hd-timer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem;
+    color: #f4c842;
+    min-width: 80px;
+    text-align: right;
+  }
+  .exam-header .hd-timer.warn { color: var(--red); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  .exam-body {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* Candidate strip */
+  .candidate-strip {
+    border: 1.5px solid var(--border);
+    padding: 0.8rem 1.4rem;
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    background: var(--card);
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+  }
+  .candidate-strip span { color: var(--muted); font-style: italic; }
+  .candidate-strip strong { color: var(--ink); }
+
+  /* Paper title */
+  .paper-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .paper-title .school {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .paper-title .exam-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+  }
+  .paper-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Section headings */
+  .section-title {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-top: 1.5px solid var(--border);
+    border-bottom: 1.5px solid var(--border);
+    padding: 0.5rem;
+    margin: 2rem 0 1.5rem;
+    color: var(--ink);
+  }
+
+  /* Questions */
+  .question-block {
+    margin-bottom: 2rem;
+  }
+  .question-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: var(--accent);
+  }
+  .question-label .marks {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--gold);
+    font-weight: 400;
+    margin-left: 0.5rem;
+  }
+  .sub-instruction {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--ink);
+  }
+
+  /* MCQ */
+  .mcq-item {
+    margin-bottom: 1.2rem;
+    padding: 0.9rem 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+  .mcq-item .q-text {
+    font-size: 0.93rem;
+    margin-bottom: 0.7rem;
+    line-height: 1.5;
+  }
+  .mcq-item .q-num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-right: 0.4rem;
+  }
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 1rem;
+  }
+  .opt-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.88rem;
+    padding: 0.3rem 0.4rem;
+    border-radius: 2px;
+    transition: background 0.15s;
+  }
+  .opt-label:hover { background: var(--cream); }
+  .opt-label input[type=radio] { accent-color: var(--accent); }
+
+  /* True/False */
+  .tf-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 0.9rem;
+  }
+  .tf-item:last-child { border-bottom: none; }
+  .tf-controls { display: flex; gap: 0.5rem; align-items: center; }
+  .tf-btn {
+    padding: 0.25rem 0.7rem;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    color: var(--muted);
+  }
+  .tf-btn.selected-t { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tf-btn.selected-f { background: var(--red); color: #fff; border-color: var(--red); }
+
+  /* Text inputs */
+  .name-item {
+    display: grid;
+    grid-template-columns: 1.8rem 1fr;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.7rem;
+  }
+  .name-item .q-num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+  .text-input {
+    padding: 0.5rem 0.8rem;
+    border: 1.5px solid var(--border);
+    background: var(--paper);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    border-radius: 2px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .text-input:focus { border-color: var(--accent); }
+  .textarea-input {
+    padding: 0.7rem 0.9rem;
+    border: 1.5px solid var(--border);
+    background: var(--paper);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    border-radius: 2px;
+    width: 100%;
+    min-height: 90px;
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  .textarea-input:focus { border-color: var(--accent); }
+
+  /* Long Q */
+  .long-q-item {
+    margin-bottom: 1.4rem;
+    padding: 1rem 1.1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 2px;
+  }
+  .long-q-item .q-prompt {
+    font-size: 0.92rem;
+    margin-bottom: 0.6rem;
+    line-height: 1.6;
+  }
+  .long-q-item .q-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  /* Examples grid */
+  .examples-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  .example-cell {
+    padding: 0.7rem 0.9rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+  .example-cell .cell-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--gold);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 0.4rem;
+  }
+  .example-cell .text-input { margin-bottom: 0.3rem; }
+
+  /* Submit */
+  .submit-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ink);
+    padding: 0.9rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .progress-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--rule);
+  }
+  .btn-submit {
+    padding: 0.7rem 2.5rem;
+    background: #f4c842;
+    color: var(--ink);
+    border: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ── GRADING SCREEN ── */
+  #grading-screen {
+    display: none;
+    min-height: 100vh;
+    background: var(--paper);
+  }
+  .grading-body {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  .grading-body h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .grading-body p { color: var(--muted); font-size: 0.95rem; margin-bottom: 2rem; }
+  .progress-bar-outer {
+    height: 8px;
+    background: var(--cream);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.4s ease;
+    border-radius: 4px;
+  }
+  .grading-log {
+    text-align: left;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1rem 1.2rem;
+    max-height: 280px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* ── RESULTS SCREEN ── */
+  #results-screen {
+    display: none;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 30% 70%, #e8f5e9 0%, var(--paper) 70%);
+    padding: 3rem 1.5rem 5rem;
+  }
+  .results-body { max-width: 820px; margin: 0 auto; }
+  .results-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .results-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    margin-bottom: 0.3rem;
+  }
+  .results-header .score-big {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3.5rem;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    margin: 0.8rem 0;
+  }
+  .results-header .score-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .grade-badge {
+    display: inline-block;
+    padding: 0.4rem 1.5rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    border: 2px solid;
+    border-radius: 2px;
+    margin-top: 0.5rem;
+  }
+  .grade-A { color: #1b6c3d; border-color: #1b6c3d; background: #e8f5e9; }
+  .grade-B { color: #2d5fa0; border-color: #2d5fa0; background: #e3edf7; }
+  .grade-C { color: #b5832a; border-color: #b5832a; background: #fdf3df; }
+  .grade-D { color: #c1440e; border-color: #c1440e; background: #fdecea; }
+
+  .score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .score-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+  }
+  .score-card .sc-label {
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 0.3rem;
+  }
+  .score-card .sc-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--ink);
+  }
+  .score-card .sc-max { font-size: 0.85rem; color: var(--muted); }
+
+  .review-section {
+    margin-bottom: 2.5rem;
+  }
+  .review-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink);
+  }
+
+  .review-item {
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--card);
+    font-size: 0.88rem;
+  }
+  .review-item .ri-q {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .review-item .ri-given { color: var(--muted); margin-bottom: 0.3rem; }
+  .review-item .ri-answer { color: var(--correct); font-style: italic; }
+  .review-item .ri-feedback {
+    background: #f0f7f4;
+    border-left: 3px solid var(--accent);
+    padding: 0.5rem 0.8rem;
+    margin-top: 0.5rem;
+    font-style: italic;
+    color: var(--ink);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .status-dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-right: 0.4rem;
+    vertical-align: middle;
+  }
+  .dot-correct { background: var(--correct); }
+  .dot-wrong { background: var(--wrong); }
+  .dot-partial { background: var(--pending); }
+
+  .score-pill {
+    float: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+  }
+  .pill-correct { background: #d4edda; color: var(--correct); }
+  .pill-wrong { background: #f8d7da; color: var(--wrong); }
+  .pill-partial { background: #fff3cd; color: var(--pending); }
+
+  .btn-retry {
+    display: block;
+    width: fit-content;
+    margin: 2rem auto 0;
+    padding: 0.9rem 3rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .btn-retry:hover { background: var(--accent2); }
+
+  /* Diff table */
+  .diff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .diff-table th {
+    background: var(--cream);
+    padding: 0.5rem 0.8rem;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+  }
+  .diff-table td {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 600px) {
+    .options-grid { grid-template-columns: 1fr; }
+    .examples-grid { grid-template-columns: 1fr; }
+    .exam-header { flex-direction: column; gap: 0.4rem; text-align: center; }
+    .meta-row { grid-template-columns: 1fr; }
+    .paper-meta { flex-direction: column; gap: 0.3rem; text-align: center; }
+  }
+
+  .q-group-header {
+    font-size: 0.82rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px dotted var(--border);
+  }
+
+  .ai-badge {
+    display: inline-block;
+    background: #e8f5e9;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ SETUP SCREEN ════════════════════ -->
+<div id="setup-screen">
+  <div class="setup-card">
+    <div class="school-name">Trinity Central School</div>
+    <h1>Biology Assessment</h1>
+    <p class="subtitle">Class VIII &nbsp;·&nbsp; Second Term Exam 2025–26 &nbsp;·&nbsp; Marks: 80+20</p>
+    <hr class="divider">
+
+    <div class="form-group">
+      <label>Candidate Name</label>
+      <input type="text" id="cand-name" placeholder="Enter your full name">
+    </div>
+    <div class="meta-row">
+      <div class="form-group">
+        <label>Roll Number</label>
+        <input type="text" id="cand-roll" placeholder="e.g. 24">
+      </div>
+      <div class="form-group">
+        <label>Section</label>
+        <input type="text" id="cand-section" placeholder="e.g. A">
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="form-group">
+      <label>API Key <span class="ai-badge">AI Grading</span></label>
+      <input type="password" id="gemini-key" placeholder="AIza... (Gemini)  or  sk-or-... (OpenRouter)">
+      <div class="api-note">Paste a Gemini key (AIza…) or an OpenRouter key (sk-or-…). Used only in-browser, never stored.</div>
+    </div>
+
+    <div style="font-size:0.83rem; color:var(--muted); margin-bottom:1.2rem; line-height:1.6;">
+      <strong>Chapters covered:</strong> Health &amp; Hygiene &nbsp;·&nbsp; Reproduction in Animals &nbsp;·&nbsp; Endocrine System &amp; Adolescence &nbsp;·&nbsp; Useful Microorganisms, Animals &amp; Plants<br>
+      <strong>Total Marks:</strong> <span class="marks-badge">80+20</span> &nbsp; <strong>Time:</strong> <span class="marks-badge">2 Hours</span>
+    </div>
+
+    <button class="btn-primary" onclick="startExam()">Begin Examination →</button>
+  </div>
+</div>
+
+<!-- ════════════════════ EXAM SCREEN ════════════════════ -->
+<div id="exam-screen">
+  <div class="exam-header">
+    <div class="hd-school">Trinity Central School</div>
+    <div class="hd-title">Class VIII – Biology</div>
+    <div class="hd-timer" id="timer-display">2:00:00</div>
+  </div>
+
+  <div class="exam-body">
+    <div class="candidate-strip">
+      <div><span>Name: </span><strong id="disp-name">—</strong></div>
+      <div><span>Roll: </span><strong id="disp-roll">—</strong></div>
+      <div><span>Section: </span><strong id="disp-sec">—</strong></div>
+      <div><span>Subject: </span><strong>Biology</strong></div>
+    </div>
+
+    <div class="paper-title">
+      <div class="school">Trinity Central School</div>
+      <div class="exam-name">Second Term Examination 2025–26</div>
+      <div class="paper-meta">
+        <span>Class: VIII &nbsp;|&nbsp; Subject: Biology</span>
+        <span>Time: 2 Hours &nbsp;|&nbsp; Marks: 80 + 20</span>
+      </div>
+    </div>
+
+    <!-- ══ SECTION A ══ -->
+    <div class="section-title">Section A (40 Marks)</div>
+
+    <!-- Q1a MCQ -->
+    <div class="question-block">
+      <div class="question-label">Question 1 <span class="marks">[40 marks]</span></div>
+      <div class="sub-instruction">a) Choose the correct option: <span class="marks">[10]</span></div>
+      <div id="mcq-container"></div>
+    </div>
+
+    <!-- Q1b True/False -->
+    <div class="question-block">
+      <div class="sub-instruction">b) Write True or False. Correct the false statements: <span class="marks">[5]</span></div>
+      <div id="tf-container"></div>
+    </div>
+
+    <!-- Q1c Name the following -->
+    <div class="question-block">
+      <div class="sub-instruction">c) Name the following: <span class="marks">[5]</span></div>
+      <div id="name-container"></div>
+    </div>
+
+    <!-- Q1d Examples -->
+    <div class="question-block">
+      <div class="sub-instruction">d) Give two examples of each: <span class="marks">[5]</span></div>
+      <div id="examples-container"></div>
+    </div>
+
+    <!-- Q1e Industrial/Process Questions -->
+    <div class="question-block">
+      <div class="sub-instruction">e) Answer the following questions related to the Endocrine System: <span class="marks">[5]</span></div>
+      <div id="short-e-container"></div>
+    </div>
+
+    <!-- Q1f Chemical/Reaction examples type -->
+    <div class="question-block">
+      <div class="sub-instruction">f) Give one example and brief explanation of each: <span class="marks">[5]</span></div>
+      <div id="short-f-container"></div>
+    </div>
+
+    <!-- Q1g Balanced questions -->
+    <div class="question-block">
+      <div class="sub-instruction">g) Write brief answers for the following: <span class="marks">[5]</span></div>
+      <div id="short-g-container"></div>
+    </div>
+
+    <!-- ══ SECTION B ══ -->
+    <div class="section-title">Section B (40 Marks)</div>
+
+    <!-- Q2 Differentiate -->
+    <div class="question-block">
+      <div class="question-label">Question 2 <span class="marks">[10 marks]</span></div>
+      <div class="sub-instruction">Differentiate between the following: <span class="marks">[2 each]</span></div>
+      <div id="diff-container"></div>
+    </div>
+
+    <!-- Q3 Explain terms -->
+    <div class="question-block">
+      <div class="question-label">Question 3 <span class="marks"></span></div>
+      <div id="q3-container"></div>
+    </div>
+
+    <!-- Q4 Analysis -->
+    <div class="question-block">
+      <div class="question-label">Question 4 <span class="marks">[8 marks]</span></div>
+      <div id="q4-container"></div>
+    </div>
+
+    <!-- Q5 Long Answers -->
+    <div class="question-block">
+      <div class="question-label">Question 5 <span class="marks"></span></div>
+      <div id="q5-container"></div>
+    </div>
+
+  </div><!-- /exam-body -->
+
+  <div class="submit-bar">
+    <div class="progress-text" id="progress-text">Answered: 0 / 0</div>
+    <button class="btn-submit" onclick="submitExam()" id="btn-submit">Submit Paper →</button>
+  </div>
+</div>
+
+<!-- ════════════════════ GRADING SCREEN ════════════════════ -->
+<div id="grading-screen">
+  <div class="grading-body">
+    <h2>Evaluating Your Paper…</h2>
+    <p>AI is grading your subjective answers using Gemini. Please wait.</p>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="grade-progress"></div>
+    </div>
+    <div class="grading-log" id="grading-log"></div>
+  </div>
+</div>
+
+<!-- ════════════════════ RESULTS SCREEN ════════════════════ -->
+<div id="results-screen">
+  <div class="results-body">
+    <div class="results-header">
+      <div style="font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;">Trinity Central School</div>
+      <h1>Your Results</h1>
+      <div class="score-big" id="res-total">—</div>
+      <div class="score-label">out of 80 marks</div>
+      <div id="res-grade-badge"></div>
+    </div>
+
+    <div class="score-breakdown" id="score-breakdown"></div>
+
+    <div class="review-section">
+      <h2>Section A — Objective Review</h2>
+      <div id="obj-review"></div>
+    </div>
+
+    <div class="review-section">
+      <h2>Section B — Subjective Review <span class="ai-badge">AI Graded</span></h2>
+      <div id="subj-review"></div>
+    </div>
+
+    <button class="btn-retry" onclick="location.reload()">← Start New Attempt</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  QUESTION DATA
+// ═══════════════════════════════════════════════════════════
+
+const MCQ = [
+  {
+    id:'m1', text:'Which of the following is a water-borne disease?',
+    opts:['Malaria','Typhoid','Dengue','Rabies'], ans:'b'
+  },
+  {
+    id:'m2', text:'The process of fusion of male and female gametes is called:',
+    opts:['Budding','Fertilisation','Regeneration','Binary fission'], ans:'b'
+  },
+  {
+    id:'m3', text:'Which gland is known as the "Master gland" of the body?',
+    opts:['Thyroid','Adrenal','Pituitary','Pancreas'], ans:'c'
+  },
+  {
+    id:'m4', text:'Which of the following is an example of a useful microorganism?',
+    opts:['Salmonella typhi','Lactobacillus','Plasmodium','Vibrio cholerae'], ans:'b'
+  },
+  {
+    id:'m5', text:'The hormone responsible for regulating blood sugar level is:',
+    opts:['Adrenaline','Thyroxine','Insulin','Estrogen'], ans:'c'
+  },
+  {
+    id:'m6', text:'Internal fertilisation occurs in:',
+    opts:['Fish','Frog','Birds','Starfish'], ans:'c'
+  },
+  {
+    id:'m7', text:'Nitrogen fixation in soil is carried out by:',
+    opts:['Rhizobium','Yeast','Penicillium','Amoeba'], ans:'a'
+  },
+  {
+    id:'m8', text:'Which of the following is a sexually transmitted disease (STD)?',
+    opts:['Cholera','Malaria','HIV/AIDS','Tuberculosis'], ans:'c'
+  },
+  {
+    id:'m9', text:'The change from larva to adult insect is called:',
+    opts:['Regeneration','Metamorphosis','Parthenogenesis','Cloning'], ans:'b'
+  },
+  {
+    id:'m10', text:'Adolescence is the period between:',
+    opts:['Birth to 5 years','5 to 10 years','10 to 19 years','20 to 30 years'], ans:'c'
+  }
+];
+
+const TF = [
+  { id:'t1', text:'Vaccines help in developing immunity against diseases.', ans:true, correction:null },
+  { id:'t2', text:'Asexual reproduction always involves two parents.', ans:false, correction:'Asexual reproduction involves only ONE parent.' },
+  { id:'t3', text:'The adrenal gland secretes adrenaline hormone.', ans:true, correction:null },
+  { id:'t4', text:'Penicillin is obtained from a bacterium.', ans:false, correction:'Penicillin is obtained from a FUNGUS (Penicillium notatum).' },
+  { id:'t5', text:'Menstruation is a sign of puberty in females.', ans:true, correction:null }
+];
+
+const NAME_Q = [
+  { id:'n1', text:'The scientist who discovered penicillin.' },
+  { id:'n2', text:'The hormone that controls the rate of metabolism.' },
+  { id:'n3', text:'The process by which organisms produce offspring similar to themselves.' },
+  { id:'n4', text:'The chemical messengers produced by endocrine glands.' },
+  { id:'n5', text:'The type of reproduction seen in Hydra.' }
+];
+
+const NAME_ANS = ['Alexander Fleming', 'Thyroxine', 'Reproduction', 'Hormones', 'Budding'];
+
+const EXAMPLES_Q = [
+  { id:'ex1', label:'Vector-borne diseases' },
+  { id:'ex2', label:'Oviparous animals (egg-laying)' },
+  { id:'ex3', label:'Endocrine glands' },
+  { id:'ex4', label:'Useful fungi' },
+  { id:'ex5', label:'Viviparous animals (give birth to young)' }
+];
+
+const EXAMPLES_ANS = [
+  ['Malaria','Dengue'],
+  ['Hen','Lizard'],
+  ['Thyroid gland','Pituitary gland'],
+  ['Yeast','Penicillium'],
+  ['Dog','Human']
+];
+
+const SHORT_E = [
+  { id:'se1', text:'Name the gland that secretes both hormones and enzymes (mixed gland).' },
+  { id:'se2', text:'Name the hormone that prepares the body for "fight or flight" response.' },
+  { id:'se3', text:'What is the full form of STD?' },
+  { id:'se4', text:'Name the male gamete in animals.' },
+  { id:'se5', text:'Name the organ that produces ovum in human females.' }
+];
+
+const SHORT_E_ANS = ['Pancreas', 'Adrenaline', 'Sexually Transmitted Disease', 'Sperm / Spermatozoa', 'Ovary'];
+
+const SHORT_F = [
+  { id:'sf1', text:'Fermentation (give example organism and product)' },
+  { id:'sf2', text:'Biological control of pests (give one example)' },
+  { id:'sf3', text:'A disease caused by deficiency of iodine' },
+  { id:'sf4', text:'A communicable disease spread through air' },
+  { id:'sf5', text:'An animal that reproduces by regeneration' }
+];
+
+const SHORT_F_ANS = [
+  'Yeast converts sugar to alcohol and CO2',
+  'Ladybirds/ladybugs control aphid pests',
+  'Goitre',
+  'Tuberculosis / Common cold / Influenza',
+  'Planaria / Starfish'
+];
+
+const SHORT_G = [
+  { id:'sg1', text:'What is the role of Rhizobium bacteria in agriculture?' },
+  { id:'sg2', text:'Define metamorphosis with an example.' },
+  { id:'sg3', text:'Name the male and female sex hormones in humans.' },
+  { id:'sg4', text:'What is a balanced diet? Why is it important?' },
+  { id:'sg5', text:'Distinguish between oviparous and viviparous animals (one point each).' }
+];
+
+const DIFF_Q = [
+  { id:'d1', text:'Asexual reproduction vs Sexual reproduction' },
+  { id:'d2', text:'Communicable disease vs Non-communicable disease' },
+  { id:'d3', text:'Exocrine gland vs Endocrine gland' },
+  { id:'d4', text:'Bacteria vs Virus (as causative agents of disease)' },
+  { id:'d5', text:'Adolescence vs Puberty' }
+];
+
+const Q3 = [
+  {
+    id:'q3a', type:'explain', marks:3,
+    text:'Explain the following terms: (i) Immunity &nbsp; (ii) Vaccine &nbsp; (iii) Epidemic'
+  },
+  {
+    id:'q3b', type:'short', marks:3,
+    text:'Mention three ways in which microorganisms are useful to humans.'
+  },
+  {
+    id:'q3c', type:'short', marks:2,
+    text:'Why is personal hygiene important for good health? Give two reasons.'
+  },
+  {
+    id:'q3d1', type:'short', marks:1,
+    text:'(d) i. Give two examples of leguminous plants.'
+  },
+  {
+    id:'q3d2', type:'short', marks:1,
+    text:'(d) ii. What is a zygote?'
+  }
+];
+
+const Q4 = [
+  {
+    id:'q4a', marks:4,
+    text:'Describe the role of each of the following hormones in the human body:\n(i) Insulin  (ii) Thyroxine  (iii) Adrenaline  (iv) Growth Hormone (GH)'
+  },
+  {
+    id:'q4b', marks:2,
+    text:'Why is it important to complete a full course of antibiotics even if you feel better? Explain.'
+  },
+  {
+    id:'q4c', marks:2,
+    text:'How is biogas produced? Name two raw materials used in its production.'
+  },
+  {
+    id:'q4d', marks:2,
+    text:'What is a synthesis reaction? Give one example from biology (e.g. photosynthesis or hormone production).'
+  }
+];
+
+const Q5 = [
+  {
+    id:'q5a', marks:3,
+    text:'Explain the laboratory preparation of hydrogen — wait, wrong subject! Instead:\nExplain the menstrual cycle with neat labelled points. Why does menstruation occur?'
+  },
+  {
+    id:'q5b', marks:2,
+    text:'What do you understand by the term "food chain"? Write a food chain with at least 4 organisms.'
+  },
+  {
+    id:'q5c', marks:2,
+    text:'What is a redox reaction in the context of cellular respiration? Give a brief example.'
+  },
+  {
+    id:'q5d', marks:3,
+    text:'What do you understand by the terms: (i) Nitrogen cycle (ii) Decomposers (iii) Symbiosis — give a biological example for each.'
+  }
+];
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+let timerInterval = null;
+let secondsLeft = 7200; // 2 hours
+let apiKey = '';
+let candidateName = '';
+
+// ═══════════════════════════════════════════════════════════
+//  START EXAM
+// ═══════════════════════════════════════════════════════════
+function startExam() {
+  candidateName = document.getElementById('cand-name').value.trim();
+  const roll = document.getElementById('cand-roll').value.trim();
+  const sec  = document.getElementById('cand-section').value.trim();
+  apiKey = document.getElementById('gemini-key').value.trim();
+
+  if (!candidateName) { alert('Please enter your name.'); return; }
+
+  document.getElementById('disp-name').textContent = candidateName;
+  document.getElementById('disp-roll').textContent = roll || '—';
+  document.getElementById('disp-sec').textContent  = sec  || '—';
+
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('exam-screen').style.display  = 'block';
+
+  buildExam();
+  startTimer();
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const h = Math.floor(secondsLeft/3600);
+    const m = Math.floor((secondsLeft%3600)/60);
+    const s = secondsLeft % 60;
+    const el = document.getElementById('timer-display');
+    el.textContent = `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if (secondsLeft <= 300) el.classList.add('warn');
+    if (secondsLeft <= 0) { clearInterval(timerInterval); submitExam(); }
+    updateProgress();
+  }, 1000);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BUILD EXAM HTML
+// ═══════════════════════════════════════════════════════════
+function buildExam() {
+  // MCQ
+  const mc = document.getElementById('mcq-container');
+  MCQ.forEach((q,i) => {
+    const div = document.createElement('div');
+    div.className = 'mcq-item';
+    div.innerHTML = `
+      <div class="q-text"><span class="q-num">${i+1}.</span>${q.text}</div>
+      <div class="options-grid">
+        ${['a','b','c','d'].map((l,j)=>`
+          <label class="opt-label">
+            <input type="radio" name="${q.id}" value="${l}"> ${l}) ${q.opts[j]}
+          </label>`).join('')}
+      </div>`;
+    mc.appendChild(div);
+  });
+
+  // True/False
+  const tf = document.getElementById('tf-container');
+  TF.forEach((q,i) => {
+    const div = document.createElement('div');
+    div.className = 'tf-item';
+    div.innerHTML = `
+      <span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.82rem;min-width:1.6rem">${['i','ii','iii','iv','v'][i]}.</span>
+      <span style="flex:1;line-height:1.5">${q.text}</span>
+      <div class="tf-controls">
+        <button class="tf-btn" onclick="selectTF('${q.id}','T',this)">TRUE</button>
+        <button class="tf-btn" onclick="selectTF('${q.id}','F',this)">FALSE</button>
+      </div>`;
+    tf.appendChild(div);
+  });
+
+  // Name the following
+  const nq = document.getElementById('name-container');
+  NAME_Q.forEach((q,i) => {
+    const div = document.createElement('div');
+    div.className = 'name-item';
+    div.innerHTML = `
+      <span class="q-num">${['i','ii','iii','iv','v'][i]}.</span>
+      <div style="flex:1">
+        <div style="font-size:0.88rem;margin-bottom:0.35rem">${q.text}</div>
+        <input type="text" class="text-input" id="${q.id}" placeholder="Your answer…">
+      </div>`;
+    nq.appendChild(div);
+  });
+
+  // Examples
+  const ex = document.getElementById('examples-container');
+  const egrid = document.createElement('div');
+  egrid.className = 'examples-grid';
+  EXAMPLES_Q.forEach((q,i) => {
+    const cell = document.createElement('div');
+    cell.className = 'example-cell';
+    cell.innerHTML = `
+      <div class="cell-label">${['i','ii','iii','iv','v'][i]}. ${q.label}</div>
+      <input type="text" class="text-input" id="${q.id}_1" placeholder="Example 1">
+      <input type="text" class="text-input" id="${q.id}_2" placeholder="Example 2">`;
+    egrid.appendChild(cell);
+  });
+  ex.appendChild(egrid);
+
+  // Short E
+  const se = document.getElementById('short-e-container');
+  SHORT_E.forEach((q,i) => {
+    const div = document.createElement('div');
+    div.className = 'name-item';
+    div.innerHTML = `
+      <span class="q-num">${['i','ii','iii','iv','v'][i]}.</span>
+      <div style="flex:1">
+        <div style="font-size:0.88rem;margin-bottom:0.35rem">${q.text}</div>
+        <input type="text" class="text-input" id="${q.id}" placeholder="Your answer…">
+      </div>`;
+    se.appendChild(div);
+  });
+
+  // Short F
+  const sf = document.getElementById('short-f-container');
+  SHORT_F.forEach((q,i) => {
+    const div = document.createElement('div');
+    div.className = 'long-q-item';
+    div.innerHTML = `
+      <div class="q-sub">${['i','ii','iii','iv','v'][i]}.</div>
+      <div class="q-prompt">${q.text}</div>
+      <input type="text" class="text-input" id="${q.id}" placeholder="Your answer…">`;
+    sf.appendChild(div);
+  });
+
+  // Short G
+  const sg = document.getElementById('short-g-container');
+  SHORT_G.forEach((q,i) => {
+    const div = document.createElement('div');
+    div.className = 'long-q-item';
+    div.innerHTML = `
+      <div class="q-sub">${['i','ii','iii','iv','v'][i]}.</div>
+      <div class="q-prompt">${q.text}</div>
+      <textarea class="textarea-input" id="${q.id}" placeholder="Write your answer here…" rows="3"></textarea>`;
+    sg.appendChild(div);
+  });
+
+  // Differentiate
+  const dq = document.getElementById('diff-container');
+  DIFF_Q.forEach((q,i) => {
+    const div = document.createElement('div');
+    div.className = 'long-q-item';
+    div.innerHTML = `
+      <div class="q-prompt" style="font-weight:600">${['i','ii','iii','iv','v'][i]}. ${q.text}</div>
+      <table class="diff-table" style="margin-top:0.5rem">
+        <tr><th>Point of Difference</th><th>${q.text.split(' vs ')[0]}</th><th>${q.text.split(' vs ')[1]||'—'}</th></tr>
+        <tr><td><input class="text-input" placeholder="Basis…"></td>
+            <td><input class="text-input" id="${q.id}_a" placeholder="…"></td>
+            <td><input class="text-input" id="${q.id}_b" placeholder="…"></td></tr>
+        <tr><td><input class="text-input" placeholder="Basis…"></td>
+            <td><input class="text-input" id="${q.id}_c" placeholder="…"></td>
+            <td><input class="text-input" id="${q.id}_d" placeholder="…"></td></tr>
+      </table>`;
+    dq.appendChild(div);
+  });
+
+  // Q3
+  const q3c = document.getElementById('q3-container');
+  Q3.forEach(q => {
+    const div = document.createElement('div');
+    div.className = 'long-q-item';
+    div.innerHTML = `
+      <div class="q-sub">Marks: [${q.marks}]</div>
+      <div class="q-prompt">${q.text}</div>
+      <textarea class="textarea-input" id="${q.id}" placeholder="Write your answer here…" rows="4"></textarea>`;
+    q3c.appendChild(div);
+  });
+
+  // Q4
+  const q4c = document.getElementById('q4-container');
+  Q4.forEach(q => {
+    const div = document.createElement('div');
+    div.className = 'long-q-item';
+    div.innerHTML = `
+      <div class="q-sub">Marks: [${q.marks}]</div>
+      <div class="q-prompt">${q.text}</div>
+      <textarea class="textarea-input" id="${q.id}" placeholder="Write your answer here…" rows="5"></textarea>`;
+    q4c.appendChild(div);
+  });
+
+  // Q5
+  const q5c = document.getElementById('q5-container');
+  Q5.forEach(q => {
+    const div = document.createElement('div');
+    div.className = 'long-q-item';
+    div.innerHTML = `
+      <div class="q-sub">Marks: [${q.marks}]</div>
+      <div class="q-prompt">${q.text}</div>
+      <textarea class="textarea-input" id="${q.id}" placeholder="Write your answer here…" rows="5"></textarea>`;
+    q5c.appendChild(div);
+  });
+
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TRUE/FALSE TOGGLE
+// ═══════════════════════════════════════════════════════════
+function selectTF(id, val, btn) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.tf-btn').forEach(b => b.className='tf-btn');
+  if (val==='T') btn.classList.add('selected-t');
+  else btn.classList.add('selected-f');
+  btn.dataset.qid = id;
+  btn.dataset.val = val;
+  // Store
+  const existing = document.querySelector(`[data-answer-tf="${id}"]`);
+  if (existing) existing.remove();
+  const hidden = document.createElement('input');
+  hidden.type='hidden'; hidden.dataset.answerTf=id; hidden.value=val; hidden.id='tf_'+id;
+  document.body.appendChild(hidden);
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PROGRESS
+// ═══════════════════════════════════════════════════════════
+function updateProgress() {
+  let answered = 0, total = 0;
+  // MCQ
+  MCQ.forEach(q => { total++; if(document.querySelector(`input[name="${q.id}"]:checked`)) answered++; });
+  // TF
+  TF.forEach(q => { total++; if(document.getElementById('tf_'+q.id)) answered++; });
+  document.getElementById('progress-text').textContent = `Answered: ${answered} / ${total}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SUBMIT
+// ═══════════════════════════════════════════════════════════
+function submitExam() {
+  clearInterval(timerInterval);
+  if (!confirm('Submit your paper? You cannot make changes after submission.')) {
+    startTimer(); return;
+  }
+  document.getElementById('exam-screen').style.display  = 'none';
+  document.getElementById('grading-screen').style.display = 'flex';
+  document.getElementById('grading-screen').style.flexDirection = 'column';
+  document.getElementById('grading-screen').style.alignItems = 'center';
+  document.getElementById('grading-screen').style.justifyContent = 'center';
+  gradeAll();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GRADING ENGINE
+// ═══════════════════════════════════════════════════════════
+let results = { mcq:[], tf:[], name:[], examples:[], shortE:[], shortF:[], shortG:[], diff:[], q3:[], q4:[], q5:[] };
+let totalMarks = 0;
+let maxMarks = 80;
+
+async function gradeAll() {
+  const log = document.getElementById('grading-log');
+  const bar = document.getElementById('grade-progress');
+  let step = 0;
+  const totalSteps = 6 + (SHORT_G.length + DIFF_Q.length + Q3.length + Q4.length + Q5.length);
+
+  function logMsg(msg) {
+    log.innerHTML += msg + '<br>';
+    log.scrollTop = log.scrollHeight;
+  }
+  function advanceBar() {
+    step++;
+    bar.style.width = Math.round((step/totalSteps)*100)+'%';
+  }
+
+  // ── 1. Auto-grade MCQ
+  logMsg('↳ Grading MCQs…');
+  let mcqScore = 0;
+  MCQ.forEach(q => {
+    const sel = document.querySelector(`input[name="${q.id}"]:checked`);
+    const given = sel ? sel.value : null;
+    const correct = given === q.ans;
+    if (correct) mcqScore++;
+    results.mcq.push({ q: q.text, opts: q.opts, ans: q.ans, given, correct });
+  });
+  advanceBar(); logMsg(`  MCQ: ${mcqScore}/10`);
+
+  // ── 2. Auto-grade TF
+  logMsg('↳ Grading True/False…');
+  let tfScore = 0;
+  TF.forEach(q => {
+    const hid = document.getElementById('tf_'+q.id);
+    const given = hid ? hid.value : null;
+    const correct = (given==='T') === q.ans;
+    if (correct) tfScore++;
+    results.tf.push({ q: q.text, ans: q.ans, given, correct, correction: q.correction });
+  });
+  advanceBar(); logMsg(`  True/False: ${tfScore}/5`);
+
+  // ── 3. Auto-grade Name
+  logMsg('↳ Grading Name the Following…');
+  let nameScore = 0;
+  NAME_Q.forEach((q,i) => {
+    const given = (document.getElementById(q.id)||{}).value || '';
+    const correct = given.trim().toLowerCase().includes(NAME_ANS[i].toLowerCase().split(' ')[0].toLowerCase());
+    if (correct) nameScore++;
+    results.name.push({ q: q.text, ans: NAME_ANS[i], given, correct });
+  });
+  advanceBar(); logMsg(`  Name the Following: ${nameScore}/5`);
+
+  // ── 4. Auto-grade Examples
+  logMsg('↳ Grading Examples…');
+  let exScore = 0;
+  EXAMPLES_Q.forEach((q,i) => {
+    const g1 = (document.getElementById(q.id+'_1')||{}).value||'';
+    const g2 = (document.getElementById(q.id+'_2')||{}).value||'';
+    const correct_ans = EXAMPLES_ANS[i].map(a=>a.toLowerCase());
+    const score = (g1.trim() && correct_ans.some(a=>g1.toLowerCase().includes(a.split(' ')[0]))) ? 0.5 : 0
+                + (g2.trim() && correct_ans.some(a=>g2.toLowerCase().includes(a.split(' ')[0]))) ? 0.5 : 0;
+    exScore += score;
+    results.examples.push({ q: q.label, ans: EXAMPLES_ANS[i], given:[g1,g2], score });
+  });
+  advanceBar(); logMsg(`  Examples: ${exScore}/5`);
+
+  // ── 5. Auto-grade Short E
+  logMsg('↳ Grading Short Answers (Section e)…');
+  let seScore = 0;
+  SHORT_E.forEach((q,i) => {
+    const given = (document.getElementById(q.id)||{}).value||'';
+    const correct = given.trim().toLowerCase().includes(SHORT_E_ANS[i].toLowerCase().split(' ')[0].toLowerCase());
+    if (correct) seScore++;
+    results.shortE.push({ q: q.text, ans: SHORT_E_ANS[i], given, correct });
+  });
+  advanceBar(); logMsg(`  Short E: ${seScore}/5`);
+
+  // ── 6 onwards: AI grading
+  const subjQs = [
+    ...SHORT_F.map((q,i)=>({ id:q.id, text:q.text, expectedAns:SHORT_F_ANS[i], maxMark:1, group:'shortF' })),
+    ...SHORT_G.map(q=>({ id:q.id, text:q.text, maxMark:1, group:'shortG' })),
+    ...DIFF_Q.map(q=>({ id:q.id, text:q.text, maxMark:2, group:'diff',
+      answer: gatherDiffAnswer(q.id) })),
+    ...Q3.map(q=>({ id:q.id, text:q.text, maxMark:q.marks, group:'q3' })),
+    ...Q4.map(q=>({ id:q.id, text:q.text, maxMark:q.marks, group:'q4' })),
+    ...Q5.map(q=>({ id:q.id, text:q.text, maxMark:q.marks, group:'q5' })),
+  ];
+
+  let aiScore = 0;
+  for (let sq of subjQs) {
+    const givenRaw = sq.answer || (document.getElementById(sq.id)||{}).value || '';
+    logMsg(`↳ AI grading: ${sq.text.substring(0,55)}…`);
+    const result = await aiGrade(sq.text, givenRaw, sq.maxMark, sq.expectedAns||'');
+    aiScore += result.score;
+    results[sq.group].push({ q: sq.text, given: givenRaw, score: result.score, maxMark: sq.maxMark, feedback: result.feedback });
+    advanceBar();
+  }
+
+  logMsg(`↳ AI graded subjective total: ${aiScore.toFixed(1)} marks`);
+  logMsg('✓ Done! Preparing results…');
+
+  const autoScore = mcqScore + tfScore + nameScore + exScore + seScore;
+  totalMarks = Math.round((autoScore + aiScore) * 10) / 10;
+
+  setTimeout(()=>showResults(mcqScore, tfScore, nameScore, exScore, seScore, aiScore), 800);
+}
+
+function gatherDiffAnswer(id) {
+  const a = (document.getElementById(id+'_a')||{}).value||'';
+  const b = (document.getElementById(id+'_b')||{}).value||'';
+  const c = (document.getElementById(id+'_c')||{}).value||'';
+  const d = (document.getElementById(id+'_d')||{}).value||'';
+  return `Point 1: [${a}] vs [${b}] | Point 2: [${c}] vs [${d}]`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GEMINI API CALL
+// ═══════════════════════════════════════════════════════════
+async function aiGrade(question, answer, maxMark, expectedAns) {
+  if (!apiKey) {
+    if (!answer.trim()) return { score: 0, feedback: 'No answer provided.' };
+    const w = answer.trim().split(/\s+/).length;
+    return { score: Math.min(maxMark, w > 10 ? maxMark : w > 4 ? maxMark * 0.5 : 0), feedback: '(No API key – heuristic score.)' };
+  }
+  if (!answer.trim()) return { score: 0, feedback: 'No answer was provided for this question.' };
+
+  const prompt = `You are an experienced Class 8 ICSE Biology teacher evaluating a student's answer.
+Question: ${question}
+${expectedAns ? 'Model Answer Hint: ' + expectedAns : ''}
+Maximum Marks: ${maxMark}
+Student's Answer: "${answer}"
+Award marks between 0 and ${maxMark} (decimals like 1.5 are fine). Reward correct key concepts even if phrasing differs. Be fair.
+You MUST respond with ONLY a raw JSON object and absolutely nothing else — no markdown, no backticks, no explanation:
+{"score": <number>, "feedback": "<1-2 sentence feedback>"}`;
+
+  try {
+    let responseText = '';
+
+    if (apiKey.startsWith('AIza')) {
+      // Direct Gemini key
+      const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.2, maxOutputTokens: 300, responseMimeType: 'application/json' }
+        })
+      });
+      const data = await resp.json();
+      if (data.error) throw new Error(data.error.message);
+      responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } else {
+      // OpenRouter key
+      const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'HTTP-Referer': 'https://trinitycentralschool.edu',
+          'X-Title': 'Class VIII Biology Assessment'
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.0-flash-001',
+          max_tokens: 300,
+          temperature: 0.2,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      const data = await resp.json();
+      if (data.error) throw new Error(JSON.stringify(data.error));
+      responseText = data.choices?.[0]?.message?.content || '';
+    }
+
+    // Robust JSON extraction
+    responseText = responseText.trim()
+      .replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+    const jsonMatch = responseText.match(/\{[\s\S]*?\}/);
+    if (!jsonMatch) throw new Error('No JSON in response: ' + responseText.substring(0, 100));
+    const parsed = JSON.parse(jsonMatch[0]);
+    return { score: Math.min(maxMark, Math.max(0, parseFloat(parsed.score) || 0)), feedback: parsed.feedback || 'Answer evaluated.' };
+
+  } catch(e) {
+    console.error('aiGrade error:', e);
+    const w = answer.trim().split(/\s+/).length;
+    const fallback = Math.min(maxMark * 0.4, w > 15 ? maxMark * 0.4 : w > 5 ? maxMark * 0.2 : 0);
+    return { score: Math.round(fallback * 2) / 2, feedback: `Grading error (${e.message?.substring(0,60)}). Score estimated from answer length.` };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SHOW RESULTS
+// ═══════════════════════════════════════════════════════════
+function showResults(mcq, tf, name, ex, se, ai) {
+  document.getElementById('grading-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'block';
+
+  document.getElementById('res-total').textContent = `${totalMarks} / 80`;
+
+  const pct = (totalMarks/80)*100;
+  let grade, gc;
+  if (pct>=75){grade='A+';gc='A';}else if(pct>=60){grade='B';gc='B';}else if(pct>=40){grade='C';gc='C';}else{grade='D';gc='D';}
+  document.getElementById('res-grade-badge').innerHTML = `<span class="grade-badge grade-${gc}">Grade ${grade}</span>`;
+
+  // Breakdown
+  const breakdown = document.getElementById('score-breakdown');
+  const cards = [
+    ['MCQ', mcq, 10],
+    ['True/False', tf, 5],
+    ['Name the Foll.', name, 5],
+    ['Examples', ex, 5],
+    ['Short (Sec e)', se, 5],
+    ['Subjective (AI)', ai.toFixed(1), 50],
+  ];
+  cards.forEach(([label, val, max]) => {
+    breakdown.innerHTML += `<div class="score-card">
+      <div class="sc-label">${label}</div>
+      <div class="sc-val">${val} <span class="sc-max">/ ${max}</span></div>
+    </div>`;
+  });
+
+  // Objective Review
+  const objRev = document.getElementById('obj-review');
+
+  // MCQ
+  results.mcq.forEach((r,i) => {
+    const dotClass = r.correct ? 'dot-correct' : 'dot-wrong';
+    const pillClass = r.correct ? 'pill-correct' : 'pill-wrong';
+    const ansText = r.correct ? '✓ Correct' : `✗ Correct: ${['a','b','c','d'][['a','b','c','d'].indexOf(r.ans)].toUpperCase()}) ${r.opts[['a','b','c','d'].indexOf(r.ans)]}`;
+    objRev.innerHTML += `<div class="review-item">
+      <div class="ri-q"><span class="status-dot ${dotClass}"></span>MCQ ${i+1}: ${r.q}
+        <span class="score-pill ${pillClass}">${r.correct?'1':'0'}/1</span>
+      </div>
+      <div class="ri-given">Your answer: ${r.given ? r.given.toUpperCase()+') '+r.opts[['a','b','c','d'].indexOf(r.given)] : 'Not answered'}</div>
+      <div class="ri-answer">${ansText}</div>
+    </div>`;
+  });
+
+  // TF
+  results.tf.forEach((r,i) => {
+    const dotClass = r.correct ? 'dot-correct' : 'dot-wrong';
+    const pillClass = r.correct ? 'pill-correct' : 'pill-wrong';
+    objRev.innerHTML += `<div class="review-item">
+      <div class="ri-q"><span class="status-dot ${dotClass}"></span>T/F ${i+1}: ${r.q}
+        <span class="score-pill ${pillClass}">${r.correct?'1':'0'}/1</span>
+      </div>
+      <div class="ri-given">Your answer: ${r.given||'Not answered'}</div>
+      <div class="ri-answer">Correct: ${r.ans?'TRUE':'FALSE'}${r.correction?' — '+r.correction:''}</div>
+    </div>`;
+  });
+
+  // Name
+  results.name.forEach((r,i) => {
+    const dotClass = r.correct ? 'dot-correct' : 'dot-wrong';
+    const pillClass = r.correct ? 'pill-correct' : 'pill-wrong';
+    objRev.innerHTML += `<div class="review-item">
+      <div class="ri-q"><span class="status-dot ${dotClass}"></span>Name ${i+1}: ${r.q}
+        <span class="score-pill ${pillClass}">${r.correct?'1':'0'}/1</span>
+      </div>
+      <div class="ri-given">Your answer: ${r.given||'—'}</div>
+      <div class="ri-answer">Answer: ${r.ans}</div>
+    </div>`;
+  });
+
+  // Subjective Review
+  const subjRev = document.getElementById('subj-review');
+  const allSubj = [...results.shortF,...results.shortG,...results.diff,...results.q3,...results.q4,...results.q5];
+  allSubj.forEach(r => {
+    const pct2 = r.score/r.maxMark;
+    const dotClass = pct2>=0.8?'dot-correct':pct2>=0.4?'dot-partial':'dot-wrong';
+    const pillClass = pct2>=0.8?'pill-correct':pct2>=0.4?'pill-partial':'pill-wrong';
+    subjRev.innerHTML += `<div class="review-item">
+      <div class="ri-q"><span class="status-dot ${dotClass}"></span>${r.q.substring(0,100)}${r.q.length>100?'…':''}
+        <span class="score-pill ${pillClass}">${r.score}/${r.maxMark}</span>
+      </div>
+      <div class="ri-given">Your answer: ${(r.given||'—').substring(0,200)}</div>
+      ${r.feedback ? `<div class="ri-feedback">💬 ${r.feedback}</div>` : ''}
+    </div>`;
+  });
+}
+</script>
+</body>
+</html>
