@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>iRank – हिंदी व्याकरण — Karnataka 1st PUC</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#00181a;--paper:#f3fcfc;--cream:#c8ecec;--rule:#2a9898;--accent:#0c4848;--accent2:#1a6060;--gold:#1a7070;--muted:#2a5858;--border:#88d0d0;--card:#f8fdfd;--correct:#1a5c38;--wrong:#8b2635;--pending:#7a5c10;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);font-family:'Noto Sans Devanagari',Georgia,serif;color:var(--ink);min-height:100vh;font-size:1.05rem;}
+#setup-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 60% 40%,var(--cream) 0%,var(--paper) 70%);padding:2rem;}
+.setup-card{background:var(--card);border:2px solid var(--border);max-width:580px;width:100%;padding:3rem 3.5rem;box-shadow:9px 9px 0 var(--cream),9px 9px 0 2px var(--rule);}
+.brand{font-family:'JetBrains Mono',monospace;font-size:.9rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);text-align:center;margin-bottom:.3rem;}
+.board-tag{font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:.4rem;}
+.setup-card h1{font-size:1.9rem;color:var(--ink);text-align:center;margin-bottom:.2rem;font-weight:700;}
+.subtitle{font-size:.9rem;color:var(--muted);text-align:center;margin-bottom:2rem;}
+.form-group{margin-bottom:1.3rem;}
+.form-group label{display:block;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;font-family:'JetBrains Mono',monospace;}
+.form-group input{width:100%;padding:.7rem 1rem;border:1.5px solid var(--border);background:var(--paper);font-size:1rem;color:var(--ink);outline:none;}
+.form-group input:focus{border-color:var(--accent);}
+.api-note{font-size:.78rem;color:var(--muted);margin-top:.3rem;}
+.meta-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.btn-primary{width:100%;padding:.9rem;background:var(--accent);color:#fff;border:none;font-size:1.1rem;cursor:pointer;}
+.btn-primary:hover{background:var(--accent2);}
+.divider{border:none;border-top:1px solid var(--border);margin:1.4rem 0;}
+.thrivoy-badge{display:inline-block;background:var(--cream);border:1px solid var(--accent);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:.66rem;padding:.1rem .4rem;margin-left:.4rem;vertical-align:middle;}
+#exam-screen{display:none;}
+.exam-header{background:var(--ink);color:var(--paper);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 3px 14px rgba(0,0,0,.2);}
+.hd-brand{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--rule);}
+.hd-title{font-size:1rem;text-align:center;}
+.hd-timer{font-family:'JetBrains Mono',monospace;font-size:1.25rem;color:#f6d365;min-width:90px;text-align:right;}
+.hd-timer.warn{color:#e74c3c;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.exam-body{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem;}
+.candidate-strip{border:1.5px solid var(--border);padding:.7rem 1.3rem;display:flex;gap:2rem;margin-bottom:2rem;background:var(--card);font-size:.88rem;flex-wrap:wrap;}
+.candidate-strip span{color:var(--muted);}
+.paper-header{text-align:center;margin-bottom:2rem;padding-bottom:1.2rem;border-bottom:2px solid var(--border);}
+.paper-header .school{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;letter-spacing:.06em;}
+.paper-meta{display:flex;justify-content:space-between;margin-top:.8rem;font-size:.82rem;color:var(--muted);font-family:'JetBrains Mono',monospace;flex-wrap:wrap;gap:.4rem;}
+.instructions{background:var(--cream);border:1px solid var(--border);padding:.9rem 1.2rem;margin-bottom:2rem;font-size:.9rem;line-height:2;}
+.instructions strong{color:var(--accent);}
+.sect-title{font-size:1rem;font-weight:700;background:var(--accent);color:#fff;padding:.55rem 1.2rem;margin:2rem 0 1.2rem;display:flex;justify-content:space-between;align-items:center;}
+.sect-marks{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:400;opacity:.85;}
+.passage-box{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);padding:1.2rem 1.4rem;margin-bottom:1.3rem;font-size:.96rem;line-height:2.1;}
+.q-block{margin-bottom:1.2rem;padding:.9rem 1rem;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);}
+.q-block .q-prompt{font-size:.94rem;margin-bottom:.55rem;line-height:2;white-space:pre-line;}
+.q-block .q-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);margin-bottom:.4rem;}
+.textarea-input{padding:.7rem .9rem;border:1.5px solid var(--border);background:var(--paper);font-size:.95rem;color:var(--ink);width:100%;min-height:80px;outline:none;resize:vertical;line-height:2;}
+.textarea-input:focus{border-color:var(--accent);}
+.submit-bar{position:fixed;bottom:0;left:0;right:0;background:var(--ink);padding:.8rem 2rem;display:flex;align-items:center;justify-content:space-between;}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--rule);}
+.btn-submit{padding:.65rem 2.2rem;background:#f6d365;color:var(--ink);border:none;font-size:1rem;font-weight:700;cursor:pointer;}
+#grading-screen{display:none;min-height:100vh;background:var(--paper);}
+.grading-body{max-width:620px;margin:0 auto;padding:5rem 2rem;text-align:center;}
+.grading-body h2{font-size:1.8rem;margin-bottom:.5rem;}
+.grading-body p{color:var(--muted);margin-bottom:2rem;}
+.progress-bar-outer{height:7px;background:var(--cream);overflow:hidden;margin-bottom:1rem;}
+.progress-bar-inner{height:100%;background:var(--accent);width:0%;transition:width .4s;}
+.grading-log{text-align:left;background:var(--card);border:1px solid var(--border);padding:1rem 1.2rem;max-height:280px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:.74rem;color:var(--muted);line-height:1.9;}
+#results-screen{display:none;min-height:100vh;background:radial-gradient(ellipse at 70% 30%,var(--cream) 0%,var(--paper) 65%);padding:3rem 1.5rem 5rem;}
+.results-body{max-width:860px;margin:0 auto;}
+.results-header{text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:2px solid var(--border);}
+.results-header h1{font-size:2rem;margin-bottom:.3rem;}
+.score-big{font-family:'JetBrains Mono',monospace;font-size:3.5rem;font-weight:500;color:var(--accent);line-height:1;margin:.8rem 0;}
+.score-label{font-size:.85rem;color:var(--muted);}
+.grade-badge{display:inline-block;padding:.4rem 1.5rem;font-size:1.3rem;border:2px solid;margin-top:.5rem;}
+.grade-A{color:#1a5c38;border-color:#1a5c38;background:#e6f4ec;}.grade-B{color:#1e4d8c;border-color:#1e4d8c;background:#e3edf7;}.grade-C{color:#a07828;border-color:#a07828;background:#fdf3df;}.grade-D{color:#8b2635;border-color:#8b2635;background:#fceaea;}
+.score-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.9rem;margin-bottom:2.5rem;}
+.score-card{background:var(--card);border:1px solid var(--border);padding:.9rem 1rem;text-align:center;}
+.sc-label{font-size:.7rem;font-family:'JetBrains Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem;}
+.sc-val{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--ink);}
+.sc-max{font-size:.82rem;color:var(--muted);}
+.review-section{margin-bottom:2.5rem;}
+.review-section h2{font-size:1.1rem;margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+.review-item{padding:.9rem 1rem;margin-bottom:.7rem;border:1px solid var(--border);background:var(--card);font-size:.9rem;}
+.ri-q{font-weight:600;margin-bottom:.35rem;line-height:1.8;}
+.ri-given{color:var(--muted);margin-bottom:.3rem;}
+.ri-feedback{background:var(--cream);border-left:3px solid var(--accent);padding:.45rem .75rem;margin-top:.45rem;font-size:.87rem;line-height:1.8;}
+.status-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:.4rem;vertical-align:middle;}
+.dot-correct{background:var(--correct);}.dot-wrong{background:var(--wrong);}.dot-partial{background:var(--pending);}
+.score-pill{float:right;font-family:'JetBrains Mono',monospace;font-size:.74rem;padding:.13rem .45rem;}
+.pill-correct{background:#d4edda;color:var(--correct);}.pill-wrong{background:#f8d7da;color:var(--wrong);}.pill-partial{background:#fff3cd;color:var(--pending);}
+.btn-retry{display:block;width:fit-content;margin:2rem auto 0;padding:.85rem 2.8rem;background:var(--accent);color:#fff;border:none;font-size:1.1rem;cursor:pointer;}
+.btn-home{display:inline-block;margin:1rem auto 0;padding:.55rem 1.8rem;background:transparent;color:var(--accent);border:1.5px solid var(--accent);font-size:1rem;text-decoration:none;transition:all .2s;}
+.btn-home:hover{background:var(--accent);color:#fff;}
+@media(max-width:600px){.exam-header{flex-direction:column;gap:.4rem;text-align:center;}.meta-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="setup-screen">
+  <div class="setup-card">
+    <div class="brand">iRank</div>
+    <div class="board-tag">Karnataka State Board · 1st PUC · वार्षिक परीक्षा</div>
+    <h1>हिंदी व्याकरण</h1>
+    <p class="subtitle">कक्षा XI · प्रथम पीयूसी · Karnataka State Board · 100 अंक · 3 घंटे</p>
+    <hr class="divider">
+    <div class="form-group"><label>Candidate Name</label><input type="text" id="cand-name" placeholder="अपना पूरा नाम लिखें"></div>
+    <div class="meta-row">
+      <div class="form-group"><label>Register Number</label><input type="text" id="cand-roll" placeholder="e.g. 1234567"></div>
+      <div class="form-group"><label>Section</label><input type="text" id="cand-section" placeholder="e.g. A"></div>
+    </div>
+    <hr class="divider">
+    <div class="form-group">
+      <label>Thrivoy Key <span class="thrivoy-badge">Thrivoy</span></label>
+      <input type="password" id="api-key" placeholder="Enter your Thrivoy key">
+      <div class="api-note">Your key is used only in-browser and never stored.</div>
+    </div>
+    <button class="btn-primary" onclick="startExam()">परीक्षा प्रारम्भ करें →</button>
+    <div style="text-align:center;margin-top:1rem;"><a href="index.html" style="color:var(--muted);font-size:.85rem;">← Back to Portal</a></div>
+  </div>
+</div>
+
+<div id="exam-screen">
+  <div class="exam-header">
+    <div class="hd-brand">iRank</div>
+    <div class="hd-title">1st PUC — हिंदी व्याकरण (Karnataka State Board)</div>
+    <div class="hd-timer" id="timer-display">3:00:00</div>
+  </div>
+  <div class="exam-body">
+    <div class="candidate-strip">
+      <div><span>नाम: </span><strong id="disp-name">—</strong></div>
+      <div><span>Reg No: </span><strong id="disp-roll">—</strong></div>
+      <div><span>वर्ग: </span><strong id="disp-sec">—</strong></div>
+      <div><span>विषय: </span><strong>हिंदी व्याकरण</strong></div>
+    </div>
+    <div class="paper-header">
+      <div class="school">iRank</div>
+      <div style="font-size:.8rem;color:var(--gold);margin:.3rem 0;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">Karnataka State Board · 1st PUC · वार्षिक परीक्षा 2025–26</div>
+      <div style="font-size:.95rem;color:var(--muted);">विषय: हिंदी व्याकरण</div>
+      <div class="paper-meta"><span>पूर्णांक: 100</span><span>समय: 3 घंटे</span><span>दिनांक: ____________________</span></div>
+    </div>
+    <div class="instructions">
+      <strong>सामान्य निर्देश:</strong><br>
+      १. इस प्रश्न-पत्र में पाँच खंड हैं — अ, ब, स, द, और य।<br>
+      २. सभी प्रश्नों के उत्तर देना अनिवार्य है।<br>
+      ३. उत्तर स्पष्ट एवं शुद्ध हिंदी में लिखें।<br>
+      ४. जहाँ विकल्प दिए गए हों, वहाँ कोई एक प्रश्न करें।<br>
+      ५. पत्र, निबंध आदि में प्रारूप का विशेष ध्यान रखें।
+    </div>
+
+    <div class="sect-title">खंड अ — अपठित गद्यांश <span class="sect-marks">20 अंक</span></div>
+    <div class="passage-box">
+      <strong>निम्नलिखित गद्यांश को ध्यानपूर्वक पढ़कर प्रश्नों के उत्तर दीजिए:</strong><br><br>
+      मनुष्य एक सामाजिक प्राणी है। वह समाज में रहकर ही अपना विकास कर सकता है। भाषा उस सामाजिक जीवन का आधार है। भाषा के बिना न तो विचारों का आदान-प्रदान संभव है और न ही ज्ञान का संरक्षण। इसीलिए किसी भी राष्ट्र की भाषा उसकी संस्कृति और पहचान का प्रतीक होती है।<br><br>
+      हिंदी भारत की राजभाषा है और लगभग 50 करोड़ से अधिक लोग इसे अपनी मातृभाषा के रूप में बोलते हैं। फिर भी, आज के युग में अंग्रेजी का वर्चस्व बढ़ता जा रहा है। नौकरी, व्यापार और शिक्षा में अंग्रेजी की माँग ने हिंदी को हाशिए पर धकेल दिया है। इस स्थिति में हमें सोचना होगा — क्या हम अपनी भाषाई पहचान खो रहे हैं?<br><br>
+      भाषा केवल संवाद का साधन नहीं, वह विचारों की नींव है। जिस भाषा में हम सपने देखते हैं, उसी में हम सबसे गहराई से सोचते हैं। इसलिए हिंदी को न केवल संरक्षित करना है, बल्कि उसे समृद्ध भी बनाना है। यहाँ अनेक भाषाएँ, धर्म, जातियाँ और परम्पराएँ मिल-जुलकर एक सुंदर संस्कृति का निर्माण करती हैं। यही विविधता में एकता भारत की सबसे बड़ी शक्ति है। जब हम किसी उत्सव में एकत्र होते हैं — चाहे वह होली हो, ईद हो या दीपावली — तो यह विभाजन की रेखाएँ मिट जाती हैं और हम सभी पहले भारतीय बन जाते हैं।<br><br>
+      परन्तु आज के युग में कुछ तत्व इस एकता को तोड़ने का प्रयास करते हैं। सोशल मीडिया पर झूठी सूचनाएँ फैलाई जाती हैं, भय और घृणा को बढ़ावा दिया जाता है। ऐसे समय में हम युवाओं की जिम्मेदारी और भी बढ़ जाती है। हमें विवेक से काम लेना होगा, सच और झूठ में अंतर करना होगा, और भारत की समन्वयी संस्कृति की रक्षा करनी होगी।<br><br>
+      महात्मा गांधी ने कहा था — "अनेकता में एकता ही भारत की विशेषता है।" आज इस विशेषता को जीवित रखना ही हमारा सबसे बड़ा राष्ट्रीय कर्तव्य है।
+    </div>
+    <div id="seca-container"></div>
+
+    <div class="sect-title">खंड ब — व्याकरण प्रयोग <span class="sect-marks">25 अंक</span></div>
+    <div id="secb-container"></div>
+
+    <div class="sect-title">खंड स — भाषा-कौशल <span class="sect-marks">25 अंक</span></div>
+    <div id="secc-container"></div>
+
+    <div class="sect-title">खंड द — शब्द-भंडार एवं रचना <span class="sect-marks">15 अंक</span></div>
+    <div id="secd-container"></div>
+
+    <div class="sect-title">खंड य — रचनात्मक लेखन <span class="sect-marks">15 अंक</span></div>
+    <div id="sece-container"></div>
+  </div>
+  <div class="submit-bar">
+    <div class="progress-text" id="progress-text">समय ऊपर दिखाया जा रहा है</div>
+    <button class="btn-submit" onclick="submitExam()">उत्तर-पुस्तिका जमा करें →</button>
+  </div>
+</div>
+
+<div id="grading-screen">
+  <div class="grading-body">
+    <h2>Thrivoy मूल्यांकन कर रहा है…</h2>
+    <p>कृपया प्रतीक्षा करें।</p>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="grade-progress"></div></div>
+    <div class="grading-log" id="grading-log"></div>
+  </div>
+</div>
+
+<div id="results-screen">
+  <div class="results-body">
+    <div class="results-header">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;">iRank · Karnataka State Board 1st PUC</div>
+      <h1>परिणाम — हिंदी व्याकरण</h1>
+      <div class="score-big" id="res-total">—</div>
+      <div class="score-label">100 में से</div>
+      <div id="res-grade-badge"></div>
+    </div>
+    <div class="score-breakdown" id="score-breakdown"></div>
+    <div class="review-section">
+      <h2>सम्पूर्ण समीक्षा — Evaluated by <span class="thrivoy-badge">Thrivoy</span></h2>
+      <div id="subj-review"></div>
+    </div>
+    <div style="text-align:center">
+      <button class="btn-retry" onclick="location.reload()">← पुनः प्रयास</button><br>
+      <a class="btn-home" href="index.html">↩ Portal पर वापस जाएँ</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const SECT_A=[
+  {id:'a1',marks:3,text:'गद्यांश के आधार पर बताइए:
+(i) लेखक ने भाषा को किस दृष्टि से महत्वपूर्ण बताया है?
+(ii) हिंदी की वर्तमान स्थिति क्या है और इसके क्या कारण हैं?'},
+  {id:'a2',marks:3,text:'गद्यांश में से निम्नलिखित के लिए शब्द छाँटिए:
+(i) लेन-देन, विनिमय
+(ii) किनारे पर, उपेक्षित
+(iii) अभिलाषाएँ, सपने
+प्रत्येक शब्द का वाक्य में प्रयोग कीजिए।'},
+  {id:'a3',marks:2,text:'"भाषा केवल संवाद का साधन नहीं, वह विचारों की नींव है" — इस कथन का भाव स्पष्ट कीजिए।'},
+  {id:'a4',marks:2,text:'गद्यांश के आधार पर एक ऐसा प्रश्न बनाइए जिसका उत्तर हो: "हिंदी को समृद्ध और संरक्षित बनाना।"'},
+  {id:'a5',marks:5,text:'इस गद्यांश का उचित शीर्षक दीजिए। लगभग 80 शब्दों में सारांश लिखिए।'},
+  {id:'a6',marks:5,text:'(विज्ञापन-लेखन) "हिंदी पखवाड़ा" के उपलक्ष्य में एक आकर्षक विज्ञापन लिखिए जो विद्यार्थियों को हिंदी बोलने और लिखने के लिए प्रेरित करे। (लगभग 80 शब्द)'},
+];
+const SECT_B=[
+  {id:'b1',marks:5,text:'(संज्ञा और सर्वनाम) निम्नलिखित वाक्यों में से संज्ञा और सर्वनाम पहचानकर उनका प्रकार बताइए:
+(i) राम ने मैदान में दौड़ लगाई।
+(ii) वह कल दिल्ली जाएगा।
+(iii) सच्चाई हमेशा जीतती है।
+(iv) उसने अपनी पुस्तक खो दी।
+(v) बचपन एक सुनहरा काल होता है।'},
+  {id:'b2',marks:5,text:'(क्रिया और काल) निम्नलिखित वाक्यों को निर्देशानुसार बदलिए:
+(i) वह खाना खा रहा है। (भूतकाल में)
+(ii) मैंने काम पूरा किया। (भविष्यकाल में)
+(iii) वे पढ़ते हैं। (संभाव्य वर्तमान में)
+(iv) बच्चे खेल रहे थे। (सामान्य भूतकाल में)
+(v) क्या तुम कल आओगे? (नकारात्मक वाक्य में)'},
+  {id:'b3',marks:5,text:'(वाच्य परिवर्तन) निम्नलिखित वाक्यों को कर्मवाच्य या भाववाच्य में बदलिए:
+(i) राम ने पत्र लिखा।
+(ii) सीता गाना गाती है।
+(iii) मैं दौड़ नहीं सकता।
+(iv) बच्चों ने नाटक किया।
+(v) पुलिस ने चोर को पकड़ा।'},
+  {id:'b4',marks:5,text:'(विराम-चिह्न और वर्तनी) निम्नलिखित में उचित विराम-चिह्न लगाइए और वर्तनी की अशुद्धियाँ सुधारिए:
+(i) अरे तुम यहाँ कब आए
+(ii) उसने पूछा क्या तुम मेरे साथ चलोगे
+(iii) महात्मा गाँधी ने कहा था सत्य ही ईश्वर है
+(iv) भारत एक महान देस है
+(v) उसकी आखें भर आईं'},
+  {id:'b5',marks:5,text:'(उपसर्ग और प्रत्यय) निम्नलिखित शब्दों में उपसर्ग/प्रत्यय अलग कीजिए और मूल शब्द बताइए:
+(i) अनुशासन (ii) लेखनी (iii) सफलतापूर्वक (iv) दुर्भाग्य (v) पठनीय
+प्रत्येक से एक नया शब्द बनाइए।'},
+];
+const SECT_C=[
+  {id:'c1',marks:4,text:'(अपठित काव्यांश) निम्नलिखित पद्यांश पढ़कर प्रश्नों के उत्तर दीजिए:
+"मातृभूमि तू मुझको प्यारी,
+तेरी माटी सोने से न्यारी।
+तेरे लिए जियें, तेरे लिए मरें,
+तेरे चरणों में हम शीश धरें।"
+(i) कवि ने मातृभूमि की माटी को क्या कहा है?
+(ii) कवि मातृभूमि के प्रति क्या भावना व्यक्त करता है?
+(iii) इस काव्यांश में कौन-सा रस है?
+(iv) "सोने से न्यारी" में कौन-सा अलंकार है?'},
+  {id:'c2',marks:4,text:'(पत्र-लेखन) निम्नलिखित में से कोई एक पत्र लिखिए:
+(क) अपने क्षेत्र में स्वच्छता अभियान चलाने के लिए नगर-पालिका अध्यक्ष को औपचारिक पत्र
+(ख) अपने मित्र को पत्र जिसमें गर्मी की छुट्टियों में घूमने की योजना हो'},
+  {id:'c3',marks:4,text:'(अनुवाद) निम्नलिखित अंग्रेजी वाक्यों का हिंदी में अनुवाद कीजिए:
+(i) Knowledge is power.
+(ii) She has been studying for three hours.
+(iii) The book was written by Premchand.
+(iv) If you work hard, you will succeed.'},
+  {id:'c4',marks:4,text:'(संवाद-लेखन) निम्नलिखित में से किसी एक विषय पर एक संवाद लिखिए (8–10 आदान-प्रदान):
+(क) दो मित्रों के बीच परीक्षा की तैयारी को लेकर बातचीत
+(ख) एक विद्यार्थी और उसके शिक्षक के बीच करियर-चयन पर चर्चा'},
+  {id:'c5',marks:4,text:'(अनुच्छेद-लेखन) निम्नलिखित में से किसी एक विषय पर लगभग 100 शब्दों में अनुच्छेद लिखिए:
+(क) "मोबाइल फोन — वरदान या अभिशाप"
+(ख) "विद्यार्थी जीवन में अनुशासन का महत्व"'},
+];
+const SECT_D=[
+  {id:'d1',marks:3,text:'(शब्द-भेद) निम्नलिखित शब्दों का वर्गीकरण करके तालिका बनाइए — संज्ञा, सर्वनाम, विशेषण, क्रिया, क्रिया-विशेषण:
+सुंदर, वह, जल्दी, पढ़ना, मेज, स्वयं, हरा, हँसना, बहुत, किताब'},
+  {id:'d2',marks:3,text:'(मुहावरे) निम्नलिखित मुहावरों का अर्थ और वाक्य-प्रयोग:
+(i) दाँत खट्टे करना
+(ii) आसमान से बातें करना
+(iii) पानी-पानी होना'},
+  {id:'d3',marks:3,text:'(लोकोक्तियाँ) अर्थ स्पष्ट करके वाक्य में प्रयोग कीजिए:
+(i) जैसी करनी वैसी भरनी
+(ii) घर का जोगी जोगना, आन गाँव का सिद्ध
+(iii) अंधों में काना राजा'},
+  {id:'d4',marks:3,text:'(विज्ञापन-लेखन) आपके विद्यालय में वार्षिक खेल-उत्सव का आयोजन होने वाला है। इस हेतु एक आकर्षक विज्ञापन लिखिए जिसमें कार्यक्रम की तिथि, स्थान, प्रतियोगिताओं का विवरण और पुरस्कार की जानकारी हो।'},
+  {id:'d5',marks:3,text:'(संक्षिप्तीकरण) निम्नलिखित गद्यांश को एक-तिहाई में संक्षिप्त कीजिए:
+"आज के प्रतिस्पर्धात्मक युग में विद्यार्थियों पर अध्ययन का भारी बोझ है। परीक्षाएँ उनकी पूरी योग्यता की कसौटी बन गई हैं। माता-पिता की अपेक्षाएँ, विद्यालय का दबाव और अपना स्वाभिमान — ये सब मिलकर एक भारी मानसिक तनाव उत्पन्न करते हैं। इस स्थिति में योग, खेलकूद और मित्रों का साथ विद्यार्थियों को राहत देते हैं।"'},
+];
+const SECT_E=[
+  {id:'e1',marks:5,text:'(निबंध) निम्नलिखित में से किसी एक विषय पर लगभग 200 शब्दों का निबंध लिखिए:
+(क) "हिंदी हमारी राष्ट्रभाषा है — इसका महत्व और वर्तमान स्थिति"
+(ख) "पर्यावरण प्रदूषण: कारण, प्रभाव और समाधान"
+(ग) "मेरे जीवन का लक्ष्य"'},
+  {id:'e2',marks:5,text:'(रचनात्मक लेखन) निम्नलिखित संकेत-बिंदुओं के आधार पर एक रोचक कहानी लिखिए (150–200 शब्द):
+रात का समय — एक अकेला युवक — रास्ता भटकना — एक बूढ़ी महिला — सहायता — आत्मविश्वास — घर पहुँचना — सीख'},
+  {id:'e3',marks:5,text:'(प्रतिवेदन-लेखन) आपके विद्यालय में "पर्यावरण जागरूकता सप्ताह" मनाया गया। इस कार्यक्रम का प्रतिवेदन (रिपोर्ट) लिखिए जिसमें उद्देश्य, कार्यक्रम-विवरण, छात्रों की भागीदारी और निष्कर्ष शामिल हों।'},
+];
+
+let timerInterval=null,secondsLeft=10800,apiKey='';
+let results={secA:[],secB:[],secC:[],secD:[],secE:[]};
+let totalMarks=0;
+
+function startExam(){
+  const name=document.getElementById('cand-name').value.trim();
+  if(!name){alert('कृपया अपना नाम लिखें।');return;}
+  apiKey=document.getElementById('api-key').value.trim();
+  document.getElementById('disp-name').textContent=name;
+  document.getElementById('disp-roll').textContent=document.getElementById('cand-roll').value.trim()||'—';
+  document.getElementById('disp-sec').textContent=document.getElementById('cand-section').value.trim()||'—';
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('exam-screen').style.display='block';
+  buildExam();startTimer();
+}
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const h=Math.floor(secondsLeft/3600),m=Math.floor((secondsLeft%3600)/60),s=secondsLeft%60;
+    const el=document.getElementById('timer-display');
+    el.textContent=`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(secondsLeft<=300)el.classList.add('warn');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitExam();}
+  },1000);
+}
+function buildExam(){
+  const L=['(i)','(ii)','(iii)','(iv)','(v)','(vi)'];
+  [['seca-container',SECT_A,'secA'],['secb-container',SECT_B,'secB'],['secc-container',SECT_C,'secC'],['secd-container',SECT_D,'secD'],['sece-container',SECT_E,'secE']].forEach(([cid,arr,grp])=>{
+    const c=document.getElementById(cid);
+    arr.forEach((q,i)=>{
+      const d=document.createElement('div');d.className='q-block';
+      d.innerHTML=`<div class="q-label">${L[i]} [${q.marks} अंक]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="${Math.max(4,Math.ceil(q.marks*2))}" placeholder="यहाँ उत्तर लिखें…"></textarea>`;
+      c.appendChild(d);
+    });
+  });
+}
+function submitExam(){
+  clearInterval(timerInterval);
+  if(!confirm('क्या आप उत्तर-पुस्तिका जमा करना चाहते हैं?')){startTimer();return;}
+  document.getElementById('exam-screen').style.display='none';
+  document.getElementById('grading-screen').style.display='block';
+  gradeAll();
+}
+async function gradeAll(){
+  const log=document.getElementById('grading-log'),bar=document.getElementById('grade-progress');
+  const logMsg=m=>{log.innerHTML+=m+'<br>';log.scrollTop=log.scrollHeight;};
+  const scoreVars={secA:0,secB:0,secC:0,secD:0,secE:0};
+  const all=[[SECT_A,'secA','खंड अ'],[SECT_B,'secB','खंड ब'],[SECT_C,'secC','खंड स'],[SECT_D,'secD','खंड द'],[SECT_E,'secE','खंड य']];
+  let done=0,total=all.reduce((s,[a])=>s+a.length,0);
+  for(const [arr,grp,lbl] of all){
+    logMsg(`↳ ${lbl} का मूल्यांकन हो रहा है…`);
+    for(const q of arr){
+      const given=(document.getElementById(q.id)||{}).value||'';
+      const r=await thrivoyGrade(q.text,given,q.marks,'Karnataka 1st PUC Hindi Vyakaran');
+      results[grp].push({q:q.text,given,score:r.score,maxMark:q.marks,feedback:r.feedback});
+      scoreVars[grp]+=r.score;done++;
+      bar.style.width=Math.round(done/total*100)+'%';
+    }
+    logMsg(`  ${lbl}: ${scoreVars[grp].toFixed(1)} अंक`);
+  }
+  bar.style.width='100%';logMsg('✓ मूल्यांकन पूर्ण!');
+  totalMarks=Math.round(Object.values(scoreVars).reduce((s,v)=>s+v,0)*10)/10;
+  setTimeout(()=>showResults(scoreVars),800);
+}
+
+async function thrivoyGrade(question,answer,maxMark,subject){
+  if(!apiKey){
+    if(!answer.trim())return{score:0,feedback:'No answer.'};
+    const w=answer.trim().split(/\s+/).length;
+    const sc=w>50?maxMark:w>20?maxMark*0.6:w>8?maxMark*0.35:w>2?maxMark*0.15:0;
+    return{score:Math.min(maxMark,Math.round(sc*2)/2),feedback:'(No Thrivoy key — estimated.)'};
+  }
+  if(!answer.trim())return{score:0,feedback:'No answer provided.'};
+  const prompt=`You are an experienced ${subject} teacher marking a Class 11 Karnataka State Board exam.\nQuestion: ${question}\nMax Marks: ${maxMark}\nStudent Answer: "${answer}"\nAward 0 to ${maxMark} marks. Credit correct concepts, method and reasoning even if minor errors. Be encouraging for a 16-year-old student.\nRespond ONLY with raw JSON: {"score":<number>,"feedback":"<1-2 sentences>"}`;
+  try{
+    let txt='';
+    if(apiKey.startsWith('AIza')){
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.15,maxOutputTokens:350,responseMimeType:'application/json'}})});
+      const d=await r.json();if(d.error)throw new Error(d.error.message);
+      txt=d.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    }else{
+      const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},body:JSON.stringify({model:'google/gemini-2.0-flash-001',max_tokens:350,temperature:0.15,messages:[{role:'user',content:prompt}]})});
+      const d=await r.json();if(d.error)throw new Error(JSON.stringify(d.error));
+      txt=d.choices?.[0]?.message?.content||'';
+    }
+    txt=txt.trim().replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```$/i,'').trim();
+    const m=txt.match(/\{[\s\S]*?\}/);if(!m)throw new Error('No JSON');
+    const p=JSON.parse(m[0]);
+    return{score:Math.min(maxMark,Math.max(0,parseFloat(p.score)||0)),feedback:p.feedback||'Evaluated.'};
+  }catch(e){
+    const w=answer.trim().split(/\s+/).length;
+    return{score:Math.min(maxMark*0.4,w>30?maxMark*0.4:w>10?maxMark*0.2:0),feedback:`Evaluation error. Score estimated.`};
+  }
+}
+
+function showResults(sv){
+  document.getElementById('grading-screen').style.display='none';
+  document.getElementById('results-screen').style.display='block';
+  document.getElementById('res-total').textContent=`${totalMarks} / 100`;
+  const pct=(totalMarks/100)*100;let grade,gc;
+  if(pct>=75){grade='विशेष योग्यता';gc='A';}else if(pct>=60){grade='प्रथम श्रेणी';gc='B';}else if(pct>=40){grade='द्वितीय श्रेणी';gc='C';}else{grade='अनुत्तीर्ण';gc='D';}
+  document.getElementById('res-grade-badge').innerHTML=`<span class="grade-badge grade-${gc}">${grade}</span>`;
+  const bd=document.getElementById('score-breakdown');
+  [['खंड अ (गद्यांश)',sv.secA.toFixed(1),20],['खंड ब (व्याकरण)',sv.secB.toFixed(1),25],['खंड स (भाषा-कौशल)',sv.secC.toFixed(1),25],['खंड द (शब्द-भंडार)',sv.secD.toFixed(1),15],['खंड य (लेखन)',sv.secE.toFixed(1),15]].forEach(([l,v,m])=>{
+    bd.innerHTML+=`<div class="score-card"><div class="sc-label">${l}</div><div class="sc-val">${v} <span class="sc-max">/ ${m}</span></div></div>`;
+  });
+  const sb=document.getElementById('subj-review');
+  [...results.secA,...results.secB,...results.secC,...results.secD,...results.secE].forEach(r=>{
+    const p2=r.score/r.maxMark,dc=p2>=0.8?'dot-correct':p2>=0.4?'dot-partial':'dot-wrong',pc=p2>=0.8?'pill-correct':p2>=0.4?'pill-partial':'pill-wrong';
+    sb.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>${r.q.substring(0,100)}${r.q.length>100?'…':''}<span class="score-pill ${pc}">${r.score}/${r.maxMark}</span></div><div class="ri-given">आपका उत्तर: ${(r.given||'—').substring(0,200)}</div>${r.feedback?`<div class="ri-feedback">💬 ${r.feedback}</div>`:''}</div>`;
+  });
+}
+</script>
+</body>
+</html>
