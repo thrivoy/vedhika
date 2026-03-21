@@ -98,6 +98,29 @@
   .btn-home{display:inline-block;margin:1rem auto 0;padding:.55rem 1.8rem;background:transparent;color:var(--accent);border:1.5px solid var(--accent);font-family:'Cormorant Garamond',serif;font-size:1rem;text-decoration:none;transition:all .2s;}
   .btn-home:hover{background:var(--accent);color:#fff;}
   @media(max-width:600px){.options-grid{grid-template-columns:1fr;}.exam-header{flex-direction:column;gap:.4rem;text-align:center;}.meta-row{grid-template-columns:1fr;}.paper-meta{flex-direction:column;}}
+
+  /* ── iRank Voice CSS ───────────────────────── */
+  .v-lang-bar{padding:.55rem 1.5rem;display:flex;align-items:center;gap:.9rem;background:rgba(0,0,0,.18);border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap;}
+  .v-lang-label{font-family:'JetBrains Mono',monospace;font-size:.67rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);}
+  .v-lang-sel{font-size:.82rem;padding:.28rem .6rem;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;font-family:'JetBrains Mono',monospace;outline:none;}
+  .v-lang-sel option{background:#222;color:#fff;}
+  .v-wave{display:flex;align-items:center;gap:2px;height:18px;}
+  .v-w{width:3px;background:#a090f0;border-radius:2px;height:4px;transition:height .09s;}
+  .v-tip{font-family:'JetBrains Mono',monospace;font-size:.67rem;color:rgba(255,255,255,.35);margin-left:auto;}
+  .v-row{display:flex;align-items:center;gap:.55rem;margin-top:.38rem;flex-wrap:wrap;min-height:1.5rem;}
+  .v-mic{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s;line-height:1;}
+  .v-mic:hover{border-color:var(--accent);background:var(--cream,#f0f0ff);}
+  .v-mic.v-rec{background:#d92020;border-color:#d92020;color:#fff;animation:v-pulse 1s infinite;}
+  .v-mic.v-ok{background:#e8f8ee;border-color:#1a7040;color:#1a7040;}
+  @keyframes v-pulse{0%,100%{box-shadow:0 0 0 0 rgba(217,32,32,.45)}50%{box-shadow:0 0 0 8px rgba(217,32,32,0)}}
+  .v-st{font-family:'JetBrains Mono',monospace;font-size:.67rem;color:var(--muted);white-space:nowrap;}
+  .v-st.v-rec{color:#d92020;font-weight:600;}
+  .v-st.v-ok{color:#1a7040;}
+  .v-int{font-family:'JetBrains Mono',monospace;font-size:.67rem;color:var(--muted);font-style:italic;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .v-wc{font-family:'JetBrains Mono',monospace;font-size:.67rem;color:var(--muted);margin-left:auto;}
+  .textarea-input.v-recording{border-color:#d92020!important;background:#fff2f2!important;}
+  .textarea-input.v-done{border-color:#1a7040!important;}
+  /* ─────────────────────────────────────────────────────── */
 </style>
 </head>
 <body>
@@ -138,6 +161,22 @@
     <div class="hd-brand">iRank</div>
     <div class="hd-title">1st PUC — Biology (Karnataka State Board)</div>
     <div class="hd-timer" id="timer-display">3:15:00</div>
+  </div>
+  <div class="v-lang-bar" id="v-lang-bar">
+    <span class="v-lang-label">🎙 Voice</span>
+    <select class="v-lang-sel" id="v-lang-sel">
+      <option value="en-IN">English (India)</option>
+      <option value="hi-IN">हिंदी</option>
+      <option value="kn-IN">ಕನ್ನಡ</option>
+      <option value="en-GB">English (UK)</option>
+      <option value="en-US">English (US)</option>
+    </select>
+    <div class="v-wave" id="v-wave">
+      <div class="v-w" id="vw1"></div><div class="v-w" id="vw2"></div>
+      <div class="v-w" id="vw3"></div><div class="v-w" id="vw4"></div>
+      <div class="v-w" id="vw5"></div>
+    </div>
+    <span class="v-tip" id="v-tip">Tap 🎙 beside any question to speak your answer</span>
   </div>
   <div class="exam-body">
     <div class="candidate-strip">
@@ -284,7 +323,7 @@ function buildExam(){
     const c=document.getElementById(cid);
     arr.forEach((q,i)=>{
       const d=document.createElement('div');d.className='q-block';
-      d.innerHTML=`<div class="q-label">${L[i]} [${q.marks} marks]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="${Math.max(3,q.marks*1.5|0)}" placeholder="Write your answer here…"></textarea>`;
+      d.innerHTML=`<div class="q-label">${L[i]} [${q.marks} marks]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="${Math.max(3,q.marks*1.5|0)}" placeholder="Write your answer here…"></textarea><div class="v-row"><button class="v-mic" id="vbtn-${q.id}" onclick="iRankVoice.toggle('${q.id}')" title="Speak your answer">🎙</button><span class="v-st" id="vst-${q.id}">Tap to speak</span><span class="v-int" id="vint-${q.id}"></span><span class="v-wc" id="vwc-${q.id}"></span></div>`;
       c.appendChild(d);
     });
   });
@@ -392,6 +431,133 @@ function showResults(mcqSc,fillSc,bSc,cSc,dSc,eSc){
     sb.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>${r.q.substring(0,110)}${r.q.length>110?'…':''}<span class="score-pill ${pc}">${r.score}/${r.maxMark}</span></div><div class="ri-given">Your answer: ${(r.given||'—').substring(0,220)}</div>${r.feedback?`<div class="ri-feedback">💬 ${r.feedback}</div>`:''}</div>`;
   });
 }
+
+/* ═══════════════════════════════════════════════════════
+   iRank Voice Input Engine  ·  injected into all papers
+   Works on Chrome / Edge · gracefully degrades elsewhere
+═══════════════════════════════════════════════════════ */
+const iRankVoice = (() => {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec = null, activeId = null, waveTimer = null;
+  const supported = !!SR;
+
+  if (!supported) {
+    // Hide language bar, show nothing — exam still fully usable by typing
+    document.addEventListener('DOMContentLoaded', () => {
+      const bar = document.getElementById('v-lang-bar');
+      if (bar) bar.style.display = 'none';
+    });
+  }
+
+  function getLang() {
+    const sel = document.getElementById('v-lang-sel');
+    return sel ? sel.value : 'en-IN';
+  }
+
+  function toggle(id) {
+    if (!supported) return;
+    if (activeId === id && rec) { rec.stop(); return; }
+    if (rec) { try { rec.stop(); } catch(e){} }
+    start(id);
+  }
+
+  function start(id) {
+    activeId = id;
+    rec = new SR();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = getLang();
+
+    const ta   = document.getElementById(id);
+    const base = ta ? ta.value.trim() : '';
+
+    setState(id, 'rec');
+
+    rec.onresult = e => {
+      let interim = '', fin = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript;
+        e.results[i].isFinal ? fin += t + ' ' : interim += t;
+      }
+      const intEl = document.getElementById('vint-' + id);
+      if (intEl) intEl.textContent = interim ? '"' + interim + '…"' : '';
+      if (fin && ta) {
+        ta.value = (base ? base + ' ' : '') + fin.trim();
+        updateWC(id);
+        // trigger any existing oninput handlers (word count etc.)
+        ta.dispatchEvent(new Event('input'));
+      }
+    };
+
+    rec.onerror = e => {
+      if (e.error === 'not-allowed')
+        alert('Microphone access denied. Please allow microphone in your browser settings, then refresh.');
+      stop(id, true);
+    };
+
+    rec.onend = () => stop(id, false);
+
+    try { rec.start(); } catch(e) { stop(id, true); return; }
+    startWave();
+    const tip = document.getElementById('v-tip');
+    if (tip) tip.textContent = '🔴 Recording…  Speak clearly · Pause to commit · Tap ⏹ to stop';
+  }
+
+  function stop(id, err) {
+    try { if (rec) rec.stop(); } catch(e) {}
+    rec = null; activeId = null;
+    setState(id, err ? 'idle' : 'done');
+    stopWave();
+    const intEl = document.getElementById('vint-' + id);
+    if (intEl) intEl.textContent = '';
+    const tip = document.getElementById('v-tip');
+    if (tip) tip.textContent = 'Tap 🎙 beside any question to speak your answer';
+  }
+
+  function setState(id, state) {
+    const ta  = document.getElementById(id);
+    const btn = document.getElementById('vbtn-' + id);
+    const st  = document.getElementById('vst-'  + id);
+    if (!ta || !btn || !st) return;
+    ta.classList.remove('v-recording', 'v-done');
+    btn.classList.remove('v-rec', 'v-ok');
+    st.classList.remove('v-rec', 'v-ok');
+    if (state === 'rec') {
+      ta.classList.add('v-recording');
+      btn.classList.add('v-rec'); btn.textContent = '⏹';
+      st.textContent = 'Recording…'; st.classList.add('v-rec');
+    } else if (state === 'done') {
+      ta.classList.add('v-done');
+      btn.classList.add('v-ok'); btn.textContent = '✓';
+      st.textContent = 'Recorded ✓'; st.classList.add('v-ok');
+      setTimeout(() => { btn.textContent = '🎙'; btn.classList.remove('v-ok'); }, 2500);
+    } else {
+      btn.textContent = '🎙';
+      st.textContent = 'Tap to speak'; st.className = 'v-st';
+    }
+  }
+
+  function updateWC(id) {
+    const ta = document.getElementById(id);
+    const el = document.getElementById('vwc-' + id);
+    if (!ta || !el) return;
+    const n = ta.value.trim() === '' ? 0 : ta.value.trim().split(/\s+/).length;
+    el.textContent = n ? n + ' word' + (n !== 1 ? 's' : '') : '';
+  }
+
+  function startWave() {
+    const bars = [1,2,3,4,5].map(n => document.getElementById('vw' + n)).filter(Boolean);
+    waveTimer = setInterval(() => bars.forEach(b => { b.style.height = (4 + Math.random() * 18) + 'px'; }), 110);
+  }
+  function stopWave() {
+    clearInterval(waveTimer);
+    [1,2,3,4,5].forEach(n => { const b = document.getElementById('vw' + n); if (b) b.style.height = '4px'; });
+  }
+
+  return { toggle, updateWC, supported };
+})();
+/* ═══════════════════════════════════════════════════════ */
+
 </script>
 </body>
 </html>
