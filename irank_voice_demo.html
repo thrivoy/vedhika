@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>iRank — Voice Answer Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ──────────────────────────────────────────── */
+:root {
+  --ink:#111018; --paper:#f8f7ff; --cream:#eae7ff; --border:#c8c0f0;
+  --accent:#3a1fa0; --accent2:#5030c0; --gold:#6040b0; --muted:#5a5478;
+  --card:#ffffff; --rule:#7060d0;
+  --rec:#d92020; --rec-l:#fff0f0;
+  --ok:#1a7040; --ok-l:#e8f8ee;
+  --warn:#b06000; --warn-l:#fff3e0;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--paper); font-family:'Crimson Pro',Georgia,serif; color:var(--ink); min-height:100vh; }
+
+/* ── HEADER ── */
+.top-bar { background:var(--ink); color:#fff; padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+.top-bar .logo { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:700; color:#fff; }
+.top-bar .logo span { color:var(--rule); }
+.top-bar .badge { font-family:'JetBrains Mono',monospace; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--rule); border:1px solid var(--rule); padding:.2rem .6rem; }
+
+/* ── MAIN ── */
+.main { max-width:860px; margin:0 auto; padding:2.5rem 1.5rem 5rem; }
+
+/* ── MODE TABS ── */
+.mode-tabs { display:flex; gap:0; margin-bottom:2.5rem; border:2px solid var(--border); overflow:hidden; }
+.mode-tab { flex:1; padding:.9rem; text-align:center; cursor:pointer; font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; background:var(--card); color:var(--muted); border:none; border-right:1px solid var(--border); transition:all .2s; }
+.mode-tab:last-child { border-right:none; }
+.mode-tab.active { background:var(--accent); color:#fff; }
+.mode-tab:hover:not(.active) { background:var(--cream); }
+
+/* ── BROWSER NOTICE ── */
+.browser-notice { background:var(--warn-l); border:1px solid var(--warn); padding:.8rem 1.1rem; font-size:.87rem; margin-bottom:1.5rem; display:none; color:var(--warn); }
+.browser-notice.show { display:block; }
+
+/* ── LANG SELECT ── */
+.lang-row { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+.lang-row label { font-family:'JetBrains Mono',monospace; font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+.lang-select { font-family:'Crimson Pro',serif; font-size:1rem; padding:.4rem .8rem; border:1.5px solid var(--border); background:var(--paper); color:var(--ink); cursor:pointer; }
+.lang-select:focus { outline:none; border-color:var(--accent); }
+.info-pill { font-family:'JetBrains Mono',monospace; font-size:.68rem; background:var(--cream); border:1px solid var(--border); padding:.2rem .6rem; color:var(--gold); }
+
+/* ── SECTION HEADING ── */
+.sec-head { font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:700; color:var(--accent); margin-bottom:1.2rem; padding-bottom:.5rem; border-bottom:1.5px solid var(--border); display:flex; align-items:center; gap:.7rem; }
+.sec-head .pill { font-family:'JetBrains Mono',monospace; font-size:.68rem; background:var(--accent); color:#fff; padding:.2rem .55rem; font-weight:400; }
+
+/* ── QUESTION CARD ── */
+.q-card { background:var(--card); border:1.5px solid var(--border); border-left:4px solid var(--accent); margin-bottom:1.8rem; overflow:hidden; }
+.q-meta { padding:.6rem 1rem; background:var(--cream); display:flex; justify-content:space-between; align-items:center; }
+.q-num { font-family:'JetBrains Mono',monospace; font-size:.73rem; color:var(--gold); }
+.q-marks { font-family:'JetBrains Mono',monospace; font-size:.73rem; color:var(--muted); }
+.q-text { padding:1rem 1.1rem .8rem; font-size:1rem; line-height:1.7; white-space:pre-line; }
+
+/* ── ANSWER AREA ── */
+.answer-area { padding:.8rem 1.1rem 1rem; }
+.answer-label { font-family:'JetBrains Mono',monospace; font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:.5rem; }
+.textarea-wrap { position:relative; }
+textarea.ans-ta {
+  width:100%; min-height:90px; padding:.75rem .9rem; padding-right:3.5rem;
+  border:1.5px solid var(--border); background:var(--paper);
+  font-family:'Crimson Pro',serif; font-size:1rem; color:var(--ink);
+  resize:vertical; outline:none; line-height:1.7; transition:border-color .2s;
+}
+textarea.ans-ta:focus { border-color:var(--accent); }
+textarea.ans-ta.recording { border-color:var(--rec); background:var(--rec-l); }
+textarea.ans-ta.recording-done { border-color:var(--ok); }
+
+/* ── MIC BUTTON ── */
+.mic-btn {
+  position:absolute; right:.55rem; top:.55rem;
+  width:38px; height:38px; border-radius:50%;
+  border:2px solid var(--border);
+  background:var(--card); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem; transition:all .2s; z-index:2;
+}
+.mic-btn:hover { border-color:var(--accent); background:var(--cream); }
+.mic-btn.active { background:var(--rec); border-color:var(--rec); animation:pulse-btn 1s infinite; }
+.mic-btn.done { background:var(--ok); border-color:var(--ok); }
+@keyframes pulse-btn { 0%,100%{box-shadow:0 0 0 0 rgba(217,32,32,.4)} 50%{box-shadow:0 0 0 8px rgba(217,32,32,0)} }
+
+/* ── STATUS ROW ── */
+.status-row { display:flex; align-items:center; gap:.7rem; margin-top:.5rem; min-height:1.6rem; flex-wrap:wrap; }
+.status-dot { width:8px; height:8px; border-radius:50%; background:var(--border); flex-shrink:0; }
+.status-dot.rec { background:var(--rec); animation:blink 1s infinite; }
+.status-dot.done { background:var(--ok); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.status-text { font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--muted); }
+.status-text.rec { color:var(--rec); }
+.status-text.done { color:var(--ok); }
+.interim-text { font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--muted); font-style:italic; flex:1; }
+.word-count { font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--muted); margin-left:auto; }
+.btn-clear { font-family:'JetBrains Mono',monospace; font-size:.68rem; padding:.15rem .5rem; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; }
+.btn-clear:hover { border-color:var(--rec); color:var(--rec); }
+
+/* ── GLOBAL MIC BAR ── */
+.global-mic-bar {
+  position:fixed; bottom:0; left:0; right:0;
+  background:var(--ink); padding:.8rem 1.5rem;
+  display:flex; align-items:center; gap:1.2rem;
+  z-index:200;
+}
+.global-mic-inner { flex:1; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+.gm-label { font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--rule); text-transform:uppercase; letter-spacing:.08em; }
+.gm-hint { font-family:'JetBrains Mono',monospace; font-size:.7rem; color:#888; }
+.btn-global-mic {
+  padding:.6rem 1.6rem; border-radius:2px; border:none; cursor:pointer;
+  font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:700;
+  background:#f6d365; color:var(--ink); transition:all .2s; display:flex; align-items:center; gap:.5rem;
+}
+.btn-global-mic.active { background:var(--rec); color:#fff; }
+.btn-global-mic:hover { opacity:.88; }
+
+/* ── WAVEFORM ── */
+.wave-container { display:flex; align-items:center; gap:3px; height:28px; }
+.wave-bar { width:4px; background:var(--rule); border-radius:2px; height:6px; transition:height .1s; }
+
+/* ══════════════════════════════════════════
+   SPELLING TEST MODE
+═══════════════════════════════════════════ */
+#spelling-mode { display:none; }
+.spelling-header { text-align:center; margin-bottom:2rem; }
+.spelling-header h2 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; margin-bottom:.4rem; }
+.spelling-header p { color:var(--muted); font-size:.92rem; }
+.spell-card { background:var(--card); border:2px solid var(--border); padding:2rem; text-align:center; margin-bottom:1.5rem; }
+.spell-word-display { font-family:'JetBrains Mono',monospace; font-size:2.2rem; letter-spacing:.1em; color:var(--accent); margin-bottom:1rem; min-height:3rem; display:flex; align-items:center; justify-content:center; }
+.spell-word-display.hidden { filter:blur(10px); user-select:none; }
+.spell-word-display .placeholder { color:var(--border); font-size:1rem; font-style:italic; }
+.spell-controls { display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.5rem; }
+.btn-spell { padding:.6rem 1.4rem; border:1.5px solid; font-family:'Cormorant Garamond',serif; font-size:1rem; cursor:pointer; transition:all .2s; background:transparent; }
+.btn-hear { color:var(--accent); border-color:var(--accent); }
+.btn-hear:hover { background:var(--accent); color:#fff; }
+.btn-reveal { color:var(--muted); border-color:var(--muted); }
+.btn-reveal:hover { background:var(--muted); color:#fff; }
+.btn-next-word { color:var(--ok); border-color:var(--ok); }
+.btn-next-word:hover { background:var(--ok); color:#fff; }
+.spell-input-wrap { margin:1rem auto; max-width:360px; }
+.spell-input { width:100%; padding:.75rem 1rem; border:2px solid var(--border); background:var(--paper); font-family:'JetBrains Mono',monospace; font-size:1.2rem; text-align:center; letter-spacing:.1em; color:var(--ink); outline:none; }
+.spell-input:focus { border-color:var(--accent); }
+.spell-input.correct { border-color:var(--ok); background:var(--ok-l); color:var(--ok); }
+.spell-input.wrong { border-color:var(--rec); background:var(--rec-l); color:var(--rec); }
+.spell-feedback { font-family:'JetBrains Mono',monospace; font-size:.85rem; margin-top:.5rem; min-height:1.2rem; }
+.spell-feedback.correct { color:var(--ok); }
+.spell-feedback.wrong { color:var(--rec); }
+.spell-score-bar { background:var(--cream); border:1px solid var(--border); padding:.8rem 1.2rem; display:flex; justify-content:space-between; align-items:center; font-family:'JetBrains Mono',monospace; font-size:.8rem; margin-bottom:1.5rem; }
+.spell-progress { height:6px; background:var(--border); overflow:hidden; margin-bottom:1.5rem; }
+.spell-progress-inner { height:100%; background:var(--accent); transition:width .4s; }
+.word-list-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.8rem; }
+.word-chip { padding:.6rem .9rem; border:1px solid var(--border); background:var(--card); font-family:'JetBrains Mono',monospace; font-size:.8rem; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:all .15s; }
+.word-chip:hover { border-color:var(--accent); background:var(--cream); }
+.word-chip .wc-status { width:10px; height:10px; border-radius:50%; background:var(--border); }
+.word-chip.correct .wc-status { background:var(--ok); }
+.word-chip.wrong .wc-status { background:var(--rec); }
+.word-chip.current { border-color:var(--accent); background:var(--cream); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){.mode-tab{font-size:.9rem;padding:.7rem .3rem;}.top-bar{flex-direction:column;gap:.4rem;text-align:center;}}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">i<span>Rank</span></div>
+  <div class="badge">Voice Answer · Demo</div>
+</div>
+
+<div class="main">
+
+  <!-- MODE TABS -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="switchMode('voice')">🎙️ &nbsp; Voice Answer Mode</button>
+    <button class="mode-tab" onclick="switchMode('spelling')">📝 &nbsp; Spelling Check Mode</button>
+  </div>
+
+  <!-- BROWSER NOTICE -->
+  <div class="browser-notice" id="browser-notice">
+    ⚠️ Voice features require Google Chrome or Microsoft Edge. Please open this page in Chrome for full voice support.
+  </div>
+
+  <!-- ══════════════════════════════════
+       VOICE ANSWER MODE
+  ═══════════════════════════════════ -->
+  <div id="voice-mode">
+    <div class="lang-row">
+      <label>Language / भाषा</label>
+      <select class="lang-select" id="lang-select">
+        <option value="en-IN">English (India)</option>
+        <option value="hi-IN">हिंदी (Hindi)</option>
+        <option value="kn-IN">ಕನ್ನಡ (Kannada)</option>
+        <option value="en-GB">English (UK)</option>
+        <option value="en-US">English (US)</option>
+      </select>
+      <span class="info-pill">Tap 🎙 on any question to speak your answer</span>
+    </div>
+
+    <div class="sec-head">
+      Sample Questions <span class="pill">Voice Input Active</span>
+    </div>
+    <p style="font-size:.9rem;color:var(--muted);margin-bottom:1.5rem;">These are sample questions demonstrating voice input. Tap the 🎙 button on any question, speak your answer clearly, and the transcript appears automatically. You can then edit it or re-record.</p>
+
+    <!-- QUESTIONS -->
+    <div id="questions-container"></div>
+
+    <div style="background:var(--cream);border:1px solid var(--border);padding:1rem 1.2rem;font-size:.87rem;line-height:1.8;margin-top:.5rem;color:var(--muted);">
+      <strong style="color:var(--ink);">How it works:</strong><br>
+      1. Tap 🎙 — browser asks for microphone permission once.<br>
+      2. Speak your answer naturally. The transcript appears in real-time (greyed italic) as you speak.<br>
+      3. When you stop speaking, the final transcript is committed to the answer box.<br>
+      4. Edit any text you want to correct, or tap 🎙 again to append more.<br>
+      5. Thrivoy grades the transcript exactly as it would grade typed text.
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SPELLING CHECK MODE
+  ═══════════════════════════════════ -->
+  <div id="spelling-mode">
+    <div class="spelling-header">
+      <h2>Spelling Check Mode</h2>
+      <p>The system reads a word aloud. You type what you hear. Completely separate from knowledge assessment.</p>
+    </div>
+
+    <div class="lang-row">
+      <label>Word List</label>
+      <select class="lang-select" id="spell-subject-select" onchange="loadWordList()">
+        <option value="bio8">Class VIII Biology Terms</option>
+        <option value="chem11">Class XI Chemistry Terms</option>
+        <option value="physics11">Class XI Physics Terms</option>
+        <option value="hindi">Hindi Vocabulary</option>
+        <option value="english">English Literature Terms</option>
+      </select>
+      <select class="lang-select" id="spell-voice-select">
+        <option value="en-IN">English Voice</option>
+        <option value="hi-IN">Hindi Voice</option>
+      </select>
+    </div>
+
+    <div class="spell-score-bar">
+      <span>Score: <strong id="spell-score">0</strong> / <strong id="spell-total">0</strong></span>
+      <span>Word <strong id="spell-current-num">0</strong> of <strong id="spell-word-count">0</strong></span>
+      <span id="spell-pct">—</span>
+      <button onclick="resetSpelling()" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:.2rem .6rem;border:1px solid var(--border);background:transparent;cursor:pointer;">Reset</button>
+    </div>
+    <div class="spell-progress"><div class="spell-progress-inner" id="spell-prog-bar" style="width:0%"></div></div>
+
+    <div class="spell-card">
+      <div class="spell-word-display" id="spell-word-display">
+        <span class="placeholder">Select a word list and press "Hear Word" →</span>
+      </div>
+      <div class="spell-controls">
+        <button class="btn-spell btn-hear" onclick="speakCurrentWord()">🔊 Hear Word</button>
+        <button class="btn-spell btn-hear" onclick="speakCurrentWord(true)" style="font-size:.88rem;padding:.5rem 1rem;">🔊 Hear in Sentence</button>
+        <button class="btn-spell btn-reveal" onclick="revealWord()">👁 Reveal</button>
+      </div>
+      <div class="spell-input-wrap">
+        <input type="text" class="spell-input" id="spell-input" placeholder="Type what you hear…" autocomplete="off" autocorrect="off" spellcheck="false" oninput="checkSpelling()" onkeydown="spellKeydown(event)">
+        <div class="spell-feedback" id="spell-feedback"></div>
+      </div>
+      <div class="spell-controls">
+        <button class="btn-spell btn-next-word" onclick="nextWord()">Next Word →</button>
+      </div>
+    </div>
+
+    <div class="sec-head" style="margin-top:1rem;">Word List</div>
+    <div class="word-list-grid" id="word-list-grid"></div>
+  </div>
+
+</div>
+
+<!-- GLOBAL MIC BAR (Voice Mode only) -->
+<div class="global-mic-bar" id="global-mic-bar">
+  <div class="global-mic-inner">
+    <span class="gm-label">Voice Input</span>
+    <div class="wave-container" id="wave-container">
+      <div class="wave-bar" id="w1"></div><div class="wave-bar" id="w2"></div>
+      <div class="wave-bar" id="w3"></div><div class="wave-bar" id="w4"></div>
+      <div class="wave-bar" id="w5"></div><div class="wave-bar" id="w6"></div>
+      <div class="wave-bar" id="w7"></div>
+    </div>
+    <span class="gm-hint" id="gm-hint">Tap 🎙 on any question to start</span>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// SAMPLE QUESTIONS
+// ═══════════════════════════════════════════════════════
+const SAMPLE_QS = [
+  { id:'q1', marks:3, subject:'Biology (Class XI)', text:'Explain the process of photosynthesis. What are the two stages? What are the raw materials and products?' },
+  { id:'q2', marks:5, subject:'Physics (Class XI)', text:'State Newton\'s three laws of motion. Give one real-life example for each law.' },
+  { id:'q3', marks:3, subject:'Chemistry (Class XI)', text:'What is Hund\'s rule of maximum multiplicity? Explain with the example of the nitrogen atom (Z = 7).' },
+  { id:'q4', marks:2, subject:'English Literature', text:'Explain the central theme of the poem "Stopping by Woods on a Snowy Evening" by Robert Frost. What does "miles to go before I sleep" symbolise?' },
+  { id:'q5', marks:3, subject:'Mathematics (Class XI)', text:'State the Binomial Theorem. Write the general term (Tr+1) in the expansion of (x + y)ⁿ. Find the 4th term in the expansion of (2x − 1)⁶.' },
+  { id:'q6', marks:2, subject:'हिंदी साहित्य', text:'कबीर की साखियों का मुख्य भाव क्या है? किसी एक साखी का अर्थ अपने शब्दों में समझाइए।' },
+];
+
+// ═══════════════════════════════════════════════════════
+// SPEECH RECOGNITION SETUP
+// ═══════════════════════════════════════════════════════
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+let activeRec = null;    // current SpeechRecognition instance
+let activeQId = null;    // which question is being recorded
+let waveAnim = null;
+
+function getLang() { return document.getElementById('lang-select').value; }
+
+// ═══════════════════════════════════════════════════════
+// BUILD QUESTION CARDS
+// ═══════════════════════════════════════════════════════
+function buildQuestions() {
+  const c = document.getElementById('questions-container');
+  c.innerHTML = '';
+  SAMPLE_QS.forEach(q => {
+    c.innerHTML += `
+    <div class="q-card" id="card-${q.id}">
+      <div class="q-meta">
+        <span class="q-num">${q.subject}</span>
+        <span class="q-marks">[${q.marks} mark${q.marks>1?'s':''}]</span>
+      </div>
+      <div class="q-text">${q.text}</div>
+      <div class="answer-area">
+        <div class="answer-label">Your Answer</div>
+        <div class="textarea-wrap">
+          <textarea class="ans-ta" id="ta-${q.id}" rows="4"
+            placeholder="Speak using 🎙 or type here…"
+            oninput="updateWordCount('${q.id}')"></textarea>
+          <button class="mic-btn" id="mic-${q.id}" onclick="toggleRec('${q.id}')" title="Speak your answer">🎙</button>
+        </div>
+        <div class="status-row">
+          <div class="status-dot" id="dot-${q.id}"></div>
+          <span class="status-text" id="st-${q.id}">Ready</span>
+          <span class="interim-text" id="interim-${q.id}"></span>
+          <span class="word-count" id="wc-${q.id}">0 words</span>
+          <button class="btn-clear" onclick="clearAnswer('${q.id}')">Clear</button>
+        </div>
+      </div>
+    </div>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// TOGGLE RECORDING FOR A QUESTION
+// ═══════════════════════════════════════════════════════
+function toggleRec(qid) {
+  if (!SpeechRec) {
+    document.getElementById('browser-notice').classList.add('show');
+    return;
+  }
+
+  // If this question is already recording → stop
+  if (activeQId === qid && activeRec) {
+    activeRec.stop();
+    return;
+  }
+
+  // If another question is recording → stop it first
+  if (activeRec) { activeRec.stop(); }
+
+  startRec(qid);
+}
+
+function startRec(qid) {
+  activeQId = qid;
+  const rec = new SpeechRec();
+  activeRec = rec;
+
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.lang = getLang();
+  rec.maxAlternatives = 1;
+
+  const ta    = document.getElementById(`ta-${qid}`);
+  const mic   = document.getElementById(`mic-${qid}`);
+  const dot   = document.getElementById(`dot-${qid}`);
+  const st    = document.getElementById(`st-${qid}`);
+  const inter = document.getElementById(`interim-${qid}`);
+
+  const existingText = ta.value.trim();
+
+  setRecState(qid, 'recording');
+
+  rec.onresult = e => {
+    let interim = '';
+    let final   = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) final += t + ' ';
+      else interim += t;
+    }
+    inter.textContent = interim ? `"${interim}"` : '';
+    if (final) {
+      ta.value = (existingText ? existingText + ' ' : '') + final.trim();
+      updateWordCount(qid);
+    }
+  };
+
+  rec.onerror = e => {
+    if (e.error === 'not-allowed') {
+      alert('Microphone access denied. Please allow microphone in browser settings.');
+    }
+    stopRec(qid, true);
+  };
+
+  rec.onend = () => { stopRec(qid, false); };
+
+  rec.start();
+  startWave();
+  document.getElementById('gm-hint').textContent = `Recording Q for "${qid}"…`;
+}
+
+function stopRec(qid, error) {
+  if (activeRec) { try { activeRec.stop(); } catch(e){} activeRec = null; }
+  activeQId = null;
+  setRecState(qid, error ? 'error' : 'done');
+  stopWave();
+  document.getElementById('gm-hint').textContent = 'Tap 🎙 on any question to start';
+  const inter = document.getElementById(`interim-${qid}`);
+  if (inter) inter.textContent = '';
+}
+
+function setRecState(qid, state) {
+  const ta  = document.getElementById(`ta-${qid}`);
+  const mic = document.getElementById(`mic-${qid}`);
+  const dot = document.getElementById(`dot-${qid}`);
+  const st  = document.getElementById(`st-${qid}`);
+  if(!ta) return;
+  ta.classList.remove('recording','recording-done');
+  mic.classList.remove('active','done');
+  dot.className = 'status-dot';
+  if (state === 'recording') {
+    ta.classList.add('recording');
+    mic.classList.add('active');
+    mic.textContent = '⏹';
+    dot.classList.add('rec');
+    st.textContent = 'Recording…';
+    st.className = 'status-text rec';
+  } else if (state === 'done') {
+    ta.classList.add('recording-done');
+    mic.classList.add('done');
+    mic.textContent = '✓';
+    dot.classList.add('done');
+    st.textContent = 'Recorded';
+    st.className = 'status-text done';
+    setTimeout(() => { mic.textContent='🎙'; mic.classList.remove('done'); }, 2000);
+  } else {
+    mic.textContent = '🎙';
+    st.textContent = 'Ready';
+    st.className = 'status-text';
+  }
+}
+
+function clearAnswer(qid) {
+  const ta = document.getElementById(`ta-${qid}`);
+  ta.value = '';
+  ta.classList.remove('recording','recording-done');
+  updateWordCount(qid);
+  document.getElementById(`st-${qid}`).textContent = 'Ready';
+  document.getElementById(`st-${qid}`).className = 'status-text';
+}
+
+function updateWordCount(qid) {
+  const ta = document.getElementById(`ta-${qid}`);
+  const wc = ta.value.trim() === '' ? 0 : ta.value.trim().split(/\s+/).length;
+  document.getElementById(`wc-${qid}`).textContent = `${wc} word${wc!==1?'s':''}`;
+}
+
+// ═══════════════════════════════════════════════════════
+// WAVEFORM ANIMATION
+// ═══════════════════════════════════════════════════════
+function startWave() {
+  const bars = [1,2,3,4,5,6,7].map(n => document.getElementById('w'+n));
+  waveAnim = setInterval(() => {
+    bars.forEach(b => {
+      b.style.height = (6 + Math.random() * 20) + 'px';
+    });
+  }, 120);
+}
+function stopWave() {
+  clearInterval(waveAnim);
+  [1,2,3,4,5,6,7].forEach(n => {
+    const b = document.getElementById('w'+n);
+    if(b) b.style.height = '6px';
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// SPELLING TEST
+// ═══════════════════════════════════════════════════════
+const WORD_LISTS = {
+  bio8: [
+    { word:'photosynthesis', sentence:'Plants use photosynthesis to make their own food.' },
+    { word:'mitochondria', sentence:'The mitochondria is the powerhouse of the cell.' },
+    { word:'stomata', sentence:'Stomata are tiny pores on the surface of leaves.' },
+    { word:'osmosis', sentence:'Water enters the root cells by the process of osmosis.' },
+    { word:'chromosome', sentence:'Each human cell contains 46 chromosomes.' },
+    { word:'respiration', sentence:'Respiration releases energy from glucose.' },
+    { word:'chlorophyll', sentence:'Chlorophyll gives leaves their green colour.' },
+    { word:'metamorphosis', sentence:'A caterpillar undergoes metamorphosis to become a butterfly.' },
+    { word:'fertilisation', sentence:'Fertilisation occurs when a sperm cell fuses with an egg cell.' },
+    { word:'excretion', sentence:'The kidneys carry out excretion to remove waste from the body.' },
+  ],
+  chem11: [
+    { word:'electronegativity', sentence:'Fluorine has the highest electronegativity of all elements.' },
+    { word:'stoichiometry', sentence:'Stoichiometry involves calculating quantities in chemical reactions.' },
+    { word:'hybridisation', sentence:'Carbon shows sp3 hybridisation in methane.' },
+    { word:'ionisation', sentence:'The ionisation energy of sodium is lower than that of chlorine.' },
+    { word:'equilibrium', sentence:'A reversible reaction reaches equilibrium when forward and reverse rates are equal.' },
+    { word:'thermodynamics', sentence:'Thermodynamics deals with heat, work and energy in chemical systems.' },
+    { word:'nomenclature', sentence:'IUPAC nomenclature gives a systematic name to every organic compound.' },
+    { word:'molarity', sentence:'Molarity is the number of moles of solute per litre of solution.' },
+    { word:'crystallisation', sentence:'Crystallisation is used to purify impure copper sulphate.' },
+    { word:'sublimation', sentence:'Dry ice undergoes sublimation at room temperature.' },
+  ],
+  physics11: [
+    { word:'acceleration', sentence:'Acceleration is the rate of change of velocity.' },
+    { word:'gravitational', sentence:'The gravitational force between two masses depends on their distance.' },
+    { word:'oscillation', sentence:'A pendulum undergoes oscillation about its mean position.' },
+    { word:'centripetal', sentence:'Centripetal force acts towards the centre of a circular path.' },
+    { word:'displacement', sentence:'Displacement is a vector quantity measured from initial to final position.' },
+    { word:'thermodynamic', sentence:'The thermodynamic process in an ideal gas can be isothermal or adiabatic.' },
+    { word:'interference', sentence:'Constructive interference occurs when two waves are in phase.' },
+    { word:'refraction', sentence:'Refraction is the bending of light as it passes from one medium to another.' },
+    { word:'momentum', sentence:'Momentum is the product of mass and velocity.' },
+    { word:'coefficient', sentence:'The coefficient of friction depends on the surfaces in contact.' },
+  ],
+  hindi: [
+    { word:'महाकाव्य', sentence:'रामायण और महाभारत भारत के प्रसिद्ध महाकाव्य हैं।' },
+    { word:'प्रत्यय', sentence:'शब्द के अंत में जुड़ने वाले अक्षर को प्रत्यय कहते हैं।' },
+    { word:'अनुच्छेद', sentence:'परीक्षा में एक अनुच्छेद लिखना अनिवार्य है।' },
+    { word:'व्याकरण', sentence:'हिंदी व्याकरण में संज्ञा, सर्वनाम और क्रिया का अध्ययन होता है।' },
+    { word:'पर्यावरण', sentence:'पर्यावरण की रक्षा करना हमारा कर्तव्य है।' },
+    { word:'स्वतन्त्रता', sentence:'भारत को 1947 में स्वतन्त्रता मिली थी।' },
+    { word:'अलंकार', sentence:'उपमा और रूपक काव्य के प्रमुख अलंकार हैं।' },
+    { word:'प्रतिपाद्य', sentence:'कविता का प्रतिपाद्य उसके केंद्रीय भाव को स्पष्ट करता है।' },
+    { word:'उद्धरण', sentence:'परीक्षा में उचित उद्धरण देने से उत्तर अच्छा बनता है।' },
+    { word:'साहित्यिक', sentence:'साहित्यिक लेखन में भावों की अभिव्यक्ति महत्वपूर्ण है।' },
+  ],
+  english: [
+    { word:'metaphor', sentence:'Life is a journey is an example of a metaphor.' },
+    { word:'protagonist', sentence:'The protagonist of the novel faces many challenges.' },
+    { word:'soliloquy', sentence:'Hamlet\'s "To be or not to be" is a famous soliloquy.' },
+    { word:'alliteration', sentence:'Alliteration repeats the same initial consonant sound.' },
+    { word:'onomatopoeia', sentence:'Words like buzz and hiss are examples of onomatopoeia.' },
+    { word:'denouement', sentence:'The denouement of the story resolved all conflicts.' },
+    { word:'anthropomorphism', sentence:'Giving human traits to animals is called anthropomorphism.' },
+    { word:'juxtaposition', sentence:'The poet uses juxtaposition to highlight the contrast between youth and age.' },
+    { word:'didactic', sentence:'Aesop\'s fables are didactic — they teach moral lessons.' },
+    { word:'euphemism', sentence:'Passed away is a euphemism for died.' },
+  ],
+};
+
+let spellWords = [];
+let spellIdx   = 0;
+let spellScore = 0;
+let spellResults = {};
+let spellRevealed = false;
+
+function loadWordList() {
+  const sub = document.getElementById('spell-subject-select').value;
+  spellWords   = [...WORD_LISTS[sub]];
+  spellIdx     = 0;
+  spellScore   = 0;
+  spellResults = {};
+  spellRevealed = false;
+  updateSpellUI();
+  renderWordGrid();
+  document.getElementById('spell-input').value = '';
+  document.getElementById('spell-input').className = 'spell-input';
+  document.getElementById('spell-feedback').textContent = '';
+  document.getElementById('spell-word-display').innerHTML = '<span class="placeholder">Press "Hear Word" to begin →</span>';
+}
+
+function updateSpellUI() {
+  document.getElementById('spell-score').textContent   = spellScore;
+  document.getElementById('spell-total').textContent   = Object.keys(spellResults).length;
+  document.getElementById('spell-current-num').textContent = spellIdx + 1;
+  document.getElementById('spell-word-count').textContent  = spellWords.length;
+  const done = Object.keys(spellResults).length;
+  const pct  = done > 0 ? Math.round((spellScore/done)*100) : 0;
+  document.getElementById('spell-pct').textContent = done > 0 ? `${pct}% correct` : '—';
+  document.getElementById('spell-prog-bar').style.width = (done/spellWords.length*100)+'%';
+}
+
+function renderWordGrid() {
+  const g = document.getElementById('word-list-grid');
+  g.innerHTML = spellWords.map((w,i) => {
+    const res   = spellResults[i];
+    const cls   = res===true?'correct':res===false?'wrong':i===spellIdx?'current':'';
+    return `<div class="word-chip ${cls}" onclick="jumpToWord(${i})">
+      <span>${i+1}. ${i<=spellIdx||res!==undefined ? w.word : '• • • •'}</span>
+      <span class="wc-status"></span>
+    </div>`;
+  }).join('');
+}
+
+function jumpToWord(i) {
+  spellIdx = i;
+  spellRevealed = false;
+  document.getElementById('spell-input').value = '';
+  document.getElementById('spell-input').className = 'spell-input';
+  document.getElementById('spell-feedback').textContent = '';
+  document.getElementById('spell-word-display').innerHTML = '<span class="placeholder">Press "Hear Word" →</span>';
+  renderWordGrid();
+  updateSpellUI();
+}
+
+function speakCurrentWord(inSentence = false) {
+  if (!spellWords.length) return;
+  const w = spellWords[spellIdx];
+  const voice = document.getElementById('spell-voice-select').value;
+  const text  = inSentence ? w.sentence : w.word;
+
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang  = voice;
+  utt.rate  = inSentence ? 0.9 : 0.75;
+  utt.pitch = 1;
+  window.speechSynthesis.speak(utt);
+
+  // Show blank display while playing
+  document.getElementById('spell-word-display').innerHTML = '<span class="placeholder">Listening… 🎵</span>';
+  utt.onend = () => {
+    if (!spellRevealed) {
+      document.getElementById('spell-word-display').innerHTML = '<span class="placeholder">Now type what you heard ↓</span>';
+    }
+    document.getElementById('spell-input').focus();
+  };
+}
+
+function revealWord() {
+  spellRevealed = true;
+  const w = spellWords[spellIdx];
+  const disp = document.getElementById('spell-word-display');
+  disp.className = 'spell-word-display';
+  disp.textContent = w.word;
+}
+
+function checkSpelling() {
+  const inp  = document.getElementById('spell-input');
+  const fb   = document.getElementById('spell-feedback');
+  const typed = inp.value.trim().toLowerCase();
+  const correct = spellWords[spellIdx].word.toLowerCase();
+
+  if (!typed) {
+    inp.className = 'spell-input';
+    fb.textContent = '';
+    return;
+  }
+  // Live feedback as they type
+  if (typed === correct) {
+    inp.className = 'spell-input correct';
+    fb.textContent = '✓ Correct!';
+    fb.className = 'spell-feedback correct';
+    if (spellResults[spellIdx] === undefined) {
+      spellResults[spellIdx] = true;
+      spellScore++;
+    }
+    renderWordGrid();
+    updateSpellUI();
+    // Auto-advance after 1.2s
+    setTimeout(() => nextWord(), 1200);
+  } else {
+    inp.className = 'spell-input wrong';
+    // Show how many letters are correct
+    let hint = '';
+    for (let i = 0; i < typed.length && i < correct.length; i++) {
+      hint += typed[i] === correct[i] ? '✓' : '✗';
+    }
+    fb.textContent = hint || '';
+    fb.className = 'spell-feedback wrong';
+    if (spellResults[spellIdx] === undefined && typed.length >= correct.length) {
+      spellResults[spellIdx] = false;
+      renderWordGrid();
+      updateSpellUI();
+    }
+  }
+}
+
+function spellKeydown(e) {
+  if (e.key === 'Enter') nextWord();
+}
+
+function nextWord() {
+  if (spellIdx < spellWords.length - 1) {
+    spellIdx++;
+    spellRevealed = false;
+    document.getElementById('spell-input').value = '';
+    document.getElementById('spell-input').className = 'spell-input';
+    document.getElementById('spell-feedback').textContent = '';
+    document.getElementById('spell-word-display').innerHTML = '<span class="placeholder">Press "Hear Word" →</span>';
+    renderWordGrid();
+    updateSpellUI();
+    speakCurrentWord(); // auto-play next
+  } else {
+    // All done
+    const total  = spellWords.length;
+    const done   = Object.keys(spellResults).length;
+    const pct    = Math.round((spellScore/total)*100);
+    document.getElementById('spell-word-display').innerHTML = `<span style="color:var(--ok);font-size:1.5rem;">✓ ${spellScore}/${total} correct (${pct}%)</span>`;
+  }
+}
+
+function resetSpelling() {
+  loadWordList();
+}
+
+// ═══════════════════════════════════════════════════════
+// MODE SWITCH
+// ═══════════════════════════════════════════════════════
+function switchMode(mode) {
+  document.querySelectorAll('.mode-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&mode==='voice')||(i===1&&mode==='spelling')));
+  document.getElementById('voice-mode').style.display   = mode==='voice'   ? '' : 'none';
+  document.getElementById('spelling-mode').style.display = mode==='spelling'? '' : 'none';
+  document.getElementById('global-mic-bar').style.display = mode==='voice' ? '' : 'none';
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  if (!SpeechRec) {
+    document.getElementById('browser-notice').classList.add('show');
+  }
+  buildQuestions();
+  loadWordList();
+});
+</script>
+</body>
+</html>
