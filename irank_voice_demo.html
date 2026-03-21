@@ -3,191 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>iRank — Voice Answer Demo</title>
+<title>iRank — Voice Answer & Spelling Check</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ── TOKENS ──────────────────────────────────────────── */
-:root {
-  --ink:#111018; --paper:#f8f7ff; --cream:#eae7ff; --border:#c8c0f0;
-  --accent:#3a1fa0; --accent2:#5030c0; --gold:#6040b0; --muted:#5a5478;
-  --card:#ffffff; --rule:#7060d0;
-  --rec:#d92020; --rec-l:#fff0f0;
-  --ok:#1a7040; --ok-l:#e8f8ee;
-  --warn:#b06000; --warn-l:#fff3e0;
+:root{
+  --ink:#111018;--paper:#f8f7ff;--cream:#eae7ff;--border:#c8c0f0;
+  --accent:#3a1fa0;--accent2:#5030c0;--gold:#6040b0;--muted:#5a5478;
+  --card:#ffffff;--rule:#7060d0;
+  --rec:#d92020;--rec-l:#fff2f2;--ok:#1a7040;--ok-l:#e8f8ee;
+  --warn:#b06000;--warn-l:#fff3e0;
 }
-* { box-sizing:border-box; margin:0; padding:0; }
-body { background:var(--paper); font-family:'Crimson Pro',Georgia,serif; color:var(--ink); min-height:100vh; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);font-family:'Crimson Pro',Georgia,serif;color:var(--ink);min-height:100vh;}
 
 /* ── HEADER ── */
-.top-bar { background:var(--ink); color:#fff; padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; }
-.top-bar .logo { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:700; color:#fff; }
-.top-bar .logo span { color:var(--rule); }
-.top-bar .badge { font-family:'JetBrains Mono',monospace; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--rule); border:1px solid var(--rule); padding:.2rem .6rem; }
-
-/* ── MAIN ── */
-.main { max-width:860px; margin:0 auto; padding:2.5rem 1.5rem 5rem; }
+.top-bar{background:var(--ink);color:#fff;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;}
+.top-bar .logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:#fff;}
+.top-bar .logo span{color:var(--rule);}
+.top-bar .badge{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--rule);border:1px solid var(--rule);padding:.2rem .6rem;}
 
 /* ── MODE TABS ── */
-.mode-tabs { display:flex; gap:0; margin-bottom:2.5rem; border:2px solid var(--border); overflow:hidden; }
-.mode-tab { flex:1; padding:.9rem; text-align:center; cursor:pointer; font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; background:var(--card); color:var(--muted); border:none; border-right:1px solid var(--border); transition:all .2s; }
-.mode-tab:last-child { border-right:none; }
-.mode-tab.active { background:var(--accent); color:#fff; }
-.mode-tab:hover:not(.active) { background:var(--cream); }
+.mode-tabs{display:flex;margin-bottom:0;border-bottom:2px solid var(--border);}
+.mode-tab{flex:1;padding:.95rem;text-align:center;cursor:pointer;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;background:var(--card);color:var(--muted);border:none;border-right:1px solid var(--border);transition:all .2s;position:relative;}
+.mode-tab:last-child{border-right:none;}
+.mode-tab.active{background:var(--accent);color:#fff;}
+.mode-tab.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--accent);}
+.mode-tab:hover:not(.active){background:var(--cream);}
 
-/* ── BROWSER NOTICE ── */
-.browser-notice { background:var(--warn-l); border:1px solid var(--warn); padding:.8rem 1.1rem; font-size:.87rem; margin-bottom:1.5rem; display:none; color:var(--warn); }
-.browser-notice.show { display:block; }
+/* ── SCREENS ── */
+#voice-screen,#spelling-screen{display:none;}
+#voice-screen.show,#spelling-screen.show{display:block;}
 
-/* ── LANG SELECT ── */
-.lang-row { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
-.lang-row label { font-family:'JetBrains Mono',monospace; font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
-.lang-select { font-family:'Crimson Pro',serif; font-size:1rem; padding:.4rem .8rem; border:1.5px solid var(--border); background:var(--paper); color:var(--ink); cursor:pointer; }
-.lang-select:focus { outline:none; border-color:var(--accent); }
-.info-pill { font-family:'JetBrains Mono',monospace; font-size:.68rem; background:var(--cream); border:1px solid var(--border); padding:.2rem .6rem; color:var(--gold); }
+/* ── NOTICE ── */
+.notice{padding:.8rem 1.2rem;font-size:.86rem;margin:1rem 1.5rem;border:1px solid;}
+.notice.warn{background:var(--warn-l);border-color:var(--warn);color:var(--warn);}
+.notice.info{background:var(--cream);border-color:var(--border);color:var(--gold);}
 
-/* ── SECTION HEADING ── */
-.sec-head { font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:700; color:var(--accent); margin-bottom:1.2rem; padding-bottom:.5rem; border-bottom:1.5px solid var(--border); display:flex; align-items:center; gap:.7rem; }
-.sec-head .pill { font-family:'JetBrains Mono',monospace; font-size:.68rem; background:var(--accent); color:#fff; padding:.2rem .55rem; font-weight:400; }
+/* ── VOICE SCREEN ── */
+.voice-body{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem;}
+.lang-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.lang-row label{font-family:'JetBrains Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.lang-select{font-family:'Crimson Pro',serif;font-size:1rem;padding:.4rem .8rem;border:1.5px solid var(--border);background:var(--paper);color:var(--ink);cursor:pointer;}
+.lang-select:focus{outline:none;border-color:var(--accent);}
+.info-pill{font-family:'JetBrains Mono',monospace;font-size:.68rem;background:var(--cream);border:1px solid var(--border);padding:.2rem .6rem;color:var(--gold);}
+.sec-head{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--accent);margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:.7rem;}
+.sec-pill{font-family:'JetBrains Mono',monospace;font-size:.68rem;background:var(--accent);color:#fff;padding:.2rem .55rem;font-weight:400;}
 
-/* ── QUESTION CARD ── */
-.q-card { background:var(--card); border:1.5px solid var(--border); border-left:4px solid var(--accent); margin-bottom:1.8rem; overflow:hidden; }
-.q-meta { padding:.6rem 1rem; background:var(--cream); display:flex; justify-content:space-between; align-items:center; }
-.q-num { font-family:'JetBrains Mono',monospace; font-size:.73rem; color:var(--gold); }
-.q-marks { font-family:'JetBrains Mono',monospace; font-size:.73rem; color:var(--muted); }
-.q-text { padding:1rem 1.1rem .8rem; font-size:1rem; line-height:1.7; white-space:pre-line; }
-
-/* ── ANSWER AREA ── */
-.answer-area { padding:.8rem 1.1rem 1rem; }
-.answer-label { font-family:'JetBrains Mono',monospace; font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:.5rem; }
-.textarea-wrap { position:relative; }
-textarea.ans-ta {
-  width:100%; min-height:90px; padding:.75rem .9rem; padding-right:3.5rem;
-  border:1.5px solid var(--border); background:var(--paper);
-  font-family:'Crimson Pro',serif; font-size:1rem; color:var(--ink);
-  resize:vertical; outline:none; line-height:1.7; transition:border-color .2s;
-}
-textarea.ans-ta:focus { border-color:var(--accent); }
-textarea.ans-ta.recording { border-color:var(--rec); background:var(--rec-l); }
-textarea.ans-ta.recording-done { border-color:var(--ok); }
-
-/* ── MIC BUTTON ── */
-.mic-btn {
-  position:absolute; right:.55rem; top:.55rem;
-  width:38px; height:38px; border-radius:50%;
-  border:2px solid var(--border);
-  background:var(--card); cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  font-size:1.1rem; transition:all .2s; z-index:2;
-}
-.mic-btn:hover { border-color:var(--accent); background:var(--cream); }
-.mic-btn.active { background:var(--rec); border-color:var(--rec); animation:pulse-btn 1s infinite; }
-.mic-btn.done { background:var(--ok); border-color:var(--ok); }
-@keyframes pulse-btn { 0%,100%{box-shadow:0 0 0 0 rgba(217,32,32,.4)} 50%{box-shadow:0 0 0 8px rgba(217,32,32,0)} }
-
-/* ── STATUS ROW ── */
-.status-row { display:flex; align-items:center; gap:.7rem; margin-top:.5rem; min-height:1.6rem; flex-wrap:wrap; }
-.status-dot { width:8px; height:8px; border-radius:50%; background:var(--border); flex-shrink:0; }
-.status-dot.rec { background:var(--rec); animation:blink 1s infinite; }
-.status-dot.done { background:var(--ok); }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-.status-text { font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--muted); }
-.status-text.rec { color:var(--rec); }
-.status-text.done { color:var(--ok); }
-.interim-text { font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--muted); font-style:italic; flex:1; }
-.word-count { font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--muted); margin-left:auto; }
-.btn-clear { font-family:'JetBrains Mono',monospace; font-size:.68rem; padding:.15rem .5rem; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; }
-.btn-clear:hover { border-color:var(--rec); color:var(--rec); }
+/* ── QUESTION CARDS ── */
+.q-card{background:var(--card);border:1.5px solid var(--border);border-left:4px solid var(--accent);margin-bottom:1.8rem;}
+.q-meta{padding:.55rem 1rem;background:var(--cream);display:flex;justify-content:space-between;align-items:center;}
+.q-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--gold);}
+.q-marks{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);}
+.q-text{padding:1rem 1.1rem .8rem;font-size:1rem;line-height:1.7;white-space:pre-line;}
+.answer-area{padding:.7rem 1.1rem 1rem;}
+.answer-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.5rem;}
+.textarea-wrap{position:relative;}
+textarea.ans-ta{width:100%;min-height:90px;padding:.75rem .9rem;padding-right:3.5rem;border:1.5px solid var(--border);background:var(--paper);font-family:'Crimson Pro',serif;font-size:1rem;color:var(--ink);resize:vertical;outline:none;line-height:1.7;transition:border-color .2s;}
+textarea.ans-ta:focus{border-color:var(--accent);}
+textarea.ans-ta.recording{border-color:var(--rec);background:var(--rec-l);}
+textarea.ans-ta.done{border-color:var(--ok);}
+.mic-btn{position:absolute;right:.55rem;top:.55rem;width:38px;height:38px;border-radius:50%;border:2px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .2s;z-index:2;}
+.mic-btn:hover{border-color:var(--accent);background:var(--cream);}
+.mic-btn.active{background:var(--rec);border-color:var(--rec);animation:pulse-btn 1s infinite;}
+.mic-btn.done{background:var(--ok-l);border-color:var(--ok);}
+@keyframes pulse-btn{0%,100%{box-shadow:0 0 0 0 rgba(217,32,32,.4)}50%{box-shadow:0 0 0 8px rgba(217,32,32,0)}}
+.status-row{display:flex;align-items:center;gap:.7rem;margin-top:.5rem;min-height:1.6rem;flex-wrap:wrap;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0;}
+.status-dot.rec{background:var(--rec);animation:blink 1s infinite;}
+.status-dot.ok{background:var(--ok);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.status-txt{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);}
+.status-txt.rec{color:var(--rec);}
+.status-txt.ok{color:var(--ok);}
+.interim-txt{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);font-style:italic;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.wc{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);margin-left:auto;}
+.btn-clr{font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:.15rem .5rem;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;}
+.btn-clr:hover{border-color:var(--rec);color:var(--rec);}
 
 /* ── GLOBAL MIC BAR ── */
-.global-mic-bar {
-  position:fixed; bottom:0; left:0; right:0;
-  background:var(--ink); padding:.8rem 1.5rem;
-  display:flex; align-items:center; gap:1.2rem;
-  z-index:200;
+.global-bar{position:fixed;bottom:0;left:0;right:0;background:var(--ink);padding:.8rem 1.5rem;display:flex;align-items:center;gap:1.2rem;z-index:200;}
+.gb-inner{flex:1;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.gb-label{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--rule);text-transform:uppercase;letter-spacing:.08em;}
+.gb-hint{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#888;}
+.wave-cont{display:flex;align-items:center;gap:3px;height:28px;}
+.w-bar{width:4px;background:var(--rule);border-radius:2px;height:6px;transition:height .1s;}
+
+/* ══════════════════════════════════════
+   SPELLING SCREEN
+══════════════════════════════════════ */
+.spell-body{max-width:780px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+.spell-top-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.8rem;flex-wrap:wrap;}
+.spell-top-row label{font-family:'JetBrains Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+
+/* Score bar */
+.spell-score-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:1.2rem;}
+.ssb-cell{background:var(--card);border:1px solid var(--border);padding:.65rem .8rem;text-align:center;}
+.ssb-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem;}
+.ssb-val{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--ink);}
+.ssb-val .ssb-sub{font-size:.85rem;color:var(--muted);}
+
+/* Progress bar */
+.prog-outer{height:8px;background:var(--border);overflow:hidden;border-radius:4px;margin-bottom:1.8rem;}
+.prog-inner{height:100%;background:var(--accent);transition:width .5s;border-radius:4px;}
+
+/* Main spelling card */
+.spell-arena{background:var(--card);border:2px solid var(--border);border-radius:0;overflow:hidden;margin-bottom:1.5rem;}
+.spell-arena-top{background:var(--accent);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.sat-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.08em;}
+.sat-word-num{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#fff;}
+
+/* Word display */
+.spell-word-area{padding:2rem 2rem 1.2rem;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;}
+.spell-word{font-family:'JetBrains Mono',monospace;font-size:2.6rem;letter-spacing:.12em;color:var(--accent);line-height:1;}
+.spell-word.blurred{filter:blur(12px);user-select:none;pointer-events:none;}
+.spell-placeholder{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--muted);font-style:italic;}
+.spell-sentence{font-family:'Crimson Pro',serif;font-size:1rem;color:var(--muted);font-style:italic;line-height:1.6;max-width:500px;text-align:center;}
+
+/* Buttons */
+.spell-btns{display:flex;gap:.7rem;justify-content:center;padding:0 2rem 1.5rem;flex-wrap:wrap;}
+.sp-btn{padding:.55rem 1.3rem;border:1.5px solid;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;display:flex;align-items:center;gap:.4rem;}
+.sp-btn.hear{color:var(--accent);border-color:var(--accent);}
+.sp-btn.hear:hover{background:var(--accent);color:#fff;}
+.sp-btn.sentence{color:var(--gold);border-color:var(--gold);font-size:.9rem;}
+.sp-btn.sentence:hover{background:var(--gold);color:#fff;}
+.sp-btn.reveal{color:var(--muted);border-color:var(--muted);}
+.sp-btn.reveal:hover{background:var(--muted);color:#fff;}
+.sp-btn.nxt{color:var(--ok);border-color:var(--ok);}
+.sp-btn.nxt:hover{background:var(--ok);color:#fff;}
+.sp-btn.skip{color:var(--muted);border-color:var(--border);font-size:.9rem;}
+.sp-btn.skip:hover{border-color:var(--muted);}
+
+/* Input area */
+.spell-input-area{padding:0 2rem 2rem;display:flex;flex-direction:column;align-items:center;gap:.6rem;}
+.spell-input{width:100%;max-width:420px;padding:.85rem 1.1rem;border:2px solid var(--border);background:var(--paper);font-family:'JetBrains Mono',monospace;font-size:1.4rem;text-align:center;letter-spacing:.12em;color:var(--ink);outline:none;transition:border-color .2s,background .2s;}
+.spell-input:focus{border-color:var(--accent);}
+.spell-input.correct{border-color:var(--ok);background:var(--ok-l);color:var(--ok);}
+.spell-input.wrong{border-color:var(--rec);background:var(--rec-l);color:var(--rec);}
+.spell-hint{font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:1.4rem;letter-spacing:.1em;}
+.spell-hint.correct{color:var(--ok);}
+.spell-hint.wrong{color:var(--rec);}
+.spell-hint.partial{color:var(--warn);}
+
+/* Word grid */
+.wg-head{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:.9rem;display:flex;align-items:center;justify-content:space-between;}
+.wg-reset{font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:.25rem .65rem;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;}
+.wg-reset:hover{border-color:var(--rec);color:var(--rec);}
+.word-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:.6rem;}
+.wg-chip{padding:.55rem .85rem;border:1.5px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .15s;font-size:.88rem;}
+.wg-chip:hover{border-color:var(--accent);background:var(--cream);}
+.wg-chip.current{border-color:var(--accent);background:var(--cream);font-weight:600;}
+.wg-chip.correct{border-color:var(--ok);background:var(--ok-l);}
+.wg-chip.wrong{border-color:var(--rec);background:var(--rec-l);}
+.wg-chip .wg-dot{width:9px;height:9px;border-radius:50%;background:var(--border);flex-shrink:0;}
+.wg-chip.correct .wg-dot{background:var(--ok);}
+.wg-chip.wrong .wg-dot{background:var(--rec);}
+.wg-chip.current .wg-dot{background:var(--accent);}
+.wg-chip .wg-word{font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.wg-chip .wg-word.hidden-word{filter:blur(5px);user-select:none;}
+
+/* Completion card */
+.completion-card{background:var(--ok-l);border:2px solid var(--ok);padding:2rem;text-align:center;display:none;}
+.completion-card h3{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--ok);margin-bottom:.5rem;}
+.completion-card p{color:var(--muted);font-size:.95rem;}
+.completion-stats{display:flex;gap:1.5rem;justify-content:center;margin:1.2rem 0;flex-wrap:wrap;}
+.cs-item{text-align:center;}
+.cs-num{font-family:'JetBrains Mono',monospace;font-size:2rem;color:var(--ok);font-weight:700;}
+.cs-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;text-transform:uppercase;color:var(--muted);}
+
+@media(max-width:600px){
+  .mode-tab{font-size:.9rem;padding:.7rem .3rem;}
+  .top-bar{flex-direction:column;gap:.4rem;text-align:center;}
+  .spell-score-bar{grid-template-columns:1fr 1fr;}
+  .spell-word{font-size:1.8rem;}
 }
-.global-mic-inner { flex:1; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
-.gm-label { font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--rule); text-transform:uppercase; letter-spacing:.08em; }
-.gm-hint { font-family:'JetBrains Mono',monospace; font-size:.7rem; color:#888; }
-.btn-global-mic {
-  padding:.6rem 1.6rem; border-radius:2px; border:none; cursor:pointer;
-  font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:700;
-  background:#f6d365; color:var(--ink); transition:all .2s; display:flex; align-items:center; gap:.5rem;
-}
-.btn-global-mic.active { background:var(--rec); color:#fff; }
-.btn-global-mic:hover { opacity:.88; }
-
-/* ── WAVEFORM ── */
-.wave-container { display:flex; align-items:center; gap:3px; height:28px; }
-.wave-bar { width:4px; background:var(--rule); border-radius:2px; height:6px; transition:height .1s; }
-
-/* ══════════════════════════════════════════
-   SPELLING TEST MODE
-═══════════════════════════════════════════ */
-#spelling-mode { display:none; }
-.spelling-header { text-align:center; margin-bottom:2rem; }
-.spelling-header h2 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; margin-bottom:.4rem; }
-.spelling-header p { color:var(--muted); font-size:.92rem; }
-.spell-card { background:var(--card); border:2px solid var(--border); padding:2rem; text-align:center; margin-bottom:1.5rem; }
-.spell-word-display { font-family:'JetBrains Mono',monospace; font-size:2.2rem; letter-spacing:.1em; color:var(--accent); margin-bottom:1rem; min-height:3rem; display:flex; align-items:center; justify-content:center; }
-.spell-word-display.hidden { filter:blur(10px); user-select:none; }
-.spell-word-display .placeholder { color:var(--border); font-size:1rem; font-style:italic; }
-.spell-controls { display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.5rem; }
-.btn-spell { padding:.6rem 1.4rem; border:1.5px solid; font-family:'Cormorant Garamond',serif; font-size:1rem; cursor:pointer; transition:all .2s; background:transparent; }
-.btn-hear { color:var(--accent); border-color:var(--accent); }
-.btn-hear:hover { background:var(--accent); color:#fff; }
-.btn-reveal { color:var(--muted); border-color:var(--muted); }
-.btn-reveal:hover { background:var(--muted); color:#fff; }
-.btn-next-word { color:var(--ok); border-color:var(--ok); }
-.btn-next-word:hover { background:var(--ok); color:#fff; }
-.spell-input-wrap { margin:1rem auto; max-width:360px; }
-.spell-input { width:100%; padding:.75rem 1rem; border:2px solid var(--border); background:var(--paper); font-family:'JetBrains Mono',monospace; font-size:1.2rem; text-align:center; letter-spacing:.1em; color:var(--ink); outline:none; }
-.spell-input:focus { border-color:var(--accent); }
-.spell-input.correct { border-color:var(--ok); background:var(--ok-l); color:var(--ok); }
-.spell-input.wrong { border-color:var(--rec); background:var(--rec-l); color:var(--rec); }
-.spell-feedback { font-family:'JetBrains Mono',monospace; font-size:.85rem; margin-top:.5rem; min-height:1.2rem; }
-.spell-feedback.correct { color:var(--ok); }
-.spell-feedback.wrong { color:var(--rec); }
-.spell-score-bar { background:var(--cream); border:1px solid var(--border); padding:.8rem 1.2rem; display:flex; justify-content:space-between; align-items:center; font-family:'JetBrains Mono',monospace; font-size:.8rem; margin-bottom:1.5rem; }
-.spell-progress { height:6px; background:var(--border); overflow:hidden; margin-bottom:1.5rem; }
-.spell-progress-inner { height:100%; background:var(--accent); transition:width .4s; }
-.word-list-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.8rem; }
-.word-chip { padding:.6rem .9rem; border:1px solid var(--border); background:var(--card); font-family:'JetBrains Mono',monospace; font-size:.8rem; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:all .15s; }
-.word-chip:hover { border-color:var(--accent); background:var(--cream); }
-.word-chip .wc-status { width:10px; height:10px; border-radius:50%; background:var(--border); }
-.word-chip.correct .wc-status { background:var(--ok); }
-.word-chip.wrong .wc-status { background:var(--rec); }
-.word-chip.current { border-color:var(--accent); background:var(--cream); }
-
-/* ── RESPONSIVE ── */
-@media(max-width:600px){.mode-tab{font-size:.9rem;padding:.7rem .3rem;}.top-bar{flex-direction:column;gap:.4rem;text-align:center;}}
 </style>
 </head>
 <body>
 
 <div class="top-bar">
   <div class="logo">i<span>Rank</span></div>
-  <div class="badge">Voice Answer · Demo</div>
+  <div class="badge">Voice + Spelling Demo</div>
 </div>
 
-<div class="main">
+<!-- MODE TABS -->
+<div class="mode-tabs">
+  <button class="mode-tab active" id="tab-voice" onclick="switchMode('voice')">🎙️ &nbsp;Voice Answer Mode</button>
+  <button class="mode-tab" id="tab-spell" onclick="switchMode('spell')">📝 &nbsp;Spelling Check Mode</button>
+</div>
 
-  <!-- MODE TABS -->
-  <div class="mode-tabs">
-    <button class="mode-tab active" onclick="switchMode('voice')">🎙️ &nbsp; Voice Answer Mode</button>
-    <button class="mode-tab" onclick="switchMode('spelling')">📝 &nbsp; Spelling Check Mode</button>
+<!-- ══════════════════════════════════
+     VOICE ANSWER SCREEN
+══════════════════════════════════ -->
+<div id="voice-screen" class="show">
+  <div id="browser-notice" class="notice warn" style="display:none">
+    ⚠️ Voice input requires <strong>Google Chrome</strong> or <strong>Microsoft Edge</strong>. Please open this page in Chrome for full voice support.
+  </div>
+  <div class="notice info">
+    💡 Tap 🎙 on any question · Speak your answer · Text appears live · Edit freely · Thrivoy grades the transcript
   </div>
 
-  <!-- BROWSER NOTICE -->
-  <div class="browser-notice" id="browser-notice">
-    ⚠️ Voice features require Google Chrome or Microsoft Edge. Please open this page in Chrome for full voice support.
-  </div>
-
-  <!-- ══════════════════════════════════
-       VOICE ANSWER MODE
-  ═══════════════════════════════════ -->
-  <div id="voice-mode">
+  <div class="voice-body">
     <div class="lang-row">
-      <label>Language / भाषा</label>
+      <label>Language</label>
       <select class="lang-select" id="lang-select">
         <option value="en-IN">English (India)</option>
         <option value="hi-IN">हिंदी (Hindi)</option>
@@ -195,129 +212,245 @@ textarea.ans-ta.recording-done { border-color:var(--ok); }
         <option value="en-GB">English (UK)</option>
         <option value="en-US">English (US)</option>
       </select>
-      <span class="info-pill">Tap 🎙 on any question to speak your answer</span>
+      <span class="info-pill">Answers graded identically whether typed or spoken</span>
     </div>
 
-    <div class="sec-head">
-      Sample Questions <span class="pill">Voice Input Active</span>
-    </div>
-    <p style="font-size:.9rem;color:var(--muted);margin-bottom:1.5rem;">These are sample questions demonstrating voice input. Tap the 🎙 button on any question, speak your answer clearly, and the transcript appears automatically. You can then edit it or re-record.</p>
+    <div class="sec-head">Sample Questions <span class="sec-pill">6 Questions · Voice Ready</span></div>
+    <div id="q-container"></div>
 
-    <!-- QUESTIONS -->
-    <div id="questions-container"></div>
-
-    <div style="background:var(--cream);border:1px solid var(--border);padding:1rem 1.2rem;font-size:.87rem;line-height:1.8;margin-top:.5rem;color:var(--muted);">
-      <strong style="color:var(--ink);">How it works:</strong><br>
-      1. Tap 🎙 — browser asks for microphone permission once.<br>
-      2. Speak your answer naturally. The transcript appears in real-time (greyed italic) as you speak.<br>
-      3. When you stop speaking, the final transcript is committed to the answer box.<br>
-      4. Edit any text you want to correct, or tap 🎙 again to append more.<br>
-      5. Thrivoy grades the transcript exactly as it would grade typed text.
+    <div class="notice info" style="margin:0;">
+      <strong>How it works:</strong> Tap 🎙 → speak naturally → transcript fills the box in real-time →
+      stop speaking to commit → edit freely → tap 🎙 again to add more.
+      Thrivoy grades the text exactly as if you had typed it.
     </div>
   </div>
 
-  <!-- ══════════════════════════════════
-       SPELLING CHECK MODE
-  ═══════════════════════════════════ -->
-  <div id="spelling-mode">
-    <div class="spelling-header">
-      <h2>Spelling Check Mode</h2>
-      <p>The system reads a word aloud. You type what you hear. Completely separate from knowledge assessment.</p>
-    </div>
-
-    <div class="lang-row">
-      <label>Word List</label>
-      <select class="lang-select" id="spell-subject-select" onchange="loadWordList()">
-        <option value="bio8">Class VIII Biology Terms</option>
-        <option value="chem11">Class XI Chemistry Terms</option>
-        <option value="physics11">Class XI Physics Terms</option>
-        <option value="hindi">Hindi Vocabulary</option>
-        <option value="english">English Literature Terms</option>
-      </select>
-      <select class="lang-select" id="spell-voice-select">
-        <option value="en-IN">English Voice</option>
-        <option value="hi-IN">Hindi Voice</option>
-      </select>
-    </div>
-
-    <div class="spell-score-bar">
-      <span>Score: <strong id="spell-score">0</strong> / <strong id="spell-total">0</strong></span>
-      <span>Word <strong id="spell-current-num">0</strong> of <strong id="spell-word-count">0</strong></span>
-      <span id="spell-pct">—</span>
-      <button onclick="resetSpelling()" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:.2rem .6rem;border:1px solid var(--border);background:transparent;cursor:pointer;">Reset</button>
-    </div>
-    <div class="spell-progress"><div class="spell-progress-inner" id="spell-prog-bar" style="width:0%"></div></div>
-
-    <div class="spell-card">
-      <div class="spell-word-display" id="spell-word-display">
-        <span class="placeholder">Select a word list and press "Hear Word" →</span>
+  <!-- Global Mic Status Bar -->
+  <div class="global-bar" id="global-bar">
+    <div class="gb-inner">
+      <span class="gb-label">Voice Input</span>
+      <div class="wave-cont">
+        <div class="w-bar" id="w1"></div><div class="w-bar" id="w2"></div>
+        <div class="w-bar" id="w3"></div><div class="w-bar" id="w4"></div>
+        <div class="w-bar" id="w5"></div><div class="w-bar" id="w6"></div>
+        <div class="w-bar" id="w7"></div>
       </div>
-      <div class="spell-controls">
-        <button class="btn-spell btn-hear" onclick="speakCurrentWord()">🔊 Hear Word</button>
-        <button class="btn-spell btn-hear" onclick="speakCurrentWord(true)" style="font-size:.88rem;padding:.5rem 1rem;">🔊 Hear in Sentence</button>
-        <button class="btn-spell btn-reveal" onclick="revealWord()">👁 Reveal</button>
-      </div>
-      <div class="spell-input-wrap">
-        <input type="text" class="spell-input" id="spell-input" placeholder="Type what you hear…" autocomplete="off" autocorrect="off" spellcheck="false" oninput="checkSpelling()" onkeydown="spellKeydown(event)">
-        <div class="spell-feedback" id="spell-feedback"></div>
-      </div>
-      <div class="spell-controls">
-        <button class="btn-spell btn-next-word" onclick="nextWord()">Next Word →</button>
-      </div>
+      <span class="gb-hint" id="gb-hint">Tap 🎙 on any question to begin</span>
     </div>
-
-    <div class="sec-head" style="margin-top:1rem;">Word List</div>
-    <div class="word-list-grid" id="word-list-grid"></div>
   </div>
-
 </div>
 
-<!-- GLOBAL MIC BAR (Voice Mode only) -->
-<div class="global-mic-bar" id="global-mic-bar">
-  <div class="global-mic-inner">
-    <span class="gm-label">Voice Input</span>
-    <div class="wave-container" id="wave-container">
-      <div class="wave-bar" id="w1"></div><div class="wave-bar" id="w2"></div>
-      <div class="wave-bar" id="w3"></div><div class="wave-bar" id="w4"></div>
-      <div class="wave-bar" id="w5"></div><div class="wave-bar" id="w6"></div>
-      <div class="wave-bar" id="w7"></div>
+<!-- ══════════════════════════════════
+     SPELLING CHECK SCREEN
+══════════════════════════════════ -->
+<div id="spelling-screen">
+  <div class="spell-body">
+
+    <!-- Settings row -->
+    <div class="spell-top-row">
+      <label>Word List</label>
+      <select class="lang-select" id="spell-list" onchange="loadList()">
+        <option value="bio8">Class VIII Biology</option>
+        <option value="chem11">Class XI Chemistry</option>
+        <option value="phy11">Class XI Physics</option>
+        <option value="eng_lit">English Literature Terms</option>
+        <option value="hindi">Hindi Vocabulary</option>
+        <option value="math">Mathematics Terms</option>
+      </select>
+      <label>Read in</label>
+      <select class="lang-select" id="spell-voice">
+        <option value="en-IN">English</option>
+        <option value="hi-IN">Hindi</option>
+      </select>
     </div>
-    <span class="gm-hint" id="gm-hint">Tap 🎙 on any question to start</span>
+
+    <!-- Score dashboard -->
+    <div class="spell-score-bar">
+      <div class="ssb-cell">
+        <div class="ssb-label">Correct</div>
+        <div class="ssb-val" id="sc-correct">0</div>
+      </div>
+      <div class="ssb-cell">
+        <div class="ssb-label">Wrong</div>
+        <div class="ssb-val" id="sc-wrong">0</div>
+      </div>
+      <div class="ssb-cell">
+        <div class="ssb-label">Remaining</div>
+        <div class="ssb-val" id="sc-remain">—</div>
+      </div>
+      <div class="ssb-cell">
+        <div class="ssb-label">Score</div>
+        <div class="ssb-val" id="sc-pct">—%</div>
+      </div>
+    </div>
+    <div class="prog-outer"><div class="prog-inner" id="prog-bar" style="width:0%"></div></div>
+
+    <!-- Arena card -->
+    <div class="spell-arena">
+      <div class="spell-arena-top">
+        <span class="sat-label">Current Word</span>
+        <span class="sat-word-num" id="word-num">Word 1 of 10</span>
+      </div>
+
+      <!-- Word display -->
+      <div class="spell-word-area">
+        <div class="spell-word blurred" id="spell-word-disp">placeholder</div>
+        <div class="spell-placeholder" id="spell-placeholder">Press 🔊 Hear Word to start</div>
+        <div class="spell-sentence" id="spell-sentence" style="display:none"></div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="spell-btns">
+        <button class="sp-btn hear" onclick="hearWord()">🔊 Hear Word</button>
+        <button class="sp-btn sentence" onclick="hearSentence()">🔊 In a Sentence</button>
+        <button class="sp-btn hear" onclick="hearWord(0.5)">🐌 Slow</button>
+        <button class="sp-btn reveal" onclick="revealWord()">👁 Reveal</button>
+        <button class="sp-btn skip" onclick="skipWord()">Skip →</button>
+      </div>
+
+      <!-- Type input -->
+      <div class="spell-input-area">
+        <input type="text" id="spell-input" class="spell-input"
+          placeholder="Type what you heard…"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          oninput="checkSpell()" onkeydown="spellKey(event)">
+        <div class="spell-hint" id="spell-hint"></div>
+        <button class="sp-btn nxt" onclick="nextWord()" style="margin-top:.3rem">Next Word →</button>
+      </div>
+    </div>
+
+    <!-- Completion card (hidden until done) -->
+    <div class="completion-card" id="completion-card">
+      <h3>🎉 Session Complete!</h3>
+      <div class="completion-stats">
+        <div class="cs-item"><div class="cs-num" id="fin-correct">—</div><div class="cs-label">Correct</div></div>
+        <div class="cs-item"><div class="cs-num" id="fin-total">—</div><div class="cs-label">Total</div></div>
+        <div class="cs-item"><div class="cs-num" id="fin-pct">—</div><div class="cs-label">Score</div></div>
+      </div>
+      <p>Knowledge and spelling are assessed separately in iRank.</p>
+      <div style="margin-top:1rem;display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap">
+        <button class="sp-btn hear" onclick="resetSession()">↺ Try Again</button>
+        <button class="sp-btn sentence" onclick="loadList()">↻ New List</button>
+      </div>
+    </div>
+
+    <!-- Word list grid -->
+    <div class="wg-head">
+      Word List
+      <button class="wg-reset" onclick="resetSession()">Reset</button>
+    </div>
+    <div class="word-grid" id="word-grid"></div>
+
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-// SAMPLE QUESTIONS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
+// VOICE ANSWER — SAMPLE QUESTIONS
+// ═══════════════════════════════════════
 const SAMPLE_QS = [
-  { id:'q1', marks:3, subject:'Biology (Class XI)', text:'Explain the process of photosynthesis. What are the two stages? What are the raw materials and products?' },
-  { id:'q2', marks:5, subject:'Physics (Class XI)', text:'State Newton\'s three laws of motion. Give one real-life example for each law.' },
-  { id:'q3', marks:3, subject:'Chemistry (Class XI)', text:'What is Hund\'s rule of maximum multiplicity? Explain with the example of the nitrogen atom (Z = 7).' },
-  { id:'q4', marks:2, subject:'English Literature', text:'Explain the central theme of the poem "Stopping by Woods on a Snowy Evening" by Robert Frost. What does "miles to go before I sleep" symbolise?' },
-  { id:'q5', marks:3, subject:'Mathematics (Class XI)', text:'State the Binomial Theorem. Write the general term (Tr+1) in the expansion of (x + y)ⁿ. Find the 4th term in the expansion of (2x − 1)⁶.' },
-  { id:'q6', marks:2, subject:'हिंदी साहित्य', text:'कबीर की साखियों का मुख्य भाव क्या है? किसी एक साखी का अर्थ अपने शब्दों में समझाइए।' },
+  {id:'q1',marks:3,subject:'Biology · Class XI',text:'Explain the process of photosynthesis. What are the two stages? What are the raw materials and products?'},
+  {id:'q2',marks:5,subject:'Physics · Class XI',text:'State Newton\'s three laws of motion. Give one real-life example for each law.'},
+  {id:'q3',marks:3,subject:'Chemistry · Class XI',text:'What is Hund\'s Rule of Maximum Multiplicity? Explain with the electronic configuration of nitrogen (Z = 7).'},
+  {id:'q4',marks:2,subject:'English Literature',text:'Explain the central theme of "Stopping by Woods on a Snowy Evening" by Robert Frost. What do the words "miles to go before I sleep" symbolise?'},
+  {id:'q5',marks:3,subject:'Mathematics · Class XI',text:'State the Binomial Theorem. Write the general term Tᵣ₊₁ in the expansion of (x + y)ⁿ. Find the 4th term in the expansion of (2x − 1)⁶.'},
+  {id:'q6',marks:2,subject:'हिंदी साहित्य · कक्षा XI',text:'कबीर की साखियों का मुख्य भाव क्या है? किसी एक साखी का अर्थ अपने शब्दों में समझाइए।'},
 ];
 
-// ═══════════════════════════════════════════════════════
-// SPEECH RECOGNITION SETUP
-// ═══════════════════════════════════════════════════════
-const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-let activeRec = null;    // current SpeechRecognition instance
-let activeQId = null;    // which question is being recorded
-let waveAnim = null;
+// ═══════════════════════════════════════
+// SPELLING — WORD LISTS
+// ═══════════════════════════════════════
+const LISTS = {
+  bio8:[
+    {w:'photosynthesis',s:'Plants use photosynthesis to make their own food using sunlight.'},
+    {w:'mitochondria',s:'The mitochondria is called the powerhouse of the cell.'},
+    {w:'stomata',s:'Stomata are tiny pores on the surface of leaves that help in gas exchange.'},
+    {w:'osmosis',s:'Water enters the root cells by the process of osmosis.'},
+    {w:'chromosome',s:'Each human body cell contains 46 chromosomes.'},
+    {w:'respiration',s:'Respiration releases energy from glucose inside cells.'},
+    {w:'chlorophyll',s:'Chlorophyll gives leaves their green colour and absorbs sunlight.'},
+    {w:'metamorphosis',s:'A caterpillar undergoes metamorphosis to become a butterfly.'},
+    {w:'fertilisation',s:'Fertilisation occurs when a sperm cell fuses with an egg cell.'},
+    {w:'transpiration',s:'Plants lose water through transpiration via their leaves.'},
+  ],
+  chem11:[
+    {w:'electronegativity',s:'Fluorine has the highest electronegativity among all elements.'},
+    {w:'stoichiometry',s:'Stoichiometry involves calculating quantities in chemical reactions.'},
+    {w:'hybridisation',s:'Carbon shows sp3 hybridisation in methane molecule.'},
+    {w:'ionisation',s:'The ionisation energy of sodium is lower than that of chlorine.'},
+    {w:'equilibrium',s:'A reversible reaction reaches equilibrium when forward and reverse rates are equal.'},
+    {w:'thermodynamics',s:'Thermodynamics deals with heat, work and energy in chemical systems.'},
+    {w:'nomenclature',s:'IUPAC nomenclature gives a systematic name to every organic compound.'},
+    {w:'crystallisation',s:'Crystallisation is used to purify impure copper sulphate.'},
+    {w:'electrolysis',s:'Electrolysis is used to extract aluminium from its ore.'},
+    {w:'sublimation',s:'Dry ice undergoes sublimation at room temperature.'},
+  ],
+  phy11:[
+    {w:'acceleration',s:'Acceleration is the rate of change of velocity with respect to time.'},
+    {w:'gravitational',s:'The gravitational force between two masses depends on their distance apart.'},
+    {w:'oscillation',s:'A simple pendulum undergoes oscillation about its mean position.'},
+    {w:'centripetal',s:'Centripetal force always acts towards the centre of a circular path.'},
+    {w:'displacement',s:'Displacement is a vector quantity measured from initial to final position.'},
+    {w:'thermodynamic',s:'The thermodynamic process can be isothermal or adiabatic.'},
+    {w:'interference',s:'Constructive interference occurs when two waves are in phase.'},
+    {w:'momentum',s:'Momentum is the product of the mass and velocity of an object.'},
+    {w:'coefficient',s:'The coefficient of friction depends on the surfaces in contact.'},
+    {w:'electromagnetic',s:'Electromagnetic waves do not need a medium to travel.'},
+  ],
+  eng_lit:[
+    {w:'metaphor',s:'Life is a journey is a classic example of a metaphor.'},
+    {w:'protagonist',s:'The protagonist of the novel faces many difficult challenges.'},
+    {w:'soliloquy',s:'Hamlet\'s "To be or not to be" is one of the most famous soliloquies in literature.'},
+    {w:'alliteration',s:'Peter Piper picked a peck of pickled peppers is an example of alliteration.'},
+    {w:'onomatopoeia',s:'Words like buzz and hiss are examples of onomatopoeia.'},
+    {w:'denouement',s:'The denouement of the story resolved all the major conflicts.'},
+    {w:'juxtaposition',s:'The poet uses juxtaposition to highlight the contrast between youth and old age.'},
+    {w:'euphemism',s:'Passed away is a common euphemism for the word died.'},
+    {w:'personification',s:'The wind whispered through the trees is an example of personification.'},
+    {w:'hyperbole',s:'I have told you a million times is an example of hyperbole.'},
+  ],
+  hindi:[
+    {w:'महाकाव्य',s:'रामायण और महाभारत भारत के प्रसिद्ध महाकाव्य हैं।'},
+    {w:'व्याकरण',s:'हिंदी व्याकरण में संज्ञा, सर्वनाम और क्रिया का अध्ययन होता है।'},
+    {w:'पर्यावरण',s:'पर्यावरण की रक्षा करना हमारा नैतिक कर्तव्य है।'},
+    {w:'स्वतन्त्रता',s:'भारत को 1947 में स्वतन्त्रता मिली थी।'},
+    {w:'अलंकार',s:'उपमा और रूपक काव्य के प्रमुख अलंकार हैं।'},
+    {w:'प्रतिपाद्य',s:'कविता का प्रतिपाद्य उसके केंद्रीय भाव को स्पष्ट करता है।'},
+    {w:'साहित्यिक',s:'साहित्यिक लेखन में भावों की अभिव्यक्ति महत्वपूर्ण है।'},
+    {w:'परिस्थिति',s:'परिस्थिति के अनुसार हमें अपना व्यवहार बदलना चाहिए।'},
+    {w:'उपसर्ग',s:'अनुशासन में अनु एक उपसर्ग है।'},
+    {w:'राष्ट्रीयता',s:'राष्ट्रीयता की भावना हम सभी को एकजुट करती है।'},
+  ],
+  math:[
+    {w:'hypotenuse',s:'In a right triangle, the hypotenuse is the longest side.'},
+    {w:'polynomial',s:'A polynomial is an expression consisting of variables and coefficients.'},
+    {w:'coefficient',s:'In the expression 5x squared, the coefficient of x squared is 5.'},
+    {w:'perpendicular',s:'Two lines that meet at 90 degrees are called perpendicular.'},
+    {w:'circumference',s:'The circumference of a circle is two pi times the radius.'},
+    {w:'denominator',s:'In the fraction three quarters, four is the denominator.'},
+    {w:'parallelogram',s:'A rectangle is a special type of parallelogram.'},
+    {w:'trigonometry',s:'Trigonometry deals with the relationships between the angles and sides of triangles.'},
+    {w:'asymptote',s:'A curve that approaches a line but never touches it is called an asymptote.'},
+    {w:'simultaneous',s:'We solve simultaneous equations to find values that satisfy both equations.'},
+  ],
+};
 
-function getLang() { return document.getElementById('lang-select').value; }
+// ═══════════════════════════════════════
+// SPEECH RECOGNITION
+// ═══════════════════════════════════════
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let activeRec=null, activeQid=null, waveTimer=null;
 
-// ═══════════════════════════════════════════════════════
-// BUILD QUESTION CARDS
-// ═══════════════════════════════════════════════════════
-function buildQuestions() {
-  const c = document.getElementById('questions-container');
-  c.innerHTML = '';
-  SAMPLE_QS.forEach(q => {
-    c.innerHTML += `
-    <div class="q-card" id="card-${q.id}">
+function getLang(){ return document.getElementById('lang-select').value; }
+
+function buildQuestions(){
+  const c=document.getElementById('q-container');
+  c.innerHTML='';
+  SAMPLE_QS.forEach(q=>{
+    const card=document.createElement('div');
+    card.className='q-card';
+    card.id='card-'+q.id;
+    card.innerHTML=`
       <div class="q-meta">
         <span class="q-num">${q.subject}</span>
         <span class="q-marks">[${q.marks} mark${q.marks>1?'s':''}]</span>
@@ -327,407 +460,314 @@ function buildQuestions() {
         <div class="answer-label">Your Answer</div>
         <div class="textarea-wrap">
           <textarea class="ans-ta" id="ta-${q.id}" rows="4"
-            placeholder="Speak using 🎙 or type here…"
-            oninput="updateWordCount('${q.id}')"></textarea>
+            placeholder="Speak 🎙 or type your answer here…"
+            oninput="updateWC('${q.id}')"></textarea>
           <button class="mic-btn" id="mic-${q.id}" onclick="toggleRec('${q.id}')" title="Speak your answer">🎙</button>
         </div>
         <div class="status-row">
           <div class="status-dot" id="dot-${q.id}"></div>
-          <span class="status-text" id="st-${q.id}">Ready</span>
-          <span class="interim-text" id="interim-${q.id}"></span>
-          <span class="word-count" id="wc-${q.id}">0 words</span>
-          <button class="btn-clear" onclick="clearAnswer('${q.id}')">Clear</button>
+          <span class="status-txt" id="st-${q.id}">Ready to record</span>
+          <span class="interim-txt" id="int-${q.id}"></span>
+          <span class="wc" id="wc-${q.id}">0 words</span>
+          <button class="btn-clr" onclick="clearAns('${q.id}')">Clear</button>
         </div>
-      </div>
-    </div>`;
+      </div>`;
+    c.appendChild(card);
   });
 }
 
-// ═══════════════════════════════════════════════════════
-// TOGGLE RECORDING FOR A QUESTION
-// ═══════════════════════════════════════════════════════
-function toggleRec(qid) {
-  if (!SpeechRec) {
-    document.getElementById('browser-notice').classList.add('show');
-    return;
-  }
-
-  // If this question is already recording → stop
-  if (activeQId === qid && activeRec) {
-    activeRec.stop();
-    return;
-  }
-
-  // If another question is recording → stop it first
-  if (activeRec) { activeRec.stop(); }
-
+function toggleRec(qid){
+  if(!SR){ document.getElementById('browser-notice').style.display='block'; return; }
+  if(activeQid===qid && activeRec){ activeRec.stop(); return; }
+  if(activeRec){ activeRec.stop(); }
   startRec(qid);
 }
 
-function startRec(qid) {
-  activeQId = qid;
-  const rec = new SpeechRec();
-  activeRec = rec;
+function startRec(qid){
+  activeQid=qid;
+  const rec=new SR();
+  activeRec=rec;
+  rec.continuous=true;
+  rec.interimResults=true;
+  rec.lang=getLang();
 
-  rec.continuous = true;
-  rec.interimResults = true;
-  rec.lang = getLang();
-  rec.maxAlternatives = 1;
+  const ta=document.getElementById('ta-'+qid);
+  const existingText=ta.value.trim();
 
-  const ta    = document.getElementById(`ta-${qid}`);
-  const mic   = document.getElementById(`mic-${qid}`);
-  const dot   = document.getElementById(`dot-${qid}`);
-  const st    = document.getElementById(`st-${qid}`);
-  const inter = document.getElementById(`interim-${qid}`);
-
-  const existingText = ta.value.trim();
-
-  setRecState(qid, 'recording');
-
-  rec.onresult = e => {
-    let interim = '';
-    let final   = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      const t = e.results[i][0].transcript;
-      if (e.results[i].isFinal) final += t + ' ';
-      else interim += t;
+  setRecState(qid,'rec');
+  rec.onresult=e=>{
+    let interim='', fin='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      e.results[i].isFinal ? fin+=t+' ' : interim+=t;
     }
-    inter.textContent = interim ? `"${interim}"` : '';
-    if (final) {
-      ta.value = (existingText ? existingText + ' ' : '') + final.trim();
-      updateWordCount(qid);
+    const intEl=document.getElementById('int-'+qid);
+    if(intEl) intEl.textContent=interim?`"${interim}"…`:'';
+    if(fin){
+      ta.value=(existingText?existingText+' ':'')+fin.trim();
+      updateWC(qid);
     }
   };
-
-  rec.onerror = e => {
-    if (e.error === 'not-allowed') {
-      alert('Microphone access denied. Please allow microphone in browser settings.');
-    }
-    stopRec(qid, true);
-  };
-
-  rec.onend = () => { stopRec(qid, false); };
-
+  rec.onerror=e=>{ if(e.error==='not-allowed')alert('Mic access denied. Please allow microphone in browser settings.'); stopRec(qid,true); };
+  rec.onend=()=>stopRec(qid,false);
   rec.start();
   startWave();
-  document.getElementById('gm-hint').textContent = `Recording Q for "${qid}"…`;
+  document.getElementById('gb-hint').textContent='🔴 Recording…';
 }
 
-function stopRec(qid, error) {
-  if (activeRec) { try { activeRec.stop(); } catch(e){} activeRec = null; }
-  activeQId = null;
-  setRecState(qid, error ? 'error' : 'done');
+function stopRec(qid,err){
+  try{ if(activeRec)activeRec.stop(); }catch(e){}
+  activeRec=null; activeQid=null;
+  setRecState(qid,err?'idle':'done');
   stopWave();
-  document.getElementById('gm-hint').textContent = 'Tap 🎙 on any question to start';
-  const inter = document.getElementById(`interim-${qid}`);
-  if (inter) inter.textContent = '';
+  document.getElementById('gb-hint').textContent='Tap 🎙 on any question to begin';
+  const intEl=document.getElementById('int-'+qid);
+  if(intEl) intEl.textContent='';
 }
 
-function setRecState(qid, state) {
-  const ta  = document.getElementById(`ta-${qid}`);
-  const mic = document.getElementById(`mic-${qid}`);
-  const dot = document.getElementById(`dot-${qid}`);
-  const st  = document.getElementById(`st-${qid}`);
-  if(!ta) return;
-  ta.classList.remove('recording','recording-done');
+function setRecState(qid,state){
+  const ta=document.getElementById('ta-'+qid);
+  const mic=document.getElementById('mic-'+qid);
+  const dot=document.getElementById('dot-'+qid);
+  const st=document.getElementById('st-'+qid);
+  if(!ta)return;
+  ta.classList.remove('recording','done');
   mic.classList.remove('active','done');
-  dot.className = 'status-dot';
-  if (state === 'recording') {
-    ta.classList.add('recording');
-    mic.classList.add('active');
-    mic.textContent = '⏹';
-    dot.classList.add('rec');
-    st.textContent = 'Recording…';
-    st.className = 'status-text rec';
-  } else if (state === 'done') {
-    ta.classList.add('recording-done');
-    mic.classList.add('done');
-    mic.textContent = '✓';
-    dot.classList.add('done');
-    st.textContent = 'Recorded';
-    st.className = 'status-text done';
-    setTimeout(() => { mic.textContent='🎙'; mic.classList.remove('done'); }, 2000);
+  dot.className='status-dot';
+  st.className='status-txt';
+  if(state==='rec'){
+    ta.classList.add('recording'); mic.classList.add('active'); mic.textContent='⏹';
+    dot.classList.add('rec'); st.textContent='Recording…'; st.classList.add('rec');
+  } else if(state==='done'){
+    ta.classList.add('done'); mic.classList.add('done'); mic.textContent='✓';
+    dot.classList.add('ok'); st.textContent='Answer recorded'; st.classList.add('ok');
+    setTimeout(()=>{ mic.textContent='🎙'; mic.classList.remove('done'); },2500);
   } else {
-    mic.textContent = '🎙';
-    st.textContent = 'Ready';
-    st.className = 'status-text';
+    mic.textContent='🎙'; st.textContent='Ready to record';
   }
 }
 
-function clearAnswer(qid) {
-  const ta = document.getElementById(`ta-${qid}`);
-  ta.value = '';
-  ta.classList.remove('recording','recording-done');
-  updateWordCount(qid);
-  document.getElementById(`st-${qid}`).textContent = 'Ready';
-  document.getElementById(`st-${qid}`).className = 'status-text';
+function clearAns(qid){
+  const ta=document.getElementById('ta-'+qid);
+  ta.value=''; ta.classList.remove('recording','done');
+  updateWC(qid);
+  const st=document.getElementById('st-'+qid);
+  st.textContent='Ready to record'; st.className='status-txt';
+  document.getElementById('dot-'+qid).className='status-dot';
 }
 
-function updateWordCount(qid) {
-  const ta = document.getElementById(`ta-${qid}`);
-  const wc = ta.value.trim() === '' ? 0 : ta.value.trim().split(/\s+/).length;
-  document.getElementById(`wc-${qid}`).textContent = `${wc} word${wc!==1?'s':''}`;
+function updateWC(qid){
+  const ta=document.getElementById('ta-'+qid);
+  const n=ta.value.trim()===''?0:ta.value.trim().split(/\s+/).length;
+  document.getElementById('wc-'+qid).textContent=n+' word'+(n!==1?'s':'');
 }
 
-// ═══════════════════════════════════════════════════════
-// WAVEFORM ANIMATION
-// ═══════════════════════════════════════════════════════
-function startWave() {
-  const bars = [1,2,3,4,5,6,7].map(n => document.getElementById('w'+n));
-  waveAnim = setInterval(() => {
-    bars.forEach(b => {
-      b.style.height = (6 + Math.random() * 20) + 'px';
-    });
-  }, 120);
+function startWave(){
+  const bars=[1,2,3,4,5,6,7].map(n=>document.getElementById('w'+n));
+  waveTimer=setInterval(()=>bars.forEach(b=>{ if(b) b.style.height=(5+Math.random()*22)+'px'; }),110);
 }
-function stopWave() {
-  clearInterval(waveAnim);
-  [1,2,3,4,5,6,7].forEach(n => {
-    const b = document.getElementById('w'+n);
-    if(b) b.style.height = '6px';
-  });
+function stopWave(){
+  clearInterval(waveTimer);
+  [1,2,3,4,5,6,7].forEach(n=>{ const b=document.getElementById('w'+n); if(b) b.style.height='6px'; });
 }
 
-// ═══════════════════════════════════════════════════════
-// SPELLING TEST
-// ═══════════════════════════════════════════════════════
-const WORD_LISTS = {
-  bio8: [
-    { word:'photosynthesis', sentence:'Plants use photosynthesis to make their own food.' },
-    { word:'mitochondria', sentence:'The mitochondria is the powerhouse of the cell.' },
-    { word:'stomata', sentence:'Stomata are tiny pores on the surface of leaves.' },
-    { word:'osmosis', sentence:'Water enters the root cells by the process of osmosis.' },
-    { word:'chromosome', sentence:'Each human cell contains 46 chromosomes.' },
-    { word:'respiration', sentence:'Respiration releases energy from glucose.' },
-    { word:'chlorophyll', sentence:'Chlorophyll gives leaves their green colour.' },
-    { word:'metamorphosis', sentence:'A caterpillar undergoes metamorphosis to become a butterfly.' },
-    { word:'fertilisation', sentence:'Fertilisation occurs when a sperm cell fuses with an egg cell.' },
-    { word:'excretion', sentence:'The kidneys carry out excretion to remove waste from the body.' },
-  ],
-  chem11: [
-    { word:'electronegativity', sentence:'Fluorine has the highest electronegativity of all elements.' },
-    { word:'stoichiometry', sentence:'Stoichiometry involves calculating quantities in chemical reactions.' },
-    { word:'hybridisation', sentence:'Carbon shows sp3 hybridisation in methane.' },
-    { word:'ionisation', sentence:'The ionisation energy of sodium is lower than that of chlorine.' },
-    { word:'equilibrium', sentence:'A reversible reaction reaches equilibrium when forward and reverse rates are equal.' },
-    { word:'thermodynamics', sentence:'Thermodynamics deals with heat, work and energy in chemical systems.' },
-    { word:'nomenclature', sentence:'IUPAC nomenclature gives a systematic name to every organic compound.' },
-    { word:'molarity', sentence:'Molarity is the number of moles of solute per litre of solution.' },
-    { word:'crystallisation', sentence:'Crystallisation is used to purify impure copper sulphate.' },
-    { word:'sublimation', sentence:'Dry ice undergoes sublimation at room temperature.' },
-  ],
-  physics11: [
-    { word:'acceleration', sentence:'Acceleration is the rate of change of velocity.' },
-    { word:'gravitational', sentence:'The gravitational force between two masses depends on their distance.' },
-    { word:'oscillation', sentence:'A pendulum undergoes oscillation about its mean position.' },
-    { word:'centripetal', sentence:'Centripetal force acts towards the centre of a circular path.' },
-    { word:'displacement', sentence:'Displacement is a vector quantity measured from initial to final position.' },
-    { word:'thermodynamic', sentence:'The thermodynamic process in an ideal gas can be isothermal or adiabatic.' },
-    { word:'interference', sentence:'Constructive interference occurs when two waves are in phase.' },
-    { word:'refraction', sentence:'Refraction is the bending of light as it passes from one medium to another.' },
-    { word:'momentum', sentence:'Momentum is the product of mass and velocity.' },
-    { word:'coefficient', sentence:'The coefficient of friction depends on the surfaces in contact.' },
-  ],
-  hindi: [
-    { word:'महाकाव्य', sentence:'रामायण और महाभारत भारत के प्रसिद्ध महाकाव्य हैं।' },
-    { word:'प्रत्यय', sentence:'शब्द के अंत में जुड़ने वाले अक्षर को प्रत्यय कहते हैं।' },
-    { word:'अनुच्छेद', sentence:'परीक्षा में एक अनुच्छेद लिखना अनिवार्य है।' },
-    { word:'व्याकरण', sentence:'हिंदी व्याकरण में संज्ञा, सर्वनाम और क्रिया का अध्ययन होता है।' },
-    { word:'पर्यावरण', sentence:'पर्यावरण की रक्षा करना हमारा कर्तव्य है।' },
-    { word:'स्वतन्त्रता', sentence:'भारत को 1947 में स्वतन्त्रता मिली थी।' },
-    { word:'अलंकार', sentence:'उपमा और रूपक काव्य के प्रमुख अलंकार हैं।' },
-    { word:'प्रतिपाद्य', sentence:'कविता का प्रतिपाद्य उसके केंद्रीय भाव को स्पष्ट करता है।' },
-    { word:'उद्धरण', sentence:'परीक्षा में उचित उद्धरण देने से उत्तर अच्छा बनता है।' },
-    { word:'साहित्यिक', sentence:'साहित्यिक लेखन में भावों की अभिव्यक्ति महत्वपूर्ण है।' },
-  ],
-  english: [
-    { word:'metaphor', sentence:'Life is a journey is an example of a metaphor.' },
-    { word:'protagonist', sentence:'The protagonist of the novel faces many challenges.' },
-    { word:'soliloquy', sentence:'Hamlet\'s "To be or not to be" is a famous soliloquy.' },
-    { word:'alliteration', sentence:'Alliteration repeats the same initial consonant sound.' },
-    { word:'onomatopoeia', sentence:'Words like buzz and hiss are examples of onomatopoeia.' },
-    { word:'denouement', sentence:'The denouement of the story resolved all conflicts.' },
-    { word:'anthropomorphism', sentence:'Giving human traits to animals is called anthropomorphism.' },
-    { word:'juxtaposition', sentence:'The poet uses juxtaposition to highlight the contrast between youth and age.' },
-    { word:'didactic', sentence:'Aesop\'s fables are didactic — they teach moral lessons.' },
-    { word:'euphemism', sentence:'Passed away is a euphemism for died.' },
-  ],
-};
+// ═══════════════════════════════════════
+// SPELLING ENGINE
+// ═══════════════════════════════════════
+let words=[], idx=0, correct=0, wrong=0, results={}, revealed=false;
 
-let spellWords = [];
-let spellIdx   = 0;
-let spellScore = 0;
-let spellResults = {};
-let spellRevealed = false;
-
-function loadWordList() {
-  const sub = document.getElementById('spell-subject-select').value;
-  spellWords   = [...WORD_LISTS[sub]];
-  spellIdx     = 0;
-  spellScore   = 0;
-  spellResults = {};
-  spellRevealed = false;
-  updateSpellUI();
-  renderWordGrid();
-  document.getElementById('spell-input').value = '';
-  document.getElementById('spell-input').className = 'spell-input';
-  document.getElementById('spell-feedback').textContent = '';
-  document.getElementById('spell-word-display').innerHTML = '<span class="placeholder">Press "Hear Word" to begin →</span>';
+function loadList(){
+  const key=document.getElementById('spell-list').value;
+  words=[...LISTS[key]];
+  idx=0; correct=0; wrong=0; results={}; revealed=false;
+  document.getElementById('completion-card').style.display='none';
+  document.getElementById('spell-input').value='';
+  document.getElementById('spell-input').className='spell-input';
+  document.getElementById('spell-hint').textContent='';
+  document.getElementById('spell-hint').className='spell-hint';
+  document.getElementById('spell-sentence').style.display='none';
+  document.getElementById('spell-word-disp').className='spell-word blurred';
+  document.getElementById('spell-word-disp').textContent=words[0]?.w||'';
+  document.getElementById('spell-placeholder').textContent='Press 🔊 Hear Word to start';
+  document.getElementById('spell-placeholder').style.display='block';
+  renderGrid();
+  updateDash();
 }
 
-function updateSpellUI() {
-  document.getElementById('spell-score').textContent   = spellScore;
-  document.getElementById('spell-total').textContent   = Object.keys(spellResults).length;
-  document.getElementById('spell-current-num').textContent = spellIdx + 1;
-  document.getElementById('spell-word-count').textContent  = spellWords.length;
-  const done = Object.keys(spellResults).length;
-  const pct  = done > 0 ? Math.round((spellScore/done)*100) : 0;
-  document.getElementById('spell-pct').textContent = done > 0 ? `${pct}% correct` : '—';
-  document.getElementById('spell-prog-bar').style.width = (done/spellWords.length*100)+'%';
+function updateDash(){
+  const done=Object.keys(results).length;
+  document.getElementById('sc-correct').textContent=correct;
+  document.getElementById('sc-wrong').textContent=wrong;
+  document.getElementById('sc-remain').textContent=Math.max(0,words.length-done);
+  const pct=done>0?Math.round((correct/done)*100):0;
+  document.getElementById('sc-pct').textContent=done>0?pct+'%':'—%';
+  document.getElementById('prog-bar').style.width=(done/words.length*100)+'%';
+  document.getElementById('word-num').textContent=`Word ${Math.min(idx+1,words.length)} of ${words.length}`;
 }
 
-function renderWordGrid() {
-  const g = document.getElementById('word-list-grid');
-  g.innerHTML = spellWords.map((w,i) => {
-    const res   = spellResults[i];
-    const cls   = res===true?'correct':res===false?'wrong':i===spellIdx?'current':'';
-    return `<div class="word-chip ${cls}" onclick="jumpToWord(${i})">
-      <span>${i+1}. ${i<=spellIdx||res!==undefined ? w.word : '• • • •'}</span>
-      <span class="wc-status"></span>
+function renderGrid(){
+  const g=document.getElementById('word-grid');
+  g.innerHTML=words.map((item,i)=>{
+    const res=results[i];
+    const cls=res===true?'correct':res===false?'wrong':i===idx?'current':'';
+    const hidden=res===undefined && i>idx;
+    return `<div class="wg-chip ${cls}" onclick="jumpTo(${i})">
+      <span class="wg-word${hidden?' hidden-word':''}">${i+1}. ${item.w}</span>
+      <span class="wg-dot"></span>
     </div>`;
   }).join('');
 }
 
-function jumpToWord(i) {
-  spellIdx = i;
-  spellRevealed = false;
-  document.getElementById('spell-input').value = '';
-  document.getElementById('spell-input').className = 'spell-input';
-  document.getElementById('spell-feedback').textContent = '';
-  document.getElementById('spell-word-display').innerHTML = '<span class="placeholder">Press "Hear Word" →</span>';
-  renderWordGrid();
-  updateSpellUI();
+function jumpTo(i){
+  idx=i; revealed=false;
+  document.getElementById('spell-input').value='';
+  document.getElementById('spell-input').className='spell-input';
+  document.getElementById('spell-hint').textContent='';
+  document.getElementById('spell-hint').className='spell-hint';
+  document.getElementById('spell-sentence').style.display='none';
+  document.getElementById('spell-word-disp').className='spell-word blurred';
+  document.getElementById('spell-word-disp').textContent=words[i].w;
+  document.getElementById('spell-placeholder').textContent='Press 🔊 Hear Word to start';
+  document.getElementById('spell-placeholder').style.display='block';
+  renderGrid(); updateDash();
+  hearWord();
 }
 
-function speakCurrentWord(inSentence = false) {
-  if (!spellWords.length) return;
-  const w = spellWords[spellIdx];
-  const voice = document.getElementById('spell-voice-select').value;
-  const text  = inSentence ? w.sentence : w.word;
-
+function speak(text, rate=0.8){
   window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang  = voice;
-  utt.rate  = inSentence ? 0.9 : 0.75;
-  utt.pitch = 1;
-  window.speechSynthesis.speak(utt);
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=document.getElementById('spell-voice').value;
+  u.rate=rate; u.pitch=1;
+  window.speechSynthesis.speak(u);
+  return u;
+}
 
-  // Show blank display while playing
-  document.getElementById('spell-word-display').innerHTML = '<span class="placeholder">Listening… 🎵</span>';
-  utt.onend = () => {
-    if (!spellRevealed) {
-      document.getElementById('spell-word-display').innerHTML = '<span class="placeholder">Now type what you heard ↓</span>';
+function hearWord(rate=0.8){
+  if(!words.length)return;
+  document.getElementById('spell-placeholder').textContent='Listening… 🎵';
+  document.getElementById('spell-sentence').style.display='none';
+  const u=speak(words[idx].w, rate);
+  u.onend=()=>{
+    if(!revealed){
+      document.getElementById('spell-placeholder').textContent='Type what you heard ↓';
     }
     document.getElementById('spell-input').focus();
   };
 }
 
-function revealWord() {
-  spellRevealed = true;
-  const w = spellWords[spellIdx];
-  const disp = document.getElementById('spell-word-display');
-  disp.className = 'spell-word-display';
-  disp.textContent = w.word;
+function hearSentence(){
+  if(!words.length)return;
+  const s=words[idx].s;
+  document.getElementById('spell-sentence').textContent=`"${s}"`;
+  document.getElementById('spell-sentence').style.display='block';
+  document.getElementById('spell-placeholder').style.display='none';
+  speak(s, 0.85);
+  setTimeout(()=>document.getElementById('spell-input').focus(),200);
 }
 
-function checkSpelling() {
-  const inp  = document.getElementById('spell-input');
-  const fb   = document.getElementById('spell-feedback');
-  const typed = inp.value.trim().toLowerCase();
-  const correct = spellWords[spellIdx].word.toLowerCase();
+function revealWord(){
+  revealed=true;
+  document.getElementById('spell-word-disp').className='spell-word';
+  document.getElementById('spell-placeholder').style.display='none';
+  document.getElementById('spell-input').focus();
+}
 
-  if (!typed) {
-    inp.className = 'spell-input';
-    fb.textContent = '';
-    return;
-  }
-  // Live feedback as they type
-  if (typed === correct) {
-    inp.className = 'spell-input correct';
-    fb.textContent = '✓ Correct!';
-    fb.className = 'spell-feedback correct';
-    if (spellResults[spellIdx] === undefined) {
-      spellResults[spellIdx] = true;
-      spellScore++;
-    }
-    renderWordGrid();
-    updateSpellUI();
-    // Auto-advance after 1.2s
-    setTimeout(() => nextWord(), 1200);
+function checkSpell(){
+  if(!words.length)return;
+  const inp=document.getElementById('spell-input');
+  const hint=document.getElementById('spell-hint');
+  const typed=inp.value.trim().toLowerCase();
+  const target=words[idx].w.toLowerCase();
+
+  if(!typed){ inp.className='spell-input'; hint.textContent=''; hint.className='spell-hint'; return; }
+
+  if(typed===target){
+    inp.className='spell-input correct';
+    hint.textContent='✓ Correct!'; hint.className='spell-hint correct';
+    // Reveal the word
+    document.getElementById('spell-word-disp').className='spell-word';
+    document.getElementById('spell-placeholder').style.display='none';
+    if(results[idx]===undefined){ results[idx]=true; correct++; }
+    renderGrid(); updateDash();
+    setTimeout(()=>nextWord(),1100);
   } else {
-    inp.className = 'spell-input wrong';
-    // Show how many letters are correct
-    let hint = '';
-    for (let i = 0; i < typed.length && i < correct.length; i++) {
-      hint += typed[i] === correct[i] ? '✓' : '✗';
-    }
-    fb.textContent = hint || '';
-    fb.className = 'spell-feedback wrong';
-    if (spellResults[spellIdx] === undefined && typed.length >= correct.length) {
-      spellResults[spellIdx] = false;
-      renderWordGrid();
-      updateSpellUI();
+    // Show letter-by-letter match
+    let hint_str='';
+    const maxLen=Math.min(typed.length, target.length);
+    for(let i=0;i<maxLen;i++) hint_str+= typed[i]===target[i]?'✓':'✗';
+    if(typed.length>target.length) for(let i=maxLen;i<typed.length;i++) hint_str+='✗';
+
+    inp.className='spell-input wrong';
+    hint.textContent=hint_str; hint.className='spell-hint wrong';
+
+    // Mark wrong after full word attempted
+    if(typed.length>=target.length && results[idx]===undefined){
+      results[idx]=false; wrong++;
+      // Reveal the word so student can see correct spelling
+      document.getElementById('spell-word-disp').className='spell-word';
+      document.getElementById('spell-placeholder').style.display='none';
+      renderGrid(); updateDash();
     }
   }
 }
 
-function spellKeydown(e) {
-  if (e.key === 'Enter') nextWord();
+function spellKey(e){
+  if(e.key==='Enter') nextWord();
 }
 
-function nextWord() {
-  if (spellIdx < spellWords.length - 1) {
-    spellIdx++;
-    spellRevealed = false;
-    document.getElementById('spell-input').value = '';
-    document.getElementById('spell-input').className = 'spell-input';
-    document.getElementById('spell-feedback').textContent = '';
-    document.getElementById('spell-word-display').innerHTML = '<span class="placeholder">Press "Hear Word" →</span>';
-    renderWordGrid();
-    updateSpellUI();
-    speakCurrentWord(); // auto-play next
+function skipWord(){
+  if(results[idx]===undefined){ results[idx]=false; wrong++; }
+  renderGrid(); updateDash();
+  nextWord();
+}
+
+function nextWord(){
+  if(idx<words.length-1){
+    idx++; revealed=false;
+    document.getElementById('spell-input').value='';
+    document.getElementById('spell-input').className='spell-input';
+    document.getElementById('spell-hint').textContent='';
+    document.getElementById('spell-hint').className='spell-hint';
+    document.getElementById('spell-sentence').style.display='none';
+    document.getElementById('spell-word-disp').className='spell-word blurred';
+    document.getElementById('spell-word-disp').textContent=words[idx].w;
+    document.getElementById('spell-placeholder').textContent='Press 🔊 Hear Word to start';
+    document.getElementById('spell-placeholder').style.display='block';
+    renderGrid(); updateDash();
+    hearWord();
   } else {
-    // All done
-    const total  = spellWords.length;
-    const done   = Object.keys(spellResults).length;
-    const pct    = Math.round((spellScore/total)*100);
-    document.getElementById('spell-word-display').innerHTML = `<span style="color:var(--ok);font-size:1.5rem;">✓ ${spellScore}/${total} correct (${pct}%)</span>`;
+    // Session complete
+    const done=words.length;
+    const pct=Math.round((correct/done)*100);
+    document.getElementById('fin-correct').textContent=correct;
+    document.getElementById('fin-total').textContent=done;
+    document.getElementById('fin-pct').textContent=pct+'%';
+    document.getElementById('completion-card').style.display='block';
+    document.getElementById('completion-card').scrollIntoView({behavior:'smooth'});
   }
 }
 
-function resetSpelling() {
-  loadWordList();
-}
+function resetSession(){ loadList(); }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // MODE SWITCH
-// ═══════════════════════════════════════════════════════
-function switchMode(mode) {
-  document.querySelectorAll('.mode-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&mode==='voice')||(i===1&&mode==='spelling')));
-  document.getElementById('voice-mode').style.display   = mode==='voice'   ? '' : 'none';
-  document.getElementById('spelling-mode').style.display = mode==='spelling'? '' : 'none';
-  document.getElementById('global-mic-bar').style.display = mode==='voice' ? '' : 'none';
+// ═══════════════════════════════════════
+function switchMode(mode){
+  document.getElementById('tab-voice').classList.toggle('active', mode==='voice');
+  document.getElementById('tab-spell').classList.toggle('active', mode==='spell');
+  document.getElementById('voice-screen').classList.toggle('show', mode==='voice');
+  document.getElementById('spelling-screen').classList.toggle('show', mode==='spell');
+  document.getElementById('global-bar').style.display=mode==='voice'?'flex':'none';
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => {
-  if (!SpeechRec) {
-    document.getElementById('browser-notice').classList.add('show');
-  }
+// ═══════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  if(!SR) document.getElementById('browser-notice').style.display='block';
   buildQuestions();
-  loadWordList();
+  loadList();
+  switchMode('voice');
 });
 </script>
 </body>
