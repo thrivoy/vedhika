@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Class VIII Mathematics Set 1 – ICSE</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0a1420;--paper:#f4f7fc;--cream:#d8e2f0;--rule:#5a82c4;--accent:#1c3a5e;--accent2:#284e7a;--gold:#3a5fa0;--muted:#4a5e78;--border:#aabcd8;--card:#f8fbff;--correct:#1a5c38;--wrong:#8b2635;--pending:#7a5c10;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);font-family:'Crimson Pro',Georgia,serif;color:var(--ink);min-height:100vh;font-size:1.04rem;}
+  #setup-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 60% 40%,#d8e2f0 0%,var(--paper) 70%);padding:2rem;}
+  .setup-card{background:var(--card);border:2px solid var(--border);max-width:560px;width:100%;padding:3rem 3.5rem;box-shadow:9px 9px 0 var(--cream),9px 9px 0 2px var(--rule);}
+  .brand{font-family:'JetBrains Mono',monospace;font-size:.9rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);text-align:center;margin-bottom:.4rem;}
+  .setup-card h1{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--ink);text-align:center;margin-bottom:.25rem;font-weight:700;}
+  .subtitle{font-size:.88rem;color:var(--muted);text-align:center;margin-bottom:2.5rem;font-style:italic;}
+  .form-group{margin-bottom:1.4rem;}
+  .form-group label{display:block;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;font-family:'JetBrains Mono',monospace;}
+  .form-group input{width:100%;padding:.7rem 1rem;border:1.5px solid var(--border);background:var(--paper);font-family:'Crimson Pro',serif;font-size:1rem;color:var(--ink);outline:none;}
+  .form-group input:focus{border-color:var(--accent);}
+  .api-note{font-size:.78rem;color:var(--muted);margin-top:.3rem;font-style:italic;}
+  .meta-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .btn-primary{width:100%;padding:.9rem;background:var(--accent);color:#fff;border:none;font-family:'Cormorant Garamond',serif;font-size:1.2rem;cursor:pointer;}
+  .btn-primary:hover{background:var(--accent2);}
+  .divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0;}
+  .marks-badge{display:inline-block;background:var(--cream);border:1px solid var(--rule);padding:.22rem .75rem;font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--gold);margin:0 .2rem;}
+  .thrivoy-badge{display:inline-block;background:#d8e2f0;border:1px solid var(--accent);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:.66rem;padding:.1rem .4rem;margin-left:.4rem;vertical-align:middle;}
+  #exam-screen{display:none;}
+  .exam-header{background:var(--ink);color:var(--paper);padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 3px 14px rgba(0,0,0,.2);}
+  .hd-brand{font-family:'JetBrains Mono',monospace;font-size:.9rem;color:var(--rule);letter-spacing:.07em;}
+  .hd-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;text-align:center;}
+  .hd-timer{font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:#f6d365;min-width:80px;text-align:right;}
+  .hd-timer.warn{color:#e74c3c;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .exam-body{max-width:840px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+  .candidate-strip{border:1.5px solid var(--border);padding:.75rem 1.4rem;display:flex;gap:2rem;margin-bottom:2rem;background:var(--card);font-size:.9rem;flex-wrap:wrap;}
+  .candidate-strip span{color:var(--muted);font-style:italic;}
+  .paper-title{text-align:center;margin-bottom:2rem;padding-bottom:1.2rem;border-bottom:2px solid var(--border);}
+  .paper-title .school{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;letter-spacing:.06em;}
+  .paper-title .exam-name{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-top:.2rem;}
+  .paper-meta{display:flex;justify-content:space-between;margin-top:.8rem;font-size:.83rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .section-title{text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-top:1.5px solid var(--border);border-bottom:1.5px solid var(--border);padding:.5rem;margin:2rem 0 1.5rem;}
+  .question-block{margin-bottom:2rem;}
+  .question-label{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;margin-bottom:.8rem;color:var(--accent);}
+  .question-label .marks{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--gold);font-weight:400;margin-left:.5rem;}
+  .sub-instruction{font-size:.92rem;font-weight:600;margin-bottom:1rem;color:var(--ink);}
+  .mcq-item{margin-bottom:1.1rem;padding:.9rem 1rem;background:var(--card);border:1px solid var(--border);}
+  .mcq-item .q-text{font-size:.95rem;margin-bottom:.7rem;line-height:1.55;}
+  .q-num{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:.78rem;margin-right:.4rem;}
+  .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem 1rem;}
+  .opt-label{display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.9rem;padding:.3rem .4rem;transition:background .15s;}
+  .opt-label:hover{background:var(--cream);}
+  .opt-label input{accent-color:var(--accent);}
+  .tf-item{display:flex;align-items:flex-start;gap:1rem;padding:.7rem 0;border-bottom:1px dashed var(--border);font-size:.92rem;}
+  .tf-item:last-child{border-bottom:none;}
+  .tf-controls{display:flex;gap:.5rem;}
+  .tf-btn{padding:.22rem .65rem;border:1.5px solid var(--border);background:transparent;font-family:'JetBrains Mono',monospace;font-size:.76rem;cursor:pointer;transition:all .15s;color:var(--muted);}
+  .tf-btn.sel-t{background:var(--correct);color:#fff;border-color:var(--correct);}
+  .tf-btn.sel-f{background:var(--wrong);color:#fff;border-color:var(--wrong);}
+  .name-item{display:grid;grid-template-columns:1.8rem 1fr;gap:.5rem;align-items:start;margin-bottom:.75rem;}
+  .text-input{padding:.5rem .8rem;border:1.5px solid var(--border);background:var(--paper);font-family:'Crimson Pro',serif;font-size:.95rem;color:var(--ink);width:100%;outline:none;}
+  .text-input:focus{border-color:var(--accent);}
+  .textarea-input{padding:.7rem .9rem;border:1.5px solid var(--border);background:var(--paper);font-family:'Crimson Pro',serif;font-size:.95rem;color:var(--ink);width:100%;min-height:88px;outline:none;resize:vertical;line-height:1.65;}
+  .textarea-input:focus{border-color:var(--accent);}
+  .long-q-item{margin-bottom:1.3rem;padding:1rem 1.1rem;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);}
+  .long-q-item .q-prompt{font-size:.94rem;margin-bottom:.6rem;line-height:1.6;white-space:pre-line;}
+  .long-q-item .q-sub{font-family:'JetBrains Mono',monospace;font-size:.73rem;color:var(--muted);margin-bottom:.5rem;}
+  .submit-bar{position:fixed;bottom:0;left:0;right:0;background:var(--ink);padding:.85rem 2rem;display:flex;align-items:center;justify-content:space-between;}
+  .progress-text{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--rule);}
+  .btn-submit{padding:.7rem 2.5rem;background:#f6d365;color:var(--ink);border:none;font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;cursor:pointer;}
+  #grading-screen{display:none;min-height:100vh;background:var(--paper);}
+  .grading-body{max-width:620px;margin:0 auto;padding:5rem 2rem;text-align:center;}
+  .grading-body h2{font-family:'Cormorant Garamond',serif;font-size:2rem;margin-bottom:.5rem;}
+  .grading-body p{color:var(--muted);font-size:.95rem;margin-bottom:2rem;}
+  .progress-bar-outer{height:7px;background:var(--cream);overflow:hidden;margin-bottom:1rem;}
+  .progress-bar-inner{height:100%;background:var(--accent);width:0%;transition:width .4s;}
+  .grading-log{text-align:left;background:var(--card);border:1px solid var(--border);padding:1rem 1.2rem;max-height:260px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--muted);line-height:1.9;}
+  #results-screen{display:none;min-height:100vh;background:radial-gradient(ellipse at 70% 30%,#d8e2f0 0%,var(--paper) 65%);padding:3rem 1.5rem 5rem;}
+  .results-body{max-width:840px;margin:0 auto;}
+  .results-header{text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:2px solid var(--border);}
+  .results-header h1{font-family:'Cormorant Garamond',serif;font-size:2.2rem;margin-bottom:.3rem;}
+  .score-big{font-family:'JetBrains Mono',monospace;font-size:3.6rem;font-weight:500;color:var(--accent);line-height:1;margin:.8rem 0;}
+  .score-label{font-size:.85rem;color:var(--muted);font-style:italic;}
+  .grade-badge{display:inline-block;padding:.4rem 1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.4rem;border:2px solid;margin-top:.5rem;}
+  .grade-A{color:#1a5c38;border-color:#1a5c38;background:#e6f4ec;} .grade-B{color:#1e4d8c;border-color:#1e4d8c;background:#e3edf7;} .grade-C{color:#a07828;border-color:#a07828;background:#fdf3df;} .grade-D{color:#8b2635;border-color:#8b2635;background:#fceaea;}
+  .score-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:2.5rem;}
+  .score-card{background:var(--card);border:1px solid var(--border);padding:1rem 1.2rem;text-align:center;}
+  .sc-label{font-size:.72rem;font-family:'JetBrains Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem;}
+  .sc-val{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--ink);}
+  .sc-max{font-size:.85rem;color:var(--muted);}
+  .review-section{margin-bottom:2.5rem;}
+  .review-section h2{font-family:'Cormorant Garamond',serif;font-size:1.25rem;margin-bottom:1rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+  .review-item{padding:1rem 1.1rem;margin-bottom:.8rem;border:1px solid var(--border);background:var(--card);font-size:.9rem;}
+  .ri-q{font-weight:600;margin-bottom:.4rem;line-height:1.5;} .ri-given{color:var(--muted);margin-bottom:.3rem;} .ri-answer{color:var(--correct);font-style:italic;}
+  .ri-feedback{background:#eef3fb;border-left:3px solid var(--accent);padding:.5rem .8rem;margin-top:.5rem;font-style:italic;color:var(--ink);font-size:.87rem;line-height:1.6;}
+  .status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.4rem;vertical-align:middle;}
+  .dot-correct{background:var(--correct);} .dot-wrong{background:var(--wrong);} .dot-partial{background:var(--pending);}
+  .score-pill{float:right;font-family:'JetBrains Mono',monospace;font-size:.76rem;padding:.15rem .5rem;}
+  .pill-correct{background:#d4edda;color:var(--correct);} .pill-wrong{background:#f8d7da;color:var(--wrong);} .pill-partial{background:#fff3cd;color:var(--pending);}
+  .btn-retry{display:block;width:fit-content;margin:2rem auto 0;padding:.9rem 3rem;background:var(--accent);color:#fff;border:none;font-family:'Cormorant Garamond',serif;font-size:1.15rem;cursor:pointer;}
+  .btn-home{display:inline-block;margin:1rem auto 0;padding:.6rem 2rem;background:transparent;color:var(--accent);border:1.5px solid var(--accent);font-family:'Cormorant Garamond',serif;font-size:1rem;text-decoration:none;transition:all .2s;}
+  .btn-home:hover{background:var(--accent);color:#fff;}
+  @media(max-width:600px){.options-grid{grid-template-columns:1fr;}.exam-header{flex-direction:column;gap:.4rem;text-align:center;}.meta-row{grid-template-columns:1fr;}.paper-meta{flex-direction:column;gap:.3rem;text-align:center;}}
+</style>
+</head>
+<body>
+<div id="setup-screen">
+  <div class="setup-card">
+    <div class="brand">iRank</div>
+    <h1>Mathematics — Set 1</h1>
+    <p class="subtitle">Class VIII &nbsp;·&nbsp; ICSE &nbsp;·&nbsp; Annual Examination 2025–26 &nbsp;·&nbsp; 80 Marks</p>
+    <hr class="divider">
+    <div class="form-group"><label>Candidate Name</label><input type="text" id="cand-name" placeholder="Enter your full name"></div>
+    <div class="meta-row">
+      <div class="form-group"><label>Roll Number</label><input type="text" id="cand-roll" placeholder="e.g. 12"></div>
+      <div class="form-group"><label>Section</label><input type="text" id="cand-section" placeholder="e.g. A"></div>
+    </div>
+    <hr class="divider">
+    <div class="form-group">
+      <label>Thrivoy Key <span class="thrivoy-badge">Thrivoy</span></label>
+      <input type="password" id="api-key" placeholder="Enter your Thrivoy key">
+      <div class="api-note">Your key is used only in-browser and never stored.</div>
+    </div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.7;">
+      <strong>Topics:</strong> Rational Numbers · Squares & Cubes · Profit/Loss · Algebraic Identities · Mensuration · Statistics<br>
+      <strong>Time:</strong> <span class="marks-badge">2 Hours</span> &nbsp; <strong>Marks:</strong> <span class="marks-badge">80</span>
+    </div>
+    <button class="btn-primary" onclick="startExam()">Begin Examination →</button>
+    <div style="text-align:center;margin-top:1rem;"><a href="index.html" style="color:var(--muted);font-size:.85rem;">← Back to Portal</a></div>
+  </div>
+</div>
+
+<div id="exam-screen">
+  <div class="exam-header">
+    <div class="hd-brand">iRank</div>
+    <div class="hd-title">Class VIII – Mathematics Set 1 (ICSE)</div>
+    <div class="hd-timer" id="timer-display">2:00:00</div>
+  </div>
+  <div class="exam-body">
+    <div class="candidate-strip"><div><span>Name: </span><strong id="disp-name">—</strong></div><div><span>Roll: </span><strong id="disp-roll">—</strong></div><div><span>Section: </span><strong id="disp-sec">—</strong></div><div><span>Subject: </span><strong>Mathematics</strong></div></div>
+    <div class="paper-title">
+      <div class="school">iRank</div>
+      <div class="exam-name">ICSE Annual Examination 2025–26</div>
+      <div class="paper-meta"><span>Class: VIII &nbsp;|&nbsp; Subject: Mathematics &nbsp;|&nbsp; Set 1</span><span>Time: 2 Hours &nbsp;|&nbsp; Marks: 80</span></div>
+    </div>
+    <div class="section-title">Section A (40 Marks) — Attempt all questions</div>
+    <div class="question-block">
+      <div class="question-label">Question 1 <span class="marks">[40 marks]</span></div>
+      <div class="sub-instruction">a) Choose the correct option: <span class="marks">[10]</span></div>
+      <div id="mcq-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">b) State True or False. Correct each false statement: <span class="marks">[5]</span></div>
+      <div id="tf-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">c) Fill in the blanks: <span class="marks">[5]</span></div>
+      <div id="fill-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">d) Define or state the following: <span class="marks">[5]</span></div>
+      <div id="define-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">e) Solve (show working): <span class="marks">[5]</span></div>
+      <div id="solve-e-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">f) Match Column A with Column B: <span class="marks">[5]</span></div>
+      <div id="match-container"></div>
+      <div class="sub-instruction" style="margin-top:1.5rem">g) Short word problems (show working): <span class="marks">[5]</span></div>
+      <div id="word-g-container"></div>
+    </div>
+    <div class="section-title">Section B (40 Marks)</div>
+    <div class="question-block"><div class="question-label">Question 2 <span class="marks">[10 marks]</span></div><div class="sub-instruction">Solve any 5 of the following (2 marks each):</div><div id="q2-container"></div></div>
+    <div class="question-block"><div class="question-label">Question 3 <span class="marks">[10 marks]</span></div><div id="q3-container"></div></div>
+    <div class="question-block"><div class="question-label">Question 4 <span class="marks">[10 marks]</span></div><div id="q4-container"></div></div>
+    <div class="question-block"><div class="question-label">Question 5 <span class="marks">[10 marks]</span></div><div id="q5-container"></div></div>
+  </div>
+  <div class="submit-bar">
+    <div class="progress-text" id="progress-text">Answered: 0 / 10</div>
+    <button class="btn-submit" onclick="submitExam()">Submit Paper →</button>
+  </div>
+</div>
+
+<div id="grading-screen">
+  <div class="grading-body">
+    <h2>Thrivoy is evaluating your paper…</h2>
+    <p>Please wait. Subjective working and word problems are being assessed.</p>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="grade-progress"></div></div>
+    <div class="grading-log" id="grading-log"></div>
+  </div>
+</div>
+
+<div id="results-screen">
+  <div class="results-body">
+    <div class="results-header">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;">iRank</div>
+      <h1>Your Results — Mathematics Set 1</h1>
+      <div class="score-big" id="res-total">—</div>
+      <div class="score-label">out of 80 marks</div>
+      <div id="res-grade-badge"></div>
+    </div>
+    <div class="score-breakdown" id="score-breakdown"></div>
+    <div class="review-section"><h2>Section A — Objective Review</h2><div id="obj-review"></div></div>
+    <div class="review-section"><h2>Section B — Problem Solving <span class="thrivoy-badge">Thrivoy</span></h2><div id="subj-review"></div></div>
+    <div style="text-align:center">
+      <button class="btn-retry" onclick="location.reload()">← New Attempt</button><br>
+      <a class="btn-home" href="index.html">↩ Back to Portal</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── QUESTION BANK: ICSE Class 8 Maths Set 1 ──────────
+// Topics: Rational Numbers, Squares/Cubes, Profit/Loss, Algebraic Identities, Mensuration, Statistics
+
+const MCQ=[
+  {id:'m1',text:'Which of the following is an irrational number?',opts:['0','−5','√2','3/7'],ans:'c'},
+  {id:'m2',text:'The value of (−3)⁴ is:',opts:['−81','81','−12','12'],ans:'b'},
+  {id:'m3',text:'√(2025) = ?',opts:['40','42','43','45'],ans:'d'},
+  {id:'m4',text:'A cycle is sold for ₹1440 at a profit of 20%. Its cost price is:',opts:['₹1200','₹1300','₹1250','₹1100'],ans:'a'},
+  {id:'m5',text:'The expanded form of (x + 5)² is:',opts:['x² + 25','x² + 10x + 25','x² + 5x + 25','x² − 10x + 25'],ans:'b'},
+  {id:'m6',text:'If 4x − 3 = 13, then x = ?',opts:['3','4','5','6'],ans:'b'},
+  {id:'m7',text:'Area of a rhombus with diagonals 10 cm and 8 cm:',opts:['40 cm²','80 cm²','45 cm²','18 cm²'],ans:'a'},
+  {id:'m8',text:'Volume of a cube with side 5 cm:',opts:['25 cm³','75 cm³','125 cm³','150 cm³'],ans:'c'},
+  {id:'m9',text:'The median of {2, 4, 6, 8, 10} is:',opts:['4','6','8','5'],ans:'b'},
+  {id:'m10',text:'∛1000 = ?',opts:['8','9','10','11'],ans:'c'}
+];
+
+const TF=[
+  {id:'t1',text:'The sum of a rational number and its additive inverse is always 0.',ans:true,correction:null},
+  {id:'t2',text:'Simple interest is always greater than compound interest for the same principal, rate and time.',ans:false,correction:'Compound interest is always GREATER THAN OR EQUAL TO simple interest; CI ≥ SI for time ≥ 1 year.'},
+  {id:'t3',text:'The diagonals of a parallelogram bisect each other at right angles.',ans:false,correction:'The diagonals of a RHOMBUS bisect each other at right angles — not all parallelograms.'},
+  {id:'t4',text:'The cube of any negative number is always negative.',ans:true,correction:null},
+  {id:'t5',text:'The mean of the first 10 natural numbers is 5.5.',ans:true,correction:null}
+];
+
+const FILL_Q=[
+  {id:'f1',text:'The additive inverse of −4/7 is ______.'},
+  {id:'f2',text:'√784 = ______.'},
+  {id:'f3',text:'If SP = ₹880 and loss = 12%, then CP = ₹______.'},
+  {id:'f4',text:'The value of (3a − b)² when a = 2, b = 1 is ______.'},
+  {id:'f5',text:'The total surface area of a cube with side 6 cm is ______ cm².'}
+];
+const FILL_ANS=['4/7','28','1000','25','216'];
+
+const DEFINE_Q=[
+  {id:'d1',marks:1,text:'Define a rational number and give one example.'},
+  {id:'d2',marks:1,text:'State the identity for (a + b)(a − b).'},
+  {id:'d3',marks:1,text:'What is the mode of a data set?'},
+  {id:'d4',marks:1,text:'State the formula for the area of a trapezium.'},
+  {id:'d5',marks:1,text:'What does "loss percent" mean? Write the formula.'}
+];
+
+const SOLVE_E=[
+  {id:'e1',marks:1,text:'Find the simple interest on ₹3600 at 5% per annum for 2 years.'},
+  {id:'e2',marks:1,text:'Simplify: (2x + 3y)²'},
+  {id:'e3',marks:1,text:'Find the mean of: 4, 7, 12, 15, 17.'},
+  {id:'e4',marks:1,text:'The length and breadth of a rectangle are in the ratio 5:3. If its perimeter = 64 cm, find its dimensions.'},
+  {id:'e5',marks:1,text:'Find the cube root of 5832 by prime factorisation.'}
+];
+
+const MATCH_Q=[
+  {id:'mc1',text:'Square of (a − b)',opts:['a² − b²','a² − 2ab + b²','(a + b)(a − b)','a² + 2ab + b²'],ans:'b'},
+  {id:'mc2',text:'(a + b)(a − b)',opts:['a² + 2ab + b²','a² + b²','a² − b²','2ab'],ans:'c'},
+  {id:'mc3',text:'Mode of {3, 3, 5, 7, 7, 7, 9}',opts:['3','5','7','9'],ans:'c'},
+  {id:'mc4',text:'Volume of cylinder (r=7, h=10, π=22/7)',opts:['1540 cm³','1470 cm³','1320 cm³','770 cm³'],ans:'a'},
+  {id:'mc5',text:'∛(−64)',opts:['−4','4','−8','8'],ans:'a'}
+];
+const MATCH_ANS=['b','c','c','a','a'];
+
+const WORD_G=[
+  {id:'w1',marks:1,text:'A shopkeeper bought 80 oranges at ₹5 each and sold them at ₹6.50 each. Find his profit percent.'},
+  {id:'w2',marks:1,text:'A sum triples itself in 20 years under simple interest. Find the rate of interest per annum.'},
+  {id:'w3',marks:1,text:'The diagonal of a square is 8√2 cm. Find its area and perimeter.'},
+  {id:'w4',marks:1,text:'Express 0.363636… as a fraction in its simplest form.'},
+  {id:'w5',marks:1,text:'Find the range and median of: 11, 4, 17, 8, 22, 14, 6.'}
+];
+
+const Q2=[
+  {id:'q2a',marks:2,text:'i. Find the square root of 7056 by long division method.'},
+  {id:'q2b',marks:2,text:'ii. A TV is marked at ₹18000. A discount of 15% is given. Find the selling price and discount amount.'},
+  {id:'q2c',marks:2,text:'iii. Factorise: 25x² − 16y²'},
+  {id:'q2d',marks:2,text:'iv. The perimeter of a rhombus is 52 cm and one diagonal is 24 cm. Find the other diagonal.'},
+  {id:'q2e',marks:2,text:'v. Expand using identity: (2a − 3b)³'},
+  {id:'q2f',marks:2,text:'vi. Find the compound interest on ₹5000 at 8% per annum for 2 years (compounded annually).'}
+];
+
+const Q3=[
+  {id:'q3a',marks:3,text:'(a) A shopkeeper bought two articles at ₹900 each. He sold one at a profit of 20% and the other at a loss of 10%. Find his overall profit or loss percent.'},
+  {id:'q3b',marks:3,text:'(b) Find the value of k if x = 2 is a solution of: 3x² + kx − 10 = 0'},
+  {id:'q3c',marks:2,text:'(c) The diagonals of a rhombus are 16 cm and 12 cm. Find:\n(i) its perimeter\n(ii) its area'},
+  {id:'q3d',marks:2,text:'(d) The following are marks out of 50 obtained by 8 students: 35, 42, 28, 46, 35, 19, 35, 50. Find the mean, median and mode.'}
+];
+
+const Q4=[
+  {id:'q4a',marks:4,text:'(a) Use the identity (a + b)² = a² + 2ab + b² to find the value of:\n(i) (103)²\n(ii) (98)²\n(iii) (2.5)² + 2(2.5)(0.5) + (0.5)²'},
+  {id:'q4b',marks:3,text:'(b) A hollow cylindrical pipe is 21 m long. Its inner radius is 5 cm and outer radius is 7 cm. Find the volume of material used (π = 22/7).'},
+  {id:'q4c',marks:3,text:'(c) A principal of ₹12000 is invested at 10% per annum compound interest. Find the amount and CI after:\n(i) 1 year\n(ii) 2 years\n(iii) 3 years'}
+];
+
+const Q5=[
+  {id:'q5a',marks:3,text:'(a) The ratio of two numbers is 4:7 and their LCM is 168. Find the two numbers and their HCF.'},
+  {id:'q5b',marks:3,text:'(b) Without multiplying, use identities to find:\n(i) 105 × 95\n(ii) (2x + 3y)(2x − 3y)\n(iii) (a + b)² − (a − b)²'},
+  {id:'q5c',marks:2,text:'(c) The mean of 10 observations is 15. If one observation 12 is replaced by 22, find the new mean.'},
+  {id:'q5d',marks:2,text:'(d) A trader allows a 20% discount on the marked price of an article and still makes a 12% profit. If the cost price is ₹500, find the marked price.'}
+];
+
+// ── STATE ──────────────────────────────────────────────
+let timerInterval=null, secondsLeft=7200, apiKey='';
+let results={mcq:[],tf:[],fill:[],define:[],solveE:[],match:[],wordG:[],q2:[],q3:[],q4:[],q5:[]};
+let totalMarks=0;
+
+function startExam(){
+  const name=document.getElementById('cand-name').value.trim();
+  if(!name){alert('Please enter your name.');return;}
+  apiKey=document.getElementById('api-key').value.trim();
+  document.getElementById('disp-name').textContent=name;
+  document.getElementById('disp-roll').textContent=document.getElementById('cand-roll').value.trim()||'—';
+  document.getElementById('disp-sec').textContent=document.getElementById('cand-section').value.trim()||'—';
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('exam-screen').style.display='block';
+  buildExam(); startTimer();
+}
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const h=Math.floor(secondsLeft/3600),m=Math.floor((secondsLeft%3600)/60),s=secondsLeft%60;
+    const el=document.getElementById('timer-display');
+    el.textContent=`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(secondsLeft<=300)el.classList.add('warn');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitExam();}
+    updateProgress();
+  },1000);
+}
+function buildExam(){
+  const L=['i','ii','iii','iv','v'];
+  // MCQ
+  const mc=document.getElementById('mcq-container');
+  MCQ.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='mcq-item';
+    d.innerHTML=`<div class="q-text"><span class="q-num">${i+1}.</span>${q.text}</div><div class="options-grid">${['a','b','c','d'].map((l,j)=>`<label class="opt-label"><input type="radio" name="${q.id}" value="${l}"> ${l}) ${q.opts[j]}</label>`).join('')}</div>`;
+    mc.appendChild(d);
+  });
+  // TF
+  const tf=document.getElementById('tf-container');
+  TF.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='tf-item';
+    d.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--muted);min-width:1.6rem">${L[i]}.</span><span style="flex:1;line-height:1.55">${q.text}</span><div class="tf-controls"><button class="tf-btn" onclick="selTF('${q.id}','T',this)">TRUE</button><button class="tf-btn" onclick="selTF('${q.id}','F',this)">FALSE</button></div>`;
+    tf.appendChild(d);
+  });
+  // Fill
+  const fi=document.getElementById('fill-container');
+  FILL_Q.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='name-item';
+    d.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:.8rem">${L[i]}.</span><div><div style="font-size:.92rem;margin-bottom:.3rem">${q.text}</div><input type="text" class="text-input" id="${q.id}" placeholder="Answer…"></div>`;
+    fi.appendChild(d);
+  });
+  // Define
+  const de=document.getElementById('define-container');
+  DEFINE_Q.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">${L[i]}. [${q.marks} mark]</div><div class="q-prompt">${q.text}</div><input type="text" class="text-input" id="${q.id}" placeholder="Your answer…" style="margin-top:.3rem">`;
+    de.appendChild(d);
+  });
+  // Solve E
+  const se=document.getElementById('solve-e-container');
+  SOLVE_E.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">${L[i]}. [${q.marks} mark]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="3" placeholder="Show your working…"></textarea>`;
+    se.appendChild(d);
+  });
+  // Match (MCQ style)
+  const mq=document.getElementById('match-container');
+  MATCH_Q.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='mcq-item';
+    d.innerHTML=`<div class="q-text"><span class="q-num">${L[i]}.</span>${q.text}</div><div class="options-grid">${['a','b','c','d'].map((l,j)=>`<label class="opt-label"><input type="radio" name="${q.id}" value="${l}"> ${l}) ${q.opts[j]}</label>`).join('')}</div>`;
+    mq.appendChild(d);
+  });
+  // Word G
+  const wg=document.getElementById('word-g-container');
+  WORD_G.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">${L[i]}. [${q.marks} mark]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="3" placeholder="Show your working…"></textarea>`;
+    wg.appendChild(d);
+  });
+  // Q2
+  const q2c=document.getElementById('q2-container');
+  Q2.forEach(q=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">Marks: [${q.marks}]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="4" placeholder="Show your working…"></textarea>`;
+    q2c.appendChild(d);
+  });
+  [['q3-container',Q3],['q4-container',Q4],['q5-container',Q5]].forEach(([cid,arr])=>{
+    const c=document.getElementById(cid);
+    arr.forEach(q=>{
+      const d=document.createElement('div');d.className='long-q-item';
+      d.innerHTML=`<div class="q-sub">Marks: [${q.marks}]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="5" placeholder="Show your working…"></textarea>`;
+      c.appendChild(d);
+    });
+  });
+  updateProgress();
+}
+function selTF(id,val,btn){
+  btn.parentElement.querySelectorAll('.tf-btn').forEach(b=>{b.className='tf-btn';});
+  btn.classList.add(val==='T'?'sel-t':'sel-f');
+  let h=document.getElementById('tf_'+id);
+  if(!h){h=document.createElement('input');h.type='hidden';h.id='tf_'+id;document.body.appendChild(h);}
+  h.value=val; updateProgress();
+}
+function updateProgress(){
+  let a=0,t=0;
+  MCQ.forEach(q=>{t++;if(document.querySelector(`input[name="${q.id}"]:checked`))a++;});
+  TF.forEach(q=>{t++;if(document.getElementById('tf_'+q.id))a++;});
+  document.getElementById('progress-text').textContent=`Answered: ${a} / ${t}`;
+}
+function numClose(given,ans){
+  const g=parseFloat(String(given).replace(/[^0-9.\-]/g,''));
+  const a=parseFloat(String(ans).replace(/[^0-9.\-]/g,''));
+  if(isNaN(g)||isNaN(a))return String(given).trim().toLowerCase().includes(String(ans).toLowerCase().split(' ')[0]);
+  return Math.abs(g-a)<=Math.abs(a)*0.02+0.01;
+}
+function submitExam(){
+  clearInterval(timerInterval);
+  if(!confirm('Submit your paper?')){startTimer();return;}
+  document.getElementById('exam-screen').style.display='none';
+  document.getElementById('grading-screen').style.display='block';
+  gradeAll();
+}
+async function gradeAll(){
+  const log=document.getElementById('grading-log'),bar=document.getElementById('grade-progress');
+  const logMsg=m=>{log.innerHTML+=m+'<br>';log.scrollTop=log.scrollHeight;};
+  logMsg('↳ Grading MCQ…');let mcqScore=0;
+  MCQ.forEach(q=>{const sel=document.querySelector(`input[name="${q.id}"]:checked`);const given=sel?sel.value:null;const correct=given===q.ans;if(correct)mcqScore++;results.mcq.push({q:q.text,opts:q.opts,ans:q.ans,given,correct});});
+  bar.style.width='8%'; logMsg(`  MCQ: ${mcqScore}/10`);
+  logMsg('↳ Grading True/False…');let tfScore=0;
+  TF.forEach(q=>{const h=document.getElementById('tf_'+q.id);const given=h?h.value:null;const correct=(given==='T')===q.ans;if(correct)tfScore++;results.tf.push({q:q.text,ans:q.ans,given,correct,correction:q.correction});});
+  bar.style.width='14%'; logMsg(`  TF: ${tfScore}/5`);
+  logMsg('↳ Grading Fill in Blanks…');let fillScore=0;
+  FILL_Q.forEach((q,i)=>{const given=(document.getElementById(q.id)||{}).value||'';const correct=numClose(given,FILL_ANS[i]);if(correct)fillScore++;results.fill.push({q:q.text,ans:FILL_ANS[i],given,correct});});
+  bar.style.width='18%'; logMsg(`  Fill: ${fillScore}/5`);
+  logMsg('↳ Grading Match…');let matchScore=0;
+  MATCH_Q.forEach((q,i)=>{const sel=document.querySelector(`input[name="${q.id}"]:checked`);const given=sel?sel.value:null;const correct=given===MATCH_ANS[i];if(correct)matchScore++;results.match.push({q:q.text,opts:q.opts,ans:MATCH_ANS[i],given,correct});});
+  bar.style.width='22%'; logMsg(`  Match: ${matchScore}/5`);
+  // Thrivoy for subjective
+  const subjQs=[
+    ...DEFINE_Q.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'define'})),
+    ...SOLVE_E.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'solveE'})),
+    ...WORD_G.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'wordG'})),
+    ...Q2.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'q2'})),
+    ...Q3.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'q3'})),
+    ...Q4.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'q4'})),
+    ...Q5.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'q5'})),
+  ];
+  let aiScore=0;
+  for(let si=0;si<subjQs.length;si++){
+    const sq=subjQs[si];
+    const given=(document.getElementById(sq.id)||{}).value||'';
+    logMsg(`↳ Thrivoy: ${sq.text.substring(0,55)}…`);
+    const r=await thrivoyGrade(sq.text,given,sq.maxMark);
+    aiScore+=r.score;
+    results[sq.group].push({q:sq.text,given,score:r.score,maxMark:sq.maxMark,feedback:r.feedback});
+    bar.style.width=Math.round(22+(si+1)/subjQs.length*75)+'%';
+  }
+  bar.style.width='100%'; logMsg('✓ Done!');
+  const autoScore=mcqScore+tfScore+fillScore+matchScore;
+  totalMarks=Math.round((autoScore+aiScore)*10)/10;
+  setTimeout(()=>showResults(mcqScore,tfScore,fillScore,matchScore,aiScore),800);
+}
+async function thrivoyGrade(question,answer,maxMark){
+  if(!apiKey){if(!answer.trim())return{score:0,feedback:'No answer.'};const w=answer.trim().split(/\s+/).length;return{score:Math.min(maxMark,w>20?maxMark:w>8?maxMark*0.6:w>2?maxMark*0.3:0),feedback:'(No key – heuristic.)'};} 
+  if(!answer.trim())return{score:0,feedback:'No answer provided.'};
+  const prompt=`You are a Class 8 ICSE Mathematics teacher. Mark this student's answer.\nQuestion: ${question}\nMax Marks: ${maxMark}\nStudent Answer: "${answer}"\nAward 0–${maxMark} marks. Credit correct method even if final answer has minor errors. Be encouraging for a 13-year-old.\nRespond ONLY with raw JSON: {"score":<number>,"feedback":"<1-2 sentences>"}`;
+  try{
+    let txt='';
+    if(apiKey.startsWith('AIza')){const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.1,maxOutputTokens:300,responseMimeType:'application/json'}})});const d=await r.json();if(d.error)throw new Error(d.error.message);txt=d.candidates?.[0]?.content?.parts?.[0]?.text||'';}
+    else{const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},body:JSON.stringify({model:'google/gemini-2.0-flash-001',max_tokens:300,temperature:0.1,messages:[{role:'user',content:prompt}]})});const d=await r.json();if(d.error)throw new Error(JSON.stringify(d.error));txt=d.choices?.[0]?.message?.content||'';}
+    txt=txt.trim().replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```$/i,'').trim();
+    const m=txt.match(/\{[\s\S]*?\}/);if(!m)throw new Error('No JSON');
+    const p=JSON.parse(m[0]);return{score:Math.min(maxMark,Math.max(0,parseFloat(p.score)||0)),feedback:p.feedback||'Evaluated.'};
+  }catch(e){const w=answer.trim().split(/\s+/).length;return{score:Math.min(maxMark*0.4,w>15?maxMark*0.4:w>5?maxMark*0.2:0),feedback:'Evaluation error. Score estimated.'};}
+}
+function showResults(mcq,tf,fill,match,ai){
+  document.getElementById('grading-screen').style.display='none';
+  document.getElementById('results-screen').style.display='block';
+  document.getElementById('res-total').textContent=`${totalMarks} / 80`;
+  const pct=(totalMarks/80)*100;let grade,gc;
+  if(pct>=75){grade='A+';gc='A';}else if(pct>=60){grade='B';gc='B';}else if(pct>=40){grade='C';gc='C';}else{grade='D';gc='D';}
+  document.getElementById('res-grade-badge').innerHTML=`<span class="grade-badge grade-${gc}">Grade ${grade}</span>`;
+  const bd=document.getElementById('score-breakdown');
+  [['MCQ',mcq,10],['True/False',tf,5],['Fill Blanks',fill,5],['Match',match,5],['Subjective (Thrivoy)',ai.toFixed(1),55]].forEach(([l,v,m])=>{bd.innerHTML+=`<div class="score-card"><div class="sc-label">${l}</div><div class="sc-val">${v} <span class="sc-max">/ ${m}</span></div></div>`;});
+  const ob=document.getElementById('obj-review');
+  results.mcq.forEach((r,i)=>{const dc=r.correct?'dot-correct':'dot-wrong',pc=r.correct?'pill-correct':'pill-wrong';const idx=['a','b','c','d'].indexOf(r.given),cidx=['a','b','c','d'].indexOf(r.ans);ob.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>MCQ ${i+1}: ${r.q}<span class="score-pill ${pc}">${r.correct?1:0}/1</span></div><div class="ri-given">Your answer: ${r.given?r.given.toUpperCase()+') '+(r.opts[idx]||''):'Not answered'}</div><div class="ri-answer">${r.correct?'✓ Correct':'✗ Correct: '+r.ans.toUpperCase()+') '+r.opts[cidx]}</div></div>`;});
+  results.tf.forEach((r,i)=>{const dc=r.correct?'dot-correct':'dot-wrong',pc=r.correct?'pill-correct':'pill-wrong';ob.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>T/F ${i+1}: ${r.q}<span class="score-pill ${pc}">${r.correct?1:0}/1</span></div><div class="ri-given">Your answer: ${r.given||'Not answered'}</div><div class="ri-answer">Correct: ${r.ans?'TRUE':'FALSE'}${r.correction?' — '+r.correction:''}</div></div>`;});
+  results.fill.forEach((r,i)=>{const dc=r.correct?'dot-correct':'dot-wrong',pc=r.correct?'pill-correct':'pill-wrong';ob.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>Fill ${i+1}: ${r.q}<span class="score-pill ${pc}">${r.correct?1:0}/1</span></div><div class="ri-given">Your answer: ${r.given||'—'}</div><div class="ri-answer">Answer: ${r.ans}</div></div>`;});
+  const sb=document.getElementById('subj-review');
+  [...results.define,...results.solveE,...results.wordG,...results.q2,...results.q3,...results.q4,...results.q5].forEach(r=>{const p2=r.score/r.maxMark,dc=p2>=0.8?'dot-correct':p2>=0.4?'dot-partial':'dot-wrong',pc=p2>=0.8?'pill-correct':p2>=0.4?'pill-partial':'pill-wrong';sb.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>${r.q.substring(0,100)}${r.q.length>100?'…':''}<span class="score-pill ${pc}">${r.score}/${r.maxMark}</span></div><div class="ri-given">Your answer: ${(r.given||'—').substring(0,200)}</div>${r.feedback?`<div class="ri-feedback">💬 ${r.feedback}</div>`:''}</div>`;});
+}
+</script>
+</body>
+</html>

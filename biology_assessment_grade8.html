@@ -703,7 +703,7 @@
 <!-- ════════════════════ SETUP SCREEN ════════════════════ -->
 <div id="setup-screen">
   <div class="setup-card">
-    <div class="school-name">Trinity Central School</div>
+    <div class="school-name">iRank</div>
     <h1>Biology Assessment</h1>
     <p class="subtitle">Class VIII &nbsp;·&nbsp; Second Term Exam 2025–26 &nbsp;·&nbsp; Marks: 80+20</p>
     <hr class="divider">
@@ -726,9 +726,9 @@
     <hr class="divider">
 
     <div class="form-group">
-      <label>API Key <span class="ai-badge">AI Grading</span></label>
-      <input type="password" id="gemini-key" placeholder="AIza... (Gemini)  or  sk-or-... (OpenRouter)">
-      <div class="api-note">Paste a Gemini key (AIza…) or an OpenRouter key (sk-or-…). Used only in-browser, never stored.</div>
+      <label>Thrivoy Key <span class="ai-badge">Thrivoy</span></label>
+      <input type="password" id="gemini-key" placeholder="Your Thrivoy key">
+      <div class="api-note">Paste a Gemini key (AIza…) or an OpenRouter key (sk-or-…). Your key is used only in-browser and never stored.</div>
     </div>
 
     <div style="font-size:0.83rem; color:var(--muted); margin-bottom:1.2rem; line-height:1.6;">
@@ -737,13 +737,14 @@
     </div>
 
     <button class="btn-primary" onclick="startExam()">Begin Examination →</button>
+    <div style="text-align:center;margin-top:1rem;"><a href="index.html" style="color:var(--muted);font-size:.85rem;">← Back to Portal</a></div>
   </div>
 </div>
 
 <!-- ════════════════════ EXAM SCREEN ════════════════════ -->
 <div id="exam-screen">
   <div class="exam-header">
-    <div class="hd-school">Trinity Central School</div>
+    <div class="hd-school">iRank</div>
     <div class="hd-title">Class VIII – Biology</div>
     <div class="hd-timer" id="timer-display">2:00:00</div>
   </div>
@@ -757,7 +758,7 @@
     </div>
 
     <div class="paper-title">
-      <div class="school">Trinity Central School</div>
+      <div class="school">iRank</div>
       <div class="exam-name">Second Term Examination 2025–26</div>
       <div class="paper-meta">
         <span>Class: VIII &nbsp;|&nbsp; Subject: Biology</span>
@@ -863,7 +864,7 @@
 <div id="results-screen">
   <div class="results-body">
     <div class="results-header">
-      <div style="font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;">Trinity Central School</div>
+      <div style="font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;">iRank</div>
       <h1>Your Results</h1>
       <div class="score-big" id="res-total">—</div>
       <div class="score-label">out of 80 marks</div>
@@ -878,7 +879,7 @@
     </div>
 
     <div class="review-section">
-      <h2>Section B — Subjective Review <span class="ai-badge">AI Graded</span></h2>
+      <h2>Section B — Subjective Review <span class="ai-badge">Thrivoy</span></h2>
       <div id="subj-review"></div>
     </div>
 

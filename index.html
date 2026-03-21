@@ -3,384 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trinity Central School — Assessment Portal</title>
+<title>iRank — Assessment Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #1a1812;
-    --paper: #fdfaf3;
-    --cream: #f0e8d0;
-    --rule: #c4a96e;
-    --gold: #a07828;
-    --muted: #6e6860;
-    --border: #ddd0a8;
-    --card: #fffef9;
-    --phy: #0d2b6b;
-    --phy-l: #e8edf8;
-    --chem: #1a5c3a;
-    --chem-l: #e6f4ec;
-    --bio: #7b2035;
-    --bio-l: #fceaea;
-    --cbse: #2c4a8c;
-    --icse: #5c3d8f;
-  }
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { background:var(--paper); font-family:'Crimson Pro',Georgia,serif; color:var(--ink); min-height:100vh; }
-
-  /* ── HEADER ── */
-  .site-header {
-    background:var(--ink);
-    color:var(--paper);
-    padding:2.5rem 2rem 2rem;
-    text-align:center;
-    position:relative;
-    overflow:hidden;
-  }
-  .site-header::before {
-    content:'';
-    position:absolute; inset:0;
-    background:repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(196,169,110,0.07) 60px, rgba(196,169,110,0.07) 61px),
-               repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(196,169,110,0.07) 60px, rgba(196,169,110,0.07) 61px);
-    pointer-events:none;
-  }
-  .site-header .emblem {
-    width:56px; height:56px;
-    border:2px solid var(--rule);
-    border-radius:50%;
-    margin:0 auto 1rem;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Cormorant Garamond',serif;
-    font-size:1.5rem;
-    color:var(--rule);
-    position:relative; z-index:1;
-  }
-  .site-header h1 {
-    font-family:'Cormorant Garamond',serif;
-    font-size:2rem; font-weight:700;
-    letter-spacing:0.08em; text-transform:uppercase;
-    color:var(--paper);
-    position:relative; z-index:1;
-  }
-  .site-header .tagline {
-    font-family:'Crimson Pro',serif;
-    font-size:0.95rem; font-style:italic;
-    color:var(--rule); margin-top:0.3rem;
-    position:relative; z-index:1;
-  }
-  .site-header .portal-badge {
-    display:inline-block;
-    background:rgba(196,169,110,0.15);
-    border:1px solid var(--rule);
-    color:var(--rule);
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.72rem; letter-spacing:0.1em;
-    text-transform:uppercase;
-    padding:0.25rem 0.9rem;
-    margin-top:0.8rem;
-    position:relative; z-index:1;
-  }
-
-  /* ── BODY ── */
-  .portal-body {
-    max-width:1060px;
-    margin:0 auto;
-    padding:3rem 1.5rem 5rem;
-  }
-
-  /* ── SECTION LABEL ── */
-  .section-label {
-    display:flex; align-items:center; gap:1rem;
-    margin-bottom:1.5rem;
-  }
-  .section-label .sl-line { flex:1; height:1px; background:var(--border); }
-  .section-label .sl-text {
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase;
-    color:var(--muted);
-    white-space:nowrap;
-  }
-  .section-label .board-pill {
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.7rem; letter-spacing:0.08em;
-    padding:0.2rem 0.65rem;
-    border-radius:2px; border:1px solid;
-  }
-  .pill-icse { color:var(--icse); border-color:var(--icse); background:#f3eeff; }
-  .pill-cbse { color:var(--cbse); border-color:var(--cbse); background:#eef2ff; }
-
-  /* ── CARDS GRID ── */
-  .cards-grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(290px,1fr));
-    gap:1.5rem;
-    margin-bottom:3.5rem;
-  }
-
-  .assessment-card {
-    background:var(--card);
-    border:1.5px solid var(--border);
-    display:flex; flex-direction:column;
-    transition:transform 0.15s, box-shadow 0.15s;
-    text-decoration:none; color:inherit;
-    position:relative;
-    overflow:hidden;
-  }
-  .assessment-card:hover {
-    transform:translateY(-3px);
-    box-shadow:0 8px 24px rgba(0,0,0,0.1);
-  }
-
-  .card-stripe {
-    height:5px;
-    width:100%;
-  }
-  .stripe-phy   { background:var(--phy); }
-  .stripe-chem  { background:var(--chem); }
-  .stripe-bio   { background:var(--bio); }
-  .stripe-icse-bio { background:var(--icse); }
-
-  .card-body { padding:1.3rem 1.4rem 0.9rem; flex:1; }
-  .card-subject-icon {
-    width:38px; height:38px;
-    border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-size:1.2rem;
-    margin-bottom:0.8rem;
-  }
-  .icon-phy  { background:var(--phy-l); }
-  .icon-chem { background:var(--chem-l); }
-  .icon-bio  { background:var(--bio-l); }
-  .icon-icse-bio { background:#ede7f6; }
-
-  .card-class {
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase;
-    color:var(--muted); margin-bottom:0.25rem;
-  }
-  .card-title {
-    font-family:'Cormorant Garamond',serif;
-    font-size:1.25rem; font-weight:700;
-    color:var(--ink); margin-bottom:0.1rem;
-    line-height:1.3;
-  }
-  .card-sub {
-    font-size:0.83rem; color:var(--muted);
-    font-style:italic; margin-bottom:0.8rem;
-  }
-  .card-chips {
-    display:flex; gap:0.4rem; flex-wrap:wrap;
-    margin-bottom:0.7rem;
-  }
-  .chip {
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.65rem; letter-spacing:0.05em;
-    padding:0.18rem 0.5rem;
-    border:1px solid var(--border);
-    color:var(--muted);
-    background:var(--cream);
-    border-radius:2px;
-  }
-  .card-footer {
-    padding:0.75rem 1.4rem;
-    border-top:1px solid var(--border);
-    display:flex; align-items:center; justify-content:space-between;
-  }
-  .card-marks {
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.72rem; color:var(--gold);
-  }
-  .btn-start {
-    font-family:'Cormorant Garamond',serif;
-    font-size:0.88rem; font-weight:700;
-    padding:0.35rem 1rem;
-    border:1.5px solid;
-    text-decoration:none;
-    transition:all 0.15s;
-    border-radius:2px;
-    cursor:pointer;
-  }
-  .btn-phy   { color:var(--phy);   border-color:var(--phy);   }  .btn-phy:hover   { background:var(--phy);   color:#fff; }
-  .btn-chem  { color:var(--chem);  border-color:var(--chem);  }  .btn-chem:hover  { background:var(--chem);  color:#fff; }
-  .btn-bio   { color:var(--bio);   border-color:var(--bio);   }  .btn-bio:hover   { background:var(--bio);   color:#fff; }
-  .btn-icse  { color:var(--icse);  border-color:var(--icse);  }  .btn-icse:hover  { background:var(--icse);  color:#fff; }
-
-  /* ── FOOTER ── */
-  .site-footer {
-    text-align:center;
-    padding:2rem;
-    border-top:1px solid var(--border);
-    font-family:'JetBrains Mono',monospace;
-    font-size:0.72rem;
-    color:var(--muted);
-    letter-spacing:0.06em;
-  }
-
-  @media(max-width:600px){
-    .cards-grid{ grid-template-columns:1fr; }
-    .site-header h1{ font-size:1.5rem; }
-  }
+  :root{--ink:#13100d;--paper:#fdfaf3;--cream:#f0e8d0;--rule:#c4a96e;--gold:#a07828;--muted:#6e6860;--border:#ddd0a8;--card:#fffef9;--phy:#0d2b6b;--phy-l:#e8edf8;--chem:#1a5c3a;--chem-l:#e6f4ec;--bio:#7b2035;--bio-l:#fceaea;--eng:#4a1942;--eng-l:#f5e8f7;--math:#1c3a5e;--math-l:#e4edf8;--math2:#2d1b5e;--math2-l:#ede8f8;--cbse:#2c4a8c;--icse:#5c3d8f;--amber:#7a4a00;--amber-l:#fdf3e0;--teal:#0d4a4a;--teal-l:#e0f5f5;--purple:#3a1868;--purple-l:#ede0ff;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);font-family:'Crimson Pro',Georgia,serif;color:var(--ink);min-height:100vh;}
+  .site-header{background:var(--ink);color:var(--paper);padding:2.8rem 2rem 2.2rem;text-align:center;position:relative;overflow:hidden;}
+  .site-header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(196,169,110,.07) 60px,rgba(196,169,110,.07) 61px),repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(196,169,110,.07) 60px,rgba(196,169,110,.07) 61px);pointer-events:none;}
+  .logo{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:700;letter-spacing:0.04em;color:var(--paper);position:relative;z-index:1;line-height:1;}
+  .logo span{color:var(--rule);}
+  .tagline{font-family:'Crimson Pro',serif;font-size:0.95rem;font-style:italic;color:var(--rule);margin-top:0.4rem;position:relative;z-index:1;}
+  .portal-badge{display:inline-block;background:rgba(196,169,110,.15);border:1px solid var(--rule);color:var(--rule);font-family:'JetBrains Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;padding:.25rem .9rem;margin-top:.8rem;position:relative;z-index:1;}
+  .portal-body{max-width:1100px;margin:0 auto;padding:3rem 1.5rem 5rem;}
+  .section-label{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+  .sl-line{flex:1;height:1px;background:var(--border);}
+  .sl-text{font-family:'JetBrains Mono',monospace;font-size:0.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+  .board-pill{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.08em;padding:.2rem .65rem;border-radius:2px;border:1px solid;}
+  .pill-icse{color:var(--icse);border-color:var(--icse);background:#f3eeff;}
+  .pill-cbse{color:var(--cbse);border-color:var(--cbse);background:#eef2ff;}
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:1.3rem;margin-bottom:3.2rem;}
+  .card{background:var(--card);border:1.5px solid var(--border);display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s;text-decoration:none;color:inherit;}
+  .card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1);}
+  .card-stripe{height:5px;width:100%;}
+  .s-icse-bio{background:var(--icse);} .s-phy{background:var(--phy);} .s-chem{background:var(--chem);} .s-bio{background:var(--bio);}
+  .s-eng{background:var(--eng);} .s-math{background:var(--math);} .s-math2{background:var(--math2);}
+  .s-amber{background:var(--amber);} .s-teal{background:var(--teal);} .s-purple{background:var(--purple);}
+  .card-body{padding:1.2rem 1.3rem .8rem;flex:1;}
+  .card-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:.7rem;}
+  .i-icse-bio{background:#ede7f6;} .i-phy{background:var(--phy-l);} .i-chem{background:var(--chem-l);} .i-bio{background:var(--bio-l);}
+  .i-eng{background:var(--eng-l);} .i-math{background:var(--math-l);} .i-math2{background:var(--math2-l);}
+  .i-amber{background:var(--amber-l);} .i-teal{background:var(--teal-l);} .i-purple{background:var(--purple-l);}
+  .card-class{font-family:'JetBrains Mono',monospace;font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.22rem;}
+  .card-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin-bottom:.1rem;line-height:1.3;}
+  .card-sub{font-size:.8rem;color:var(--muted);font-style:italic;margin-bottom:.7rem;line-height:1.45;}
+  .card-chips{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.6rem;}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:.62rem;padding:.16rem .45rem;border:1px solid var(--border);color:var(--muted);background:var(--cream);border-radius:2px;}
+  .card-footer{padding:.65rem 1.3rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .card-marks{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--gold);}
+  .btn-start{font-family:'Cormorant Garamond',serif;font-size:.86rem;font-weight:700;padding:.32rem .9rem;border:1.5px solid;text-decoration:none;transition:all .15s;border-radius:2px;}
+  .b-icse{color:var(--icse);border-color:var(--icse);} .b-icse:hover{background:var(--icse);color:#fff;}
+  .b-phy{color:var(--phy);border-color:var(--phy);} .b-phy:hover{background:var(--phy);color:#fff;}
+  .b-chem{color:var(--chem);border-color:var(--chem);} .b-chem:hover{background:var(--chem);color:#fff;}
+  .b-bio{color:var(--bio);border-color:var(--bio);} .b-bio:hover{background:var(--bio);color:#fff;}
+  .b-eng{color:var(--eng);border-color:var(--eng);} .b-eng:hover{background:var(--eng);color:#fff;}
+  .b-math{color:var(--math);border-color:var(--math);} .b-math:hover{background:var(--math);color:#fff;}
+  .b-math2{color:var(--math2);border-color:var(--math2);} .b-math2:hover{background:var(--math2);color:#fff;}
+  .b-amber{color:var(--amber);border-color:var(--amber);} .b-amber:hover{background:var(--amber);color:#fff;}
+  .b-teal{color:var(--teal);border-color:var(--teal);} .b-teal:hover{background:var(--teal);color:#fff;}
+  .b-purple{color:var(--purple);border-color:var(--purple);} .b-purple:hover{background:var(--purple);color:#fff;}
+  .site-footer{text-align:center;padding:2rem;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.06em;}
+  .thrivoy-badge{color:var(--gold);font-weight:500;}
+  @media(max-width:600px){.cards-grid{grid-template-columns:1fr;}.logo{font-size:2.4rem;}}
 </style>
 </head>
 <body>
-
 <header class="site-header">
-  <div class="emblem">T</div>
-  <h1>Trinity Central School</h1>
-  <div class="tagline">Knowledge · Integrity · Excellence</div>
-  <div class="portal-badge">Online Assessment Portal</div>
+  <div class="logo">i<span>Rank</span></div>
+  <div class="tagline">Assess · Analyse · Advance</div>
+  <div class="portal-badge">Online Assessment Portal · 2025–26</div>
 </header>
-
 <div class="portal-body">
 
-  <!-- ── CLASS VIII ICSE ── -->
-  <div class="section-label" style="margin-top:0.5rem">
-    <div class="sl-line"></div>
-    <span class="sl-text">Class VIII</span>
-    <span class="board-pill pill-icse">ICSE</span>
-    <div class="sl-line"></div>
+  <div class="section-label" style="margin-top:.5rem">
+    <div class="sl-line"></div><span class="sl-text">Class VIII</span><span class="board-pill pill-icse">ICSE</span><div class="sl-line"></div>
   </div>
-
   <div class="cards-grid">
-
-    <a class="assessment-card" href="biology_assessment_grade8.html">
-      <div class="card-stripe stripe-icse-bio"></div>
-      <div class="card-body">
-        <div class="card-subject-icon icon-icse-bio">🧬</div>
-        <div class="card-class">Class VIII · ICSE · Biology</div>
-        <div class="card-title">Biology — Set 1</div>
-        <div class="card-sub">Health &amp; Hygiene, Reproduction in Animals, Endocrine System &amp; Adolescence, Useful Microorganisms</div>
-        <div class="card-chips">
-          <span class="chip">10 MCQ</span>
-          <span class="chip">5 True/False</span>
-          <span class="chip">Differentiate</span>
-          <span class="chip">AI Graded</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-marks">80 + 20 Marks · 2 Hours</span>
-        <span class="btn-start btn-icse">Start →</span>
-      </div>
-    </a>
-
-    <a class="assessment-card" href="biology_assessment_grade8_set2.html">
-      <div class="card-stripe stripe-icse-bio"></div>
-      <div class="card-body">
-        <div class="card-subject-icon icon-icse-bio">🧬</div>
-        <div class="card-class">Class VIII · ICSE · Biology</div>
-        <div class="card-title">Biology — Set 2</div>
-        <div class="card-sub">Health &amp; Hygiene, Reproduction in Animals, Endocrine System &amp; Adolescence, Useful Microorganisms</div>
-        <div class="card-chips">
-          <span class="chip">10 MCQ</span>
-          <span class="chip">Match Column</span>
-          <span class="chip">Fill Blanks</span>
-          <span class="chip">AI Graded</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-marks">80 + 20 Marks · 2 Hours</span>
-        <span class="btn-start btn-icse">Start →</span>
-      </div>
-    </a>
-
-    <a class="assessment-card" href="biology_assessment_grade8_set3.html">
-      <div class="card-stripe stripe-icse-bio"></div>
-      <div class="card-body">
-        <div class="card-subject-icon icon-icse-bio">🧬</div>
-        <div class="card-class">Class VIII · ICSE · Biology</div>
-        <div class="card-title">Biology — Set 3</div>
-        <div class="card-sub">Health &amp; Hygiene, Reproduction in Animals, Endocrine System &amp; Adolescence, Useful Microorganisms</div>
-        <div class="card-chips">
-          <span class="chip">10 MCQ</span>
-          <span class="chip">Assertion–Reason</span>
-          <span class="chip">Differentiate</span>
-          <span class="chip">AI Graded</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-marks">80 + 20 Marks · 2 Hours</span>
-        <span class="btn-start btn-icse">Start →</span>
-      </div>
-    </a>
-
+    <a class="card" href="biology_assessment_grade8.html"><div class="card-stripe s-icse-bio"></div><div class="card-body"><div class="card-icon i-icse-bio">🧬</div><div class="card-class">Class VIII · ICSE · Biology</div><div class="card-title">Biology — Set 1</div><div class="card-sub">Health & Hygiene · Reproduction in Animals · Endocrine System · Useful Microorganisms</div><div class="card-chips"><span class="chip">10 MCQ</span><span class="chip">T/F</span><span class="chip">Subjective</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-icse">Start →</span></div></a>
+    <a class="card" href="biology_assessment_grade8_set2.html"><div class="card-stripe s-icse-bio"></div><div class="card-body"><div class="card-icon i-icse-bio">🧬</div><div class="card-class">Class VIII · ICSE · Biology</div><div class="card-title">Biology — Set 2</div><div class="card-sub">Health & Hygiene · Reproduction in Animals · Endocrine System · Useful Microorganisms</div><div class="card-chips"><span class="chip">Match Column</span><span class="chip">Fill Blanks</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-icse">Start →</span></div></a>
+    <a class="card" href="biology_assessment_grade8_set3.html"><div class="card-stripe s-icse-bio"></div><div class="card-body"><div class="card-icon i-icse-bio">🧬</div><div class="card-class">Class VIII · ICSE · Biology</div><div class="card-title">Biology — Set 3</div><div class="card-sub">Health & Hygiene · Reproduction in Animals · Endocrine System · Useful Microorganisms</div><div class="card-chips"><span class="chip">Assertion–Reason</span><span class="chip">Differentiate</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-icse">Start →</span></div></a>
+    <a class="card" href="icse8_english_lit.html"><div class="card-stripe s-eng"></div><div class="card-body"><div class="card-icon i-eng">📖</div><div class="card-class">Class VIII · ICSE · English</div><div class="card-title">English Literature</div><div class="card-sub">Comprehension · Prose & Poetry Extracts · Character Study · Essay Writing</div><div class="card-chips"><span class="chip">Comprehension</span><span class="chip">Extracts</span><span class="chip">Essays</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-eng">Start →</span></div></a>
+    <a class="card" href="icse8_maths_set1.html"><div class="card-stripe s-math"></div><div class="card-body"><div class="card-icon i-math">📐</div><div class="card-class">Class VIII · ICSE · Mathematics</div><div class="card-title">Mathematics — Set 1</div><div class="card-sub">Rational Numbers · Squares/Cubes · Profit & Loss · Algebraic Identities · Mensuration · Statistics</div><div class="card-chips"><span class="chip">10 MCQ</span><span class="chip">Numericals</span><span class="chip">Word Problems</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-math">Start →</span></div></a>
+    <a class="card" href="icse8_maths_set2.html"><div class="card-stripe s-math2"></div><div class="card-body"><div class="card-icon i-math2">📐</div><div class="card-class">Class VIII · ICSE · Mathematics</div><div class="card-title">Mathematics — Set 2</div><div class="card-sub">Compound Interest · Factorisation · Linear Equations · Geometry · Pythagoras · Data Handling</div><div class="card-chips"><span class="chip">10 MCQ</span><span class="chip">Proofs</span><span class="chip">Word Problems</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-math2">Start →</span></div></a>
   </div>
 
-  <!-- ── CLASS VII CBSE ── -->
   <div class="section-label">
-    <div class="sl-line"></div>
-    <span class="sl-text">Class VII</span>
-    <span class="board-pill pill-cbse">CBSE</span>
-    <div class="sl-line"></div>
+    <div class="sl-line"></div><span class="sl-text">Class VII</span><span class="board-pill pill-cbse">CBSE</span><div class="sl-line"></div>
+  </div>
+  <div class="cards-grid">
+    <a class="card" href="cbse7_physics.html"><div class="card-stripe s-phy"></div><div class="card-body"><div class="card-icon i-phy">⚡</div><div class="card-class">Class VII · CBSE · Science</div><div class="card-title">Physics</div><div class="card-sub">Heat · Motion and Time · Electric Current and its Effects · Light</div><div class="card-chips"><span class="chip">10 MCQ</span><span class="chip">Numericals</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-phy">Start →</span></div></a>
+    <a class="card" href="cbse7_chemistry.html"><div class="card-stripe s-chem"></div><div class="card-body"><div class="card-icon i-chem">⚗️</div><div class="card-class">Class VII · CBSE · Science</div><div class="card-title">Chemistry</div><div class="card-sub">Nutrition in Plants · Fibre to Fabric · Acids, Bases & Salts · Chemical Changes · Water</div><div class="card-chips"><span class="chip">10 MCQ</span><span class="chip">Differentiate</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-chem">Start →</span></div></a>
+    <a class="card" href="cbse7_biology.html"><div class="card-stripe s-bio"></div><div class="card-body"><div class="card-icon i-bio">🌿</div><div class="card-class">Class VII · CBSE · Science</div><div class="card-title">Biology</div><div class="card-sub">Nutrition in Animals · Respiration · Transportation · Reproduction in Plants · Adaptations</div><div class="card-chips"><span class="chip">10 MCQ</span><span class="chip">Differentiate</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-bio">Start →</span></div></a>
+    <a class="card" href="cbse7_maths.html"><div class="card-stripe s-amber"></div><div class="card-body"><div class="card-icon i-amber">➗</div><div class="card-class">Class VII · CBSE · Mathematics</div><div class="card-title">Mathematics</div><div class="card-sub">Integers · Fractions · Simple Equations · Lines & Angles · Comparing Quantities · Algebraic Expressions</div><div class="card-chips"><span class="chip">10 MCQ</span><span class="chip">Numericals</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-amber">Start →</span></div></a>
   </div>
 
+  <div class="section-label">
+    <div class="sl-line"></div><span class="sl-text">Class VII</span><span class="board-pill pill-icse">ICSE</span><div class="sl-line"></div>
+  </div>
   <div class="cards-grid">
+    <a class="card" href="icse7_maths.html"><div class="card-stripe s-teal"></div><div class="card-body"><div class="card-icon i-teal">➗</div><div class="card-class">Class VII · ICSE · Mathematics</div><div class="card-title">Mathematics</div><div class="card-sub">Rational Numbers · Percentage · Profit & Loss · Simple Interest · Algebra · Geometry · Mensuration</div><div class="card-chips"><span class="chip">10 MCQ</span><span class="chip">Numericals</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-teal">Start →</span></div></a>
+  </div>
 
-    <a class="assessment-card" href="cbse7_physics.html">
-      <div class="card-stripe stripe-phy"></div>
-      <div class="card-body">
-        <div class="card-subject-icon icon-phy">⚡</div>
-        <div class="card-class">Class VII · CBSE · Science</div>
-        <div class="card-title">Physics</div>
-        <div class="card-sub">Heat · Motion and Time · Electric Current and its Effects · Light</div>
-        <div class="card-chips">
-          <span class="chip">10 MCQ</span>
-          <span class="chip">5 True/False</span>
-          <span class="chip">Numericals</span>
-          <span class="chip">AI Graded</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-marks">80 Marks · 2 Hours</span>
-        <span class="btn-start btn-phy">Start →</span>
-      </div>
-    </a>
-
-    <a class="assessment-card" href="cbse7_chemistry.html">
-      <div class="card-stripe stripe-chem"></div>
-      <div class="card-body">
-        <div class="card-subject-icon icon-chem">⚗️</div>
-        <div class="card-class">Class VII · CBSE · Science</div>
-        <div class="card-title">Chemistry</div>
-        <div class="card-sub">Nutrition in Plants · Fibre to Fabric · Acids, Bases &amp; Salts · Physical &amp; Chemical Changes · Water</div>
-        <div class="card-chips">
-          <span class="chip">10 MCQ</span>
-          <span class="chip">5 True/False</span>
-          <span class="chip">Differentiate</span>
-          <span class="chip">AI Graded</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-marks">80 Marks · 2 Hours</span>
-        <span class="btn-start btn-chem">Start →</span>
-      </div>
-    </a>
-
-    <a class="assessment-card" href="cbse7_biology.html">
-      <div class="card-stripe stripe-bio"></div>
-      <div class="card-body">
-        <div class="card-subject-icon icon-bio">🌿</div>
-        <div class="card-class">Class VII · CBSE · Science</div>
-        <div class="card-title">Biology</div>
-        <div class="card-sub">Nutrition in Animals · Respiration in Organisms · Transportation · Reproduction in Plants · Weather &amp; Adaptations</div>
-        <div class="card-chips">
-          <span class="chip">10 MCQ</span>
-          <span class="chip">5 True/False</span>
-          <span class="chip">Differentiate</span>
-          <span class="chip">AI Graded</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-marks">80 Marks · 2 Hours</span>
-        <span class="btn-start btn-bio">Start →</span>
-      </div>
-    </a>
-
+  <div class="section-label">
+    <div class="sl-line"></div><span class="sl-text">Class VI</span><span class="board-pill pill-icse">ICSE</span><div class="sl-line"></div>
+  </div>
+  <div class="cards-grid">
+    <a class="card" href="icse6_maths.html"><div class="card-stripe s-purple"></div><div class="card-body"><div class="card-icon i-purple">🔢</div><div class="card-class">Class VI · ICSE · Mathematics</div><div class="card-title">Mathematics</div><div class="card-sub">Natural Numbers · HCF & LCM · Fractions & Decimals · Ratio & Proportion · Basic Geometry · Mensuration</div><div class="card-chips"><span class="chip">10 MCQ</span><span class="chip">Numericals</span><span class="chip">Thrivoy</span></div></div><div class="card-footer"><span class="card-marks">80 Marks · 2 Hrs</span><span class="btn-start b-purple">Start →</span></div></a>
   </div>
 
 </div>
-
-<footer class="site-footer">
-  Trinity Central School &nbsp;·&nbsp; Assessment Portal &nbsp;·&nbsp; 2025–26 &nbsp;·&nbsp; Subjective answers graded by AI
-</footer>
-
+<footer class="site-footer">iRank &nbsp;·&nbsp; Online Assessment Portal &nbsp;·&nbsp; 2025–26 &nbsp;·&nbsp; Evaluated by <span class="thrivoy-badge">Thrivoy</span></footer>
 </body>
 </html>

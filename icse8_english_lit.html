@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Class VIII English Literature – ICSE</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#180a14;--paper:#fdf6fb;--cream:#f0dcea;--rule:#b06898;--accent:#4a1942;--accent2:#6b2860;--gold:#82406e;--muted:#6a4860;--border:#d8aec8;--card:#fffafd;--correct:#1a5c38;--wrong:#8b2635;--pending:#7a5c10;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);font-family:'Crimson Pro',Georgia,serif;color:var(--ink);min-height:100vh;font-size:1.04rem;}
+  #setup-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 60% 40%,#f0dcea 0%,var(--paper) 70%);padding:2rem;}
+  .setup-card{background:var(--card);border:2px solid var(--border);max-width:580px;width:100%;padding:3rem 3.5rem;box-shadow:9px 9px 0 var(--cream),9px 9px 0 2px var(--rule);}
+  .brand{font-family:'JetBrains Mono',monospace;font-size:.9rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);text-align:center;margin-bottom:.4rem;}
+  .setup-card h1{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--ink);text-align:center;margin-bottom:.25rem;font-weight:700;}
+  .subtitle{font-size:.88rem;color:var(--muted);text-align:center;margin-bottom:2.5rem;font-style:italic;}
+  .form-group{margin-bottom:1.4rem;}
+  .form-group label{display:block;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;font-family:'JetBrains Mono',monospace;}
+  .form-group input{width:100%;padding:.7rem 1rem;border:1.5px solid var(--border);background:var(--paper);font-family:'Crimson Pro',serif;font-size:1rem;color:var(--ink);outline:none;transition:border-color .2s;}
+  .form-group input:focus{border-color:var(--accent);}
+  .api-note{font-size:.78rem;color:var(--muted);margin-top:.3rem;font-style:italic;}
+  .meta-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .btn-primary{width:100%;padding:.9rem;background:var(--accent);color:#fff;border:none;font-family:'Cormorant Garamond',serif;font-size:1.2rem;cursor:pointer;transition:background .2s;}
+  .btn-primary:hover{background:var(--accent2);}
+  .divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0;}
+  .marks-badge{display:inline-block;background:var(--cream);border:1px solid var(--rule);padding:.22rem .75rem;font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--gold);margin:0 .2rem;}
+  .thrivoy-badge{display:inline-block;background:#f0dcea;border:1px solid var(--accent);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:.66rem;padding:.1rem .4rem;margin-left:.4rem;vertical-align:middle;}
+  #exam-screen{display:none;}
+  .exam-header{background:var(--ink);color:var(--paper);padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 3px 14px rgba(0,0,0,.2);}
+  .hd-brand{font-family:'JetBrains Mono',monospace;font-size:.9rem;color:var(--rule);letter-spacing:.07em;}
+  .hd-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;text-align:center;}
+  .hd-timer{font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:#f6d365;min-width:80px;text-align:right;}
+  .hd-timer.warn{color:#e74c3c;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .exam-body{max-width:840px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+  .candidate-strip{border:1.5px solid var(--border);padding:.75rem 1.4rem;display:flex;gap:2rem;margin-bottom:2rem;background:var(--card);font-size:.9rem;flex-wrap:wrap;}
+  .candidate-strip span{color:var(--muted);font-style:italic;}
+  .paper-title{text-align:center;margin-bottom:2rem;padding-bottom:1.2rem;border-bottom:2px solid var(--border);}
+  .paper-title .school{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;letter-spacing:.06em;}
+  .paper-title .exam-name{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-top:.2rem;}
+  .paper-meta{display:flex;justify-content:space-between;margin-top:.8rem;font-size:.83rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .section-title{text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-top:1.5px solid var(--border);border-bottom:1.5px solid var(--border);padding:.5rem;margin:2rem 0 1.5rem;}
+  .question-block{margin-bottom:2rem;}
+  .question-label{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;margin-bottom:.8rem;color:var(--accent);}
+  .question-label .marks{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--gold);font-weight:400;margin-left:.5rem;}
+  .sub-instruction{font-size:.92rem;font-weight:600;margin-bottom:1rem;color:var(--ink);}
+  .mcq-item{margin-bottom:1.1rem;padding:.9rem 1rem;background:var(--card);border:1px solid var(--border);}
+  .mcq-item .q-text{font-size:.95rem;margin-bottom:.7rem;line-height:1.6;}
+  .q-num{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:.78rem;margin-right:.4rem;}
+  .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem 1rem;}
+  .opt-label{display:flex;align-items:flex-start;gap:.5rem;cursor:pointer;font-size:.9rem;padding:.3rem .4rem;transition:background .15s;line-height:1.5;}
+  .opt-label:hover{background:var(--cream);}
+  .opt-label input{margin-top:.2rem;accent-color:var(--accent);}
+  .tf-item{display:flex;align-items:flex-start;gap:1rem;padding:.7rem 0;border-bottom:1px dashed var(--border);font-size:.92rem;}
+  .tf-item:last-child{border-bottom:none;}
+  .tf-controls{display:flex;gap:.5rem;}
+  .tf-btn{padding:.22rem .65rem;border:1.5px solid var(--border);background:transparent;font-family:'JetBrains Mono',monospace;font-size:.76rem;cursor:pointer;transition:all .15s;color:var(--muted);}
+  .tf-btn.sel-t{background:var(--correct);color:#fff;border-color:var(--correct);}
+  .tf-btn.sel-f{background:var(--wrong);color:#fff;border-color:var(--wrong);}
+  .name-item{display:grid;grid-template-columns:1.8rem 1fr;gap:.5rem;align-items:start;margin-bottom:.75rem;}
+  .text-input{padding:.5rem .8rem;border:1.5px solid var(--border);background:var(--paper);font-family:'Crimson Pro',serif;font-size:.95rem;color:var(--ink);width:100%;outline:none;transition:border-color .2s;}
+  .text-input:focus{border-color:var(--accent);}
+  .textarea-input{padding:.7rem .9rem;border:1.5px solid var(--border);background:var(--paper);font-family:'Crimson Pro',serif;font-size:.95rem;color:var(--ink);width:100%;min-height:88px;outline:none;resize:vertical;transition:border-color .2s;line-height:1.65;}
+  .textarea-input:focus{border-color:var(--accent);}
+  .long-q-item{margin-bottom:1.3rem;padding:1rem 1.1rem;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);}
+  .long-q-item .q-prompt{font-size:.94rem;margin-bottom:.6rem;line-height:1.65;white-space:pre-line;}
+  .long-q-item .q-sub{font-family:'JetBrains Mono',monospace;font-size:.73rem;color:var(--muted);margin-bottom:.5rem;}
+  .passage-box{background:#fdf0f8;border:1px solid var(--border);border-left:4px solid var(--accent);padding:1.1rem 1.3rem;margin-bottom:1.2rem;font-size:.93rem;line-height:1.75;font-style:italic;color:var(--ink);}
+  .passage-box .attrib{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.6rem;text-align:right;}
+  .submit-bar{position:fixed;bottom:0;left:0;right:0;background:var(--ink);padding:.85rem 2rem;display:flex;align-items:center;justify-content:space-between;}
+  .progress-text{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--rule);}
+  .btn-submit{padding:.7rem 2.5rem;background:#f6d365;color:var(--ink);border:none;font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;cursor:pointer;}
+  #grading-screen{display:none;min-height:100vh;background:var(--paper);display:none;flex-direction:column;align-items:center;justify-content:center;}
+  .grading-body{max-width:620px;width:100%;padding:4rem 2rem;text-align:center;}
+  .grading-body h2{font-family:'Cormorant Garamond',serif;font-size:2rem;margin-bottom:.5rem;}
+  .grading-body p{color:var(--muted);font-size:.95rem;margin-bottom:2rem;}
+  .progress-bar-outer{height:7px;background:var(--cream);overflow:hidden;margin-bottom:1rem;}
+  .progress-bar-inner{height:100%;background:var(--accent);width:0%;transition:width .4s;}
+  .grading-log{text-align:left;background:var(--card);border:1px solid var(--border);padding:1rem 1.2rem;max-height:260px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--muted);line-height:1.9;}
+  #results-screen{display:none;min-height:100vh;background:radial-gradient(ellipse at 70% 30%,#f0dcea 0%,var(--paper) 65%);padding:3rem 1.5rem 5rem;}
+  .results-body{max-width:840px;margin:0 auto;}
+  .results-header{text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:2px solid var(--border);}
+  .results-header h1{font-family:'Cormorant Garamond',serif;font-size:2.2rem;margin-bottom:.3rem;}
+  .score-big{font-family:'JetBrains Mono',monospace;font-size:3.6rem;font-weight:500;color:var(--accent);line-height:1;margin:.8rem 0;}
+  .score-label{font-size:.85rem;color:var(--muted);font-style:italic;}
+  .grade-badge{display:inline-block;padding:.4rem 1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.4rem;border:2px solid;margin-top:.5rem;}
+  .grade-A{color:#1a5c38;border-color:#1a5c38;background:#e6f4ec;} .grade-B{color:#1e4d8c;border-color:#1e4d8c;background:#e3edf7;} .grade-C{color:#a07828;border-color:#a07828;background:#fdf3df;} .grade-D{color:#8b2635;border-color:#8b2635;background:#fceaea;}
+  .score-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2.5rem;}
+  .score-card{background:var(--card);border:1px solid var(--border);padding:1rem 1.2rem;text-align:center;}
+  .sc-label{font-size:.73rem;font-family:'JetBrains Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem;}
+  .sc-val{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--ink);}
+  .sc-max{font-size:.85rem;color:var(--muted);}
+  .review-section{margin-bottom:2.5rem;}
+  .review-section h2{font-family:'Cormorant Garamond',serif;font-size:1.25rem;margin-bottom:1rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+  .review-item{padding:1rem 1.1rem;margin-bottom:.8rem;border:1px solid var(--border);background:var(--card);font-size:.9rem;}
+  .ri-q{font-weight:600;margin-bottom:.4rem;line-height:1.5;} .ri-given{color:var(--muted);margin-bottom:.3rem;} .ri-answer{color:var(--correct);font-style:italic;}
+  .ri-feedback{background:#fdf0f8;border-left:3px solid var(--accent);padding:.5rem .8rem;margin-top:.5rem;font-style:italic;color:var(--ink);font-size:.87rem;line-height:1.6;}
+  .status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.4rem;vertical-align:middle;}
+  .dot-correct{background:var(--correct);} .dot-wrong{background:var(--wrong);} .dot-partial{background:var(--pending);}
+  .score-pill{float:right;font-family:'JetBrains Mono',monospace;font-size:.76rem;padding:.15rem .5rem;}
+  .pill-correct{background:#d4edda;color:var(--correct);} .pill-wrong{background:#f8d7da;color:var(--wrong);} .pill-partial{background:#fff3cd;color:var(--pending);}
+  .btn-retry{display:block;width:fit-content;margin:2rem auto 0;padding:.9rem 3rem;background:var(--accent);color:#fff;border:none;font-family:'Cormorant Garamond',serif;font-size:1.15rem;cursor:pointer;}
+  .btn-home{display:inline-block;margin:1rem auto 0;padding:.6rem 2rem;background:transparent;color:var(--accent);border:1.5px solid var(--accent);font-family:'Cormorant Garamond',serif;font-size:1rem;cursor:pointer;text-decoration:none;transition:all .2s;}
+  .btn-home:hover{background:var(--accent);color:#fff;}
+  @media(max-width:600px){.options-grid{grid-template-columns:1fr;}.exam-header{flex-direction:column;gap:.4rem;text-align:center;}.meta-row{grid-template-columns:1fr;}.paper-meta{flex-direction:column;gap:.3rem;text-align:center;}}
+</style>
+</head>
+<body>
+
+<div id="setup-screen">
+  <div class="setup-card">
+    <div class="brand">iRank</div>
+    <h1>English Literature</h1>
+    <p class="subtitle">Class VIII &nbsp;·&nbsp; ICSE &nbsp;·&nbsp; Annual Examination 2025–26 &nbsp;·&nbsp; 80 Marks</p>
+    <hr class="divider">
+    <div class="form-group"><label>Candidate Name</label><input type="text" id="cand-name" placeholder="Enter your full name"></div>
+    <div class="meta-row">
+      <div class="form-group"><label>Roll Number</label><input type="text" id="cand-roll" placeholder="e.g. 12"></div>
+      <div class="form-group"><label>Section</label><input type="text" id="cand-section" placeholder="e.g. A"></div>
+    </div>
+    <hr class="divider">
+    <div class="form-group">
+      <label>Thrivoy Key <span class="thrivoy-badge">Thrivoy</span></label>
+      <input type="password" id="api-key" placeholder="Enter your Thrivoy key">
+      <div class="api-note">Your key is used only in-browser and never stored.</div>
+    </div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.7;">
+      <strong>Sections:</strong> A — Comprehension (20 marks) &nbsp;·&nbsp; B — Literature (40 marks) &nbsp;·&nbsp; C — Writing (20 marks)<br>
+      <strong>Time:</strong> <span class="marks-badge">2 Hours</span> &nbsp; <strong>Marks:</strong> <span class="marks-badge">80</span>
+    </div>
+    <button class="btn-primary" onclick="startExam()">Begin Examination →</button>
+    <div style="text-align:center;margin-top:1rem;"><a href="index.html" style="color:var(--muted);font-size:.85rem;">← Back to Portal</a></div>
+  </div>
+</div>
+
+<div id="exam-screen">
+  <div class="exam-header">
+    <div class="hd-brand">iRank</div>
+    <div class="hd-title">Class VIII — English Literature (ICSE)</div>
+    <div class="hd-timer" id="timer-display">2:00:00</div>
+  </div>
+  <div class="exam-body">
+    <div class="candidate-strip">
+      <div><span>Name: </span><strong id="disp-name">—</strong></div>
+      <div><span>Roll: </span><strong id="disp-roll">—</strong></div>
+      <div><span>Section: </span><strong id="disp-sec">—</strong></div>
+      <div><span>Subject: </span><strong>English Literature</strong></div>
+    </div>
+    <div class="paper-title">
+      <div class="school">iRank</div>
+      <div class="exam-name">ICSE Annual Examination 2025–26 &nbsp;·&nbsp; English Literature</div>
+      <div class="paper-meta"><span>Class: VIII &nbsp;|&nbsp; Subject: English Literature</span><span>Time: 2 Hours &nbsp;|&nbsp; Max Marks: 80</span></div>
+    </div>
+
+    <!-- SECTION A: COMPREHENSION -->
+    <div class="section-title">Section A — Comprehension (20 Marks)</div>
+    <div class="question-block">
+      <div class="question-label">Question 1 <span class="marks">[20 marks]</span></div>
+      <p style="font-size:.9rem;margin-bottom:1rem;">Read the following passage carefully and answer the questions that follow.</p>
+      <div class="passage-box">
+        It was the best of all possible seasons for the village of Millhaven. The rains had come exactly on time, the crops had grown tall and green, and the old banyan tree at the centre of the market square had spread its great canopy wider than anyone could remember. Yet old Rajan sat on his stone step, unmoved by the abundance around him.
+
+        "What is wealth," he said to his grandson, "when the heart that holds it is empty?" The boy, eight years old and restless, did not understand. He had been counting the mango trees in the orchard — seventeen, if you included the one by the well that had only just started bearing fruit. He wanted to know exactly how many mangoes they would have this year, and then he wanted to count the rupees those mangoes would bring.
+
+        Old Rajan watched him and smiled — not unkindly, but with the patience of someone who has already asked all the questions the boy was asking, and has moved, slowly, to a place beyond them. "You will count," he said, "and count, and count. And then one day you will stop counting and start listening. That," he said, "is when education truly begins."
+        <div class="attrib">— Original passage, iRank English Assessment</div>
+      </div>
+
+      <div class="sub-instruction">a) Answer the following questions: <span class="marks">[10]</span></div>
+      <div id="comp-a-container"></div>
+
+      <div class="sub-instruction" style="margin-top:1.5rem">b) Find words in the passage that mean the same as: <span class="marks">[4]</span></div>
+      <div id="vocab-container"></div>
+
+      <div class="sub-instruction" style="margin-top:1.5rem">c) Grammar: Rewrite as directed: <span class="marks">[6]</span></div>
+      <div id="grammar-container"></div>
+    </div>
+
+    <!-- SECTION B: LITERATURE -->
+    <div class="section-title">Section B — Literature (40 Marks)</div>
+
+    <div class="question-block">
+      <div class="question-label">Question 2 — Prose Extract <span class="marks">[16 marks]</span></div>
+      <p style="font-size:.9rem;margin-bottom:1rem;">Read the following extract and answer the questions that follow.</p>
+      <div class="passage-box">
+        <em>The Gift of the Magi</em> — O. Henry (extract)<br><br>
+        One dollar and eighty-seven cents. That was all. And sixty cents of it was in pennies. Pennies saved one and two at a time by bulldozing the grocer and the vegetable man and the butcher until one's cheeks burned with the silent imputation of parsimony that such close dealing implied. Three times Della counted it. One dollar and eighty-seven cents. And the next day would be Christmas.
+        <div class="attrib">— O. Henry, <em>The Gift of the Magi</em> (1905)</div>
+      </div>
+      <div id="prose-container"></div>
+    </div>
+
+    <div class="question-block">
+      <div class="question-label">Question 3 — Poetry Extract <span class="marks">[14 marks]</span></div>
+      <p style="font-size:.9rem;margin-bottom:1rem;">Read the following lines carefully and answer the questions.</p>
+      <div class="passage-box">
+        <em>Stopping by Woods on a Snowy Evening</em> — Robert Frost<br><br>
+        Whose woods these are I think I know.<br>
+        His house is in the village though;<br>
+        He will not see me stopping here<br>
+        To watch his woods fill up with snow.<br><br>
+        My little horse must think it queer<br>
+        To stop without a farmhouse near<br>
+        Between the woods and frozen lake<br>
+        The darkest evening of the year.<br><br>
+        The woods are lovely, dark and deep,<br>
+        But I have promises to keep,<br>
+        And miles to go before I sleep,<br>
+        And miles to go before I sleep.
+        <div class="attrib">— Robert Frost</div>
+      </div>
+      <div id="poetry-container"></div>
+    </div>
+
+    <div class="question-block">
+      <div class="question-label">Question 4 — Short Answer <span class="marks">[10 marks]</span></div>
+      <div class="sub-instruction">Answer any two of the following. (5 marks each)</div>
+      <div id="short-lit-container"></div>
+    </div>
+
+    <!-- SECTION C: WRITING -->
+    <div class="section-title">Section C — Writing (20 Marks)</div>
+    <div class="question-block">
+      <div class="question-label">Question 5 — Letter / Composition <span class="marks">[10 marks]</span></div>
+      <div id="writing-a-container"></div>
+    </div>
+    <div class="question-block">
+      <div class="question-label">Question 6 — Essay / Story <span class="marks">[10 marks]</span></div>
+      <div id="writing-b-container"></div>
+    </div>
+
+  </div>
+  <div class="submit-bar">
+    <div class="progress-text" id="progress-text">Section A · B · C</div>
+    <button class="btn-submit" onclick="submitExam()">Submit Paper →</button>
+  </div>
+</div>
+
+<div id="grading-screen" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--paper);">
+  <div class="grading-body">
+    <h2>Thrivoy is evaluating your paper…</h2>
+    <p>Please wait while your answers are being assessed.</p>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="grade-progress"></div></div>
+    <div class="grading-log" id="grading-log"></div>
+  </div>
+</div>
+
+<div id="results-screen">
+  <div class="results-body">
+    <div class="results-header">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;">iRank</div>
+      <h1>Your Results — English Literature</h1>
+      <div class="score-big" id="res-total">—</div>
+      <div class="score-label">out of 80 marks</div>
+      <div id="res-grade-badge"></div>
+    </div>
+    <div class="score-breakdown" id="score-breakdown"></div>
+    <div class="review-section"><h2>Section A — Comprehension Review</h2><div id="obj-review"></div></div>
+    <div class="review-section"><h2>Sections B & C — Literature & Writing <span class="thrivoy-badge">Thrivoy</span></h2><div id="subj-review"></div></div>
+    <div style="text-align:center">
+      <button class="btn-retry" onclick="location.reload()">← New Attempt</button><br>
+      <a class="btn-home" href="index.html">↩ Back to Portal</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── QUESTION BANK ─────────────────────────────────────
+const COMP_A = [
+  {id:'ca1', marks:2, text:'Why was it considered "the best of all possible seasons" for the village of Millhaven?'},
+  {id:'ca2', marks:2, text:'What was the boy doing while old Rajan sat on his step? What does this tell us about the boy\'s character?'},
+  {id:'ca3', marks:2, text:'How did old Rajan react to his grandson\'s behaviour? What does his smile suggest about him?'},
+  {id:'ca4', marks:2, text:'What did Rajan mean when he said, "You will count, and count, and count. And then one day you will stop counting and start listening"?'},
+  {id:'ca5', marks:2, text:'What is the central theme of this passage? Support your answer with evidence from the text.'}
+];
+const VOCAB_Q = [
+  {id:'v1', text:'Plentiful; more than enough (paragraph 1):', ans:'abundance'},
+  {id:'v2', text:'Calm tolerance; willingness to wait (paragraph 3):', ans:'patience'},
+  {id:'v3', text:'Large protective covering (paragraph 1):', ans:'canopy'},
+  {id:'v4', text:'Generous yield of a crop or harvest (contextual synonym):', ans:'abundance'}
+];
+const VOCAB_ANS = ['abundance','patience','canopy','abundance/plenty'];
+const GRAMMAR_Q = [
+  {id:'g1', marks:1, text:'Rewrite in passive voice: "The rains filled the rivers."'},
+  {id:'g2', marks:1, text:'Rewrite in reported speech: Rajan said, "Education truly begins when you stop counting."'},
+  {id:'g3', marks:1, text:'Identify the figure of speech: "The great canopy of the banyan spread like a green umbrella."'},
+  {id:'g4', marks:1, text:'Fill in the correct tense: "By the time the boy grew up, he ___ (understand) what Rajan meant."'},
+  {id:'g5', marks:1, text:'Punctuate correctly: what is wealth he said when the heart that holds it is empty'},
+  {id:'g6', marks:1, text:'Give the noun form of: "abundant"'}
+];
+const PROSE_Q = [
+  {id:'p1', marks:4, text:'a) Who is the narrator, and what is the setting at the opening of "The Gift of the Magi"? What mood is established in this extract?'},
+  {id:'p2', marks:4, text:'b) What does the phrase "the silent imputation of parsimony" mean? What does it tell us about Della\'s situation?'},
+  {id:'p3', marks:4, text:'c) Why is counting so significant in this extract? How does the repetition of "One dollar and eighty-seven cents" affect the reader?'},
+  {id:'p4', marks:4, text:'d) What conflict is established in this extract? How does O. Henry create sympathy for Della?'}
+];
+const POETRY_Q = [
+  {id:'po1', marks:3, text:'a) Where is the speaker in this poem, and what is he doing? Why does he feel he must continue his journey?'},
+  {id:'po2', marks:3, text:'b) Explain the meaning of the lines: "The woods are lovely, dark and deep, / But I have promises to keep." What is the tension the poet describes?'},
+  {id:'po3', marks:4, text:'c) What is the central theme of "Stopping by Woods on a Snowy Evening"? How does Frost use nature to convey a deeper message about human duty and temptation?'},
+  {id:'po4', marks:4, text:'d) Comment on the mood and tone of the poem. Identify TWO poetic devices used (e.g., imagery, repetition, alliteration) and explain their effect.'}
+];
+const SHORT_LIT = [
+  {id:'sl1', marks:5, text:'Write a character sketch of Della from "The Gift of the Magi." Use evidence from the story to show her personality, motivations, and values.'},
+  {id:'sl2', marks:5, text:'Describe the theme of "duty vs. desire" in Robert Frost\'s "Stopping by Woods." How is it relevant to everyday life?'},
+  {id:'sl3', marks:5, text:'Compare the use of nature as a symbol in any poem you have studied. How does the poet use natural imagery to express human emotions or ideas?'}
+];
+const WRITING_A = [
+  {id:'wa1', marks:10, text:'Write a letter to your school principal requesting permission to organise a literary festival. Include: purpose of the event, proposed activities, dates, and how it will benefit students. (Minimum 150 words)'}
+];
+const WRITING_B = [
+  {id:'wb1', marks:10, text:'Write a short story (minimum 200 words) that begins with the line: "She had been counting the days, but she had never expected the day to arrive like this."'}
+];
+
+// ── STATE ──────────────────────────────────────────────
+let timerInterval=null, secondsLeft=7200, apiKey='';
+let results={compA:[],vocab:[],grammar:[],prose:[],poetry:[],shortLit:[],writingA:[],writingB:[]};
+let totalMarks=0;
+
+function startExam(){
+  const name=document.getElementById('cand-name').value.trim();
+  if(!name){alert('Please enter your name.');return;}
+  apiKey=document.getElementById('api-key').value.trim();
+  document.getElementById('disp-name').textContent=name;
+  document.getElementById('disp-roll').textContent=document.getElementById('cand-roll').value.trim()||'—';
+  document.getElementById('disp-sec').textContent=document.getElementById('cand-section').value.trim()||'—';
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('exam-screen').style.display='block';
+  buildExam(); startTimer();
+}
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const h=Math.floor(secondsLeft/3600),m=Math.floor((secondsLeft%3600)/60),s=secondsLeft%60;
+    const el=document.getElementById('timer-display');
+    el.textContent=`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(secondsLeft<=300)el.classList.add('warn');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitExam();}
+  },1000);
+}
+function buildExam(){
+  const L=['i','ii','iii','iv','v','vi'];
+  // Comprehension A
+  const ca=document.getElementById('comp-a-container');
+  COMP_A.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">${L[i]}. [${q.marks} marks]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="3" placeholder="Your answer…"></textarea>`;
+    ca.appendChild(d);
+  });
+  // Vocab
+  const vc=document.getElementById('vocab-container');
+  VOCAB_Q.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='name-item';
+    d.innerHTML=`<span style="font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:.8rem">${L[i]}.</span><div><div style="font-size:.92rem;margin-bottom:.3rem">${q.text}</div><input type="text" class="text-input" id="${q.id}" placeholder="Word from the passage…"></div>`;
+    vc.appendChild(d);
+  });
+  // Grammar
+  const gc=document.getElementById('grammar-container');
+  GRAMMAR_Q.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">${L[i]}. [${q.marks} mark]</div><div class="q-prompt">${q.text}</div><input type="text" class="text-input" id="${q.id}" placeholder="Your answer…" style="margin-top:.3rem">`;
+    gc.appendChild(d);
+  });
+  // Prose
+  const pc=document.getElementById('prose-container');
+  PROSE_Q.forEach(q=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">[${q.marks} marks]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="5" placeholder="Write your answer here…"></textarea>`;
+    pc.appendChild(d);
+  });
+  // Poetry
+  const poc=document.getElementById('poetry-container');
+  POETRY_Q.forEach(q=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">[${q.marks} marks]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="5" placeholder="Write your answer here…"></textarea>`;
+    poc.appendChild(d);
+  });
+  // Short Lit
+  const sl=document.getElementById('short-lit-container');
+  SHORT_LIT.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">${L[i]}. [${q.marks} marks]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="6" placeholder="Write your answer here…"></textarea>`;
+    sl.appendChild(d);
+  });
+  // Writing
+  WRITING_A.forEach(q=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">[${q.marks} marks]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="10" placeholder="Write your letter here…"></textarea>`;
+    document.getElementById('writing-a-container').appendChild(d);
+  });
+  WRITING_B.forEach(q=>{
+    const d=document.createElement('div');d.className='long-q-item';
+    d.innerHTML=`<div class="q-sub">[${q.marks} marks]</div><div class="q-prompt">${q.text}</div><textarea class="textarea-input" id="${q.id}" rows="12" placeholder="Write your story here…"></textarea>`;
+    document.getElementById('writing-b-container').appendChild(d);
+  });
+}
+function submitExam(){
+  clearInterval(timerInterval);
+  if(!confirm('Submit your paper?')){startTimer();return;}
+  document.getElementById('exam-screen').style.display='none';
+  const gs=document.getElementById('grading-screen');
+  gs.style.display='flex';
+  gradeAll();
+}
+async function gradeAll(){
+  const log=document.getElementById('grading-log'),bar=document.getElementById('grade-progress');
+  const logMsg=m=>{log.innerHTML+=m+'<br>';log.scrollTop=log.scrollHeight;};
+  // Vocab auto-grade
+  logMsg('↳ Checking vocabulary…');
+  let vocabScore=0;
+  VOCAB_Q.forEach((q,i)=>{
+    const given=(document.getElementById(q.id)||{}).value||'';
+    const correct=given.trim().toLowerCase().includes(VOCAB_ANS[i].split('/')[0].split(' ')[0].toLowerCase());
+    if(correct)vocabScore++;
+    results.vocab.push({q:q.text,ans:VOCAB_ANS[i],given,correct});
+  });
+  bar.style.width='10%';
+  logMsg(`  Vocabulary: ${vocabScore}/4`);
+  // All other sections → Thrivoy
+  const allSubj=[
+    ...COMP_A.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'compA'})),
+    ...GRAMMAR_Q.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'grammar'})),
+    ...PROSE_Q.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'prose'})),
+    ...POETRY_Q.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'poetry'})),
+    ...SHORT_LIT.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'shortLit'})),
+    ...WRITING_A.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'writingA'})),
+    ...WRITING_B.map(q=>({id:q.id,text:q.text,maxMark:q.marks,group:'writingB'})),
+  ];
+  let aiScore=0;
+  for(let si=0;si<allSubj.length;si++){
+    const sq=allSubj[si];
+    const given=(document.getElementById(sq.id)||{}).value||'';
+    logMsg(`↳ Evaluating: ${sq.text.substring(0,55)}…`);
+    const r=await thrivoyGrade(sq.text,given,sq.maxMark,'Class 8 ICSE English Literature');
+    aiScore+=r.score;
+    results[sq.group].push({q:sq.text,given,score:r.score,maxMark:sq.maxMark,feedback:r.feedback});
+    bar.style.width=Math.round(10+(si+1)/allSubj.length*85)+'%';
+  }
+  bar.style.width='100%';
+  logMsg('✓ Evaluation complete!');
+  totalMarks=Math.round((vocabScore+aiScore)*10)/10;
+  setTimeout(()=>showResults(vocabScore,aiScore),800);
+}
+async function thrivoyGrade(question,answer,maxMark,subject='Class 8 ICSE English'){
+  if(!apiKey){
+    if(!answer.trim())return{score:0,feedback:'No answer provided.'};
+    const w=answer.trim().split(/\s+/).length;
+    return{score:Math.min(maxMark,w>40?maxMark:w>15?maxMark*0.6:w>5?maxMark*0.3:0),feedback:'(No Thrivoy key — estimated from response length.)'};
+  }
+  if(!answer.trim())return{score:0,feedback:'No answer was provided.'};
+  const prompt=`You are an experienced ${subject} teacher marking a student exam.\nQuestion: ${question}\nMax Marks: ${maxMark}\nStudent Answer: "${answer}"\nGive a mark from 0 to ${maxMark}. Reward good ideas, relevant textual reference, and literary understanding. Be encouraging for a 13-year-old student.\nRespond ONLY with raw JSON: {"score":<number>,"feedback":"<1-2 sentences>"}`;
+  try{
+    let txt='';
+    if(apiKey.startsWith('AIza')){
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:300,responseMimeType:'application/json'}})});
+      const d=await r.json();if(d.error)throw new Error(d.error.message);
+      txt=d.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    }else{
+      const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},body:JSON.stringify({model:'google/gemini-2.0-flash-001',max_tokens:300,temperature:0.2,messages:[{role:'user',content:prompt}]})});
+      const d=await r.json();if(d.error)throw new Error(JSON.stringify(d.error));
+      txt=d.choices?.[0]?.message?.content||'';
+    }
+    txt=txt.trim().replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```$/i,'').trim();
+    const m=txt.match(/\{[\s\S]*?\}/);if(!m)throw new Error('No JSON');
+    const p=JSON.parse(m[0]);
+    return{score:Math.min(maxMark,Math.max(0,parseFloat(p.score)||0)),feedback:p.feedback||'Evaluated.'};
+  }catch(e){
+    const w=answer.trim().split(/\s+/).length;
+    return{score:Math.min(maxMark*0.4,w>30?maxMark*0.4:w>10?maxMark*0.2:0),feedback:`Evaluation error. Score estimated.`};
+  }
+}
+function showResults(vocabScore,aiScore){
+  document.getElementById('grading-screen').style.display='none';
+  document.getElementById('results-screen').style.display='block';
+  document.getElementById('res-total').textContent=`${totalMarks} / 80`;
+  const pct=(totalMarks/80)*100;
+  let grade,gc;
+  if(pct>=75){grade='A+';gc='A';}else if(pct>=60){grade='B';gc='B';}else if(pct>=40){grade='C';gc='C';}else{grade='D';gc='D';}
+  document.getElementById('res-grade-badge').innerHTML=`<span class="grade-badge grade-${gc}">Grade ${grade}</span>`;
+  const bd=document.getElementById('score-breakdown');
+  const compAScore=results.compA.reduce((s,r)=>s+r.score,0);
+  const gramScore=results.grammar.reduce((s,r)=>s+r.score,0);
+  const proseScore=results.prose.reduce((s,r)=>s+r.score,0);
+  const poetryScore=results.poetry.reduce((s,r)=>s+r.score,0);
+  const writingScore=(results.writingA.reduce((s,r)=>s+r.score,0))+(results.writingB.reduce((s,r)=>s+r.score,0));
+  [['Vocabulary',vocabScore,4],['Comprehension',compAScore.toFixed(1),10],['Grammar',gramScore.toFixed(1),6],['Prose',proseScore.toFixed(1),16],['Poetry',poetryScore.toFixed(1),14],['Writing',writingScore.toFixed(1),20]].forEach(([l,v,m])=>{
+    bd.innerHTML+=`<div class="score-card"><div class="sc-label">${l}</div><div class="sc-val">${v} <span class="sc-max">/ ${m}</span></div></div>`;
+  });
+  const ob=document.getElementById('obj-review');
+  results.vocab.forEach((r,i)=>{
+    const dc=r.correct?'dot-correct':'dot-wrong',pc=r.correct?'pill-correct':'pill-wrong';
+    ob.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>Vocab ${i+1}: ${r.q}<span class="score-pill ${pc}">${r.correct?1:0}/1</span></div><div class="ri-given">Your answer: ${r.given||'—'}</div><div class="ri-answer">Answer: ${r.ans}</div></div>`;
+  });
+  const sb=document.getElementById('subj-review');
+  [...results.compA,...results.grammar,...results.prose,...results.poetry,...results.shortLit,...results.writingA,...results.writingB].forEach(r=>{
+    const p2=r.score/r.maxMark,dc=p2>=0.8?'dot-correct':p2>=0.4?'dot-partial':'dot-wrong',pc=p2>=0.8?'pill-correct':p2>=0.4?'pill-partial':'pill-wrong';
+    sb.innerHTML+=`<div class="review-item"><div class="ri-q"><span class="status-dot ${dc}"></span>${r.q.substring(0,100)}${r.q.length>100?'…':''}<span class="score-pill ${pc}">${r.score}/${r.maxMark}</span></div><div class="ri-given">Your answer: ${(r.given||'—').substring(0,200)}</div>${r.feedback?`<div class="ri-feedback">💬 ${r.feedback}</div>`:''}</div>`;
+  });
+}
+</script>
+</body>
+</html>
